@@ -365,24 +365,20 @@ const app = new (function Application() {
     function addLightForCars(cars) {
         cars.map((car) => {
             var texture = new THREE.TextureLoader().load('assets/textures/light.png');
-            var material = new THREE.MeshBasicMaterial({
+            var material = new THREE.SpriteMaterial({
                 map: texture,
-                side: THREE.DoubleSide,
                 transparent: true,
                 opacity: 0
             });
-            var geometry = new THREE.PlaneGeometry(.5, .5);
-            var rightLight = new THREE.Mesh(geometry, material);
+            var rightLight = new THREE.Sprite(material);
             rightLight.name = "rightLight";
             car.add(rightLight);
-            material = new THREE.MeshBasicMaterial({
+            material = new THREE.SpriteMaterial({
                 map: texture,
-                side: THREE.DoubleSide,
                 transparent: true,
                 opacity: 0
             });
-            geometry = new THREE.PlaneGeometry(.5, .5);
-            leftLight = new THREE.Mesh(geometry, material);
+            leftLight = new THREE.Sprite(material);
             leftLight.name = "leftLight";
             car.add(leftLight);
             // console.log(car.name);
@@ -393,8 +389,8 @@ const app = new (function Application() {
                 rightLight.position.set(1.1, 1.1, -3);
                 leftLight.position.set(-1.1, 1.1, -3);
             } else if (car.name.indexOf('_Container_') != -1) {
-                rightLight.position.set(1.2, 1.5, -4.5);
-                leftLight.position.set(-1.2, 1.5, -4.5);
+                rightLight.position.set(1.2, 1.5, -4.6);
+                leftLight.position.set(-1.2, 1.5, -4.6);
             } else if (car.name.indexOf('_Pick up Truck_') != -1) {
                 rightLight.position.set(1.2, 1.15, -3.2);
                 leftLight.position.set(-1.2, 1.15, -3.2);

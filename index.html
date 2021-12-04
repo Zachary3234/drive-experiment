@@ -1,15 +1,20 @@
 <html>
 	<head>
-		<meta charset="utf-8">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>自动驾驶合作实验</title>
 		<style>
 			html,body { width: 100%; height: 100%; margin: 0; }
-            #render { width: 100vh; height: 100vh; margin: 0 auto; }
+            #app { width: 100%; height: 100%;}
+            #monitor { width: 100vh; max-width: 100%; height: 100vh; }
+            #render { width: calc(100% - 1rem); height: calc(100% - 1rem); }
+            /* #dialog { z-index: 100; } */
             .panel { position: fixed; z-index: 10;}
 		</style>
+        <link href="css/tailwind-2.2.19.min.css" rel="stylesheet">
 	</head>
 	<body>
-        <div class="panel">
+        <div class="panel bg-gray-200 rounded-xl m-1 p-2">
             <button onclick="app.reset()">重置</button>
             <br>
             <button onclick="app.pause()">暂停</button>
@@ -18,16 +23,72 @@
             <br>
             <button onclick="app.stopOther()">对方停车</button>
             <br>
-            <!-- <button onclick="app.turnOther()">对方左转</button><span>←点这里</span> -->
+            <span>车速：</span><span id="carSpeed">0.2</span><br><input id="speed" type="range" min="0" max="0.5" step="0.01" value="0.2" onchange="speedchange()">
             <br>
-            <span>车速</span><br><input id="speed" type="range" min="0" max="0.5" step="0.01" value="0.2" onchange="speedchange()"><span id="carSpeed">0.2</span>
-            <br>
-            <span>高度</span><br><input id="height" type="range" min="100" max="200" step="10" value="140" onchange="heightchange()"><span id="camHeight">170</span>
+            <span>高度：</span><span id="camHeight">170</span><br><input id="height" type="range" min="100" max="200" step="10" value="140" onchange="heightchange()">
         </div>
+        <div id="app" class="flex overflow-hidden bg-gray-50">
+            <div id="monitor" class="mx-auto my-0">
+                <div id="render" class="overflow-hidden bg-gray-700 m-2 p-5 ring-4 ring-gray-400 rounded-3xl">
+                    <canvas></canvas>
+                </div>
+            </div>
+            <div id="dialog" class="z-50">
+                <div
+                  class="fixed inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl"
+                >
+                    <h3 class="text-lg font-medium leading-6 text-gray-900">
+                        Payment successful
+                    </h3>
+                    <div class="mt-2">
+                        <p class="text-sm text-gray-500">
+                          Your payment has been successfully submitted. We’ve sent you
+                          an email with all of the details of your order.
+                        </p>
+                    </div>
+                    <div class="mt-4">
+                        <button type="button"
+                            class="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+                            onclick="closeModal()">
+                            Got it, thanks!
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- <div class="dialog">
+            <div class="fixed inset-0 flex items-center justify-center">
+                <button type="button"
+                  onclick="openDialog()"
+                  class="px-4 py-2 text-sm font-medium text-white bg-black rounded-md bg-opacity-20 hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+                >
+                  Open dialog
+                </button>
+            </div>
+            <div
+              class="fixed inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl"
+            >
+                <h3 class="text-lg font-medium leading-6 text-gray-900">
+                    Payment successful
+                </h3>
+                <div class="mt-2">
+                    <p class="text-sm text-gray-500">
+                      Your payment has been successfully submitted. We’ve sent you
+                      an email with all of the details of your order.
+                    </p>
+                </div>
+                <div class="mt-4">
+                    <button type="button"
+                        class="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+                        onclick="closeModal()">
+                        Got it, thanks!
+                    </button>
+                </div>
+            </div>
+        </div> -->
         
-        <div id="render">
-            <canvas></canvas>
-        </div>
         <script src="js/lib/jquery-3.6.0.min.js"></script>
         <script src="js/lib/three.js"></script>
         <script src="js/load.js"></script>

@@ -120,12 +120,12 @@ const app = new (function Application() {
     function initView() {
         const _offsetZ = -10;
         const _center = new THREE.Vector3(0, 0, _offsetZ);
+
         // var maxHeight = control.maxHeight;//180;
         var targetHeight = control.maxHeight;
         var len = 1000;
         camera.position.set(0, targetHeight + 60, 80 + _offsetZ);
         camera.lookAt(_center);
-
         $(renderer.domElement).on('mousewheel', function (event) {
             len = len + event.originalEvent.deltaY;
             len = Math.min(Math.max(len, 0), 3000);
@@ -147,18 +147,47 @@ const app = new (function Application() {
     function initWorld() {
         var nRows = 8;
         var nCols = 4;
+        // nRows = 4;
+        // nCols = 4;
         var chunkSize = 60;
         var citySizeX = nCols * chunkSize;
         var citySizeZ = nRows * chunkSize;
         this.chunkTable = buildCity(nRows, nCols);
 
+        if (debug) {
+            var drag = false;
+            var lastOffset = new THREE.Vector2(0, 0);
+            var dragStart = new THREE.Vector2(0, 0);
+            var dragTo = new THREE.Vector2(0, 0);
+            $(renderer.domElement).on('mousedown', function (event) {
+                drag = true;
+                dragStart.set(-event.originalEvent.pageX/7,event.originalEvent.pageY/7);
+            });
+            $(renderer.domElement).on('mouseup', function (event) {
+                drag = false;
+                lastOffset.copy(offset);
+            });
+            $(renderer.domElement).on('mouseleave', function (event) {
+                drag = false;
+                lastOffset.copy(offset);
+            });
+            $(renderer.domElement).on('mousemove', function (event) {
+                if (drag){
+                    dragTo.set(-event.originalEvent.pageX/7,event.originalEvent.pageY/7);
+                    offset.addVectors(lastOffset,dragTo);
+                    offset.subVectors(offset,dragStart);
+                    // console.log(event.originalEvent.pageX,event.originalEvent.pageY)
+                }
+            });
+        }
+
         var sceneOffset = new THREE.Vector3;
-        this.offset = new THREE.Vector2;
+        var offset = new THREE.Vector2;
         this.update = function () {
             // 跟随主车辆
-            carsControl && carsControl.carSelf && (this.offset.y = -carsControl.carSelf.position.z);
-            sceneOffset.z = this.offset.y;
-            sceneOffset.x = -this.offset.x;
+            carsControl && carsControl.carSelf && (offset.y = -carsControl.carSelf.position.z);
+            sceneOffset.z = offset.y;
+            sceneOffset.x = -offset.x;
             chunkScene.position.lerp(sceneOffset, .05);
             refreshPosition();
         }
@@ -227,6 +256,7 @@ const app = new (function Application() {
                     chunk = worldControl.chunkTable[i][j];
                     worldPosition = chunk.getWorldPosition();
                     // if (i==0 && j==0) console.log(chunk.getWorldPosition());
+
                     if (worldPosition.z >= 2 * chunkSize) {
                         chunk.position.z -= citySizeZ;
                     } else if (worldPosition.z < -citySizeZ + 2 * chunkSize) {

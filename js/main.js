@@ -1,3 +1,4 @@
+const debug = true;
 function speedchange() {
     var value = document.getElementById('speed').value ;
     document.getElementById('carSpeed').innerHTML = value;
@@ -7,4 +8,8 @@ function heightchange() {
     var value = document.getElementById('height').value ;
     document.getElementById('camHeight').innerHTML = value;
     app.setHeight(value);
+}
+
+function openDialog() {
+    
 }

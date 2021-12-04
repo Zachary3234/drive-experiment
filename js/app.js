@@ -41,8 +41,9 @@ const app = new (function Application() {
     //控制参数
     var control = {
         pause: false,
-        maxSpeed: 0.2,
-        maxHeight: 180,
+        maxSpeed: 0.15,
+        maxHeight: 170,
+        decision: false,
     };
 
     //加载场景
@@ -85,6 +86,13 @@ const app = new (function Application() {
             carsControl && carsControl.update();
         }
 
+        //触发决策框
+        if (!control.decision && void 0 != carsControl) {
+            if (carsControl.carSelf.getWorldPosition().z - carsControl.carOther.getWorldPosition().z < 60){
+                toggleDialog(control.decision = true);
+            }
+        }
+
         renderer.render(scene, camera);
         requestAnimationFrame(update);
     }
@@ -93,6 +101,8 @@ const app = new (function Application() {
     this.reset = function () {
         worldControl && worldControl.reset();
         carsControl && (carsControl.reset(), carsControl.carOther.turn = 1);
+
+        toggleDialog(control.decision = false);
     };
     this.pause = function () {
         control.pause = !control.pause;
@@ -287,7 +297,9 @@ const app = new (function Application() {
         }
         this.reset = function () {
             this.carSelf && this.carSelf.reset();
-            this.carOther && this.carOther.reset();
+            // this.carOther && this.carOther.reset();
+            chunkScene.remove(this.carOther);
+            this.carOther = initCar(new THREE.Vector3(-3.4, 0, -180), new THREE.Euler(0, Math.PI, 0));
         }
 
         function initCar(position, rotation, stop, ind) {
@@ -388,6 +400,9 @@ const app = new (function Application() {
                     (this.getWorldPosition().x >= testChunk.getWorldPosition().x - 10 + testCloseInterOffset) &&
                     (this.getWorldPosition().z <= testChunk.getWorldPosition().z + 40 - testCloseInterOffset) &&
                     (this.getWorldPosition().z >= testChunk.getWorldPosition().z + 20 + testCloseInterOffset);
+            }
+            car.changeCar = function () {
+                this.car
             }
             return car;
         }

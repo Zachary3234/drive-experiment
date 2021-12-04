@@ -10,7 +10,17 @@ function heightchange() {
     app.setHeight(value);
 }
 
-function toggleDialog() {
-    $('#dialog').toggleClass('scale-100 opacity-100');
-    $('#dialog').toggleClass('scale-95 opacity-0');
+function toggleDialog(open) {
+    if (void 0 != open){
+        if (open){
+            $('#dialog').addClass('scale-100 opacity-100');
+            $('#dialog').removeClass('scale-95 opacity-0');
+        }else{
+            $('#dialog').removeClass('scale-100 opacity-100');
+            $('#dialog').addClass('scale-95 opacity-0');
+        }
+    }else{
+        $('#dialog').toggleClass('scale-100 opacity-100');
+        $('#dialog').toggleClass('scale-95 opacity-0');
+    }
 }

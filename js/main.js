@@ -10,6 +10,7 @@ function heightchange() {
     app.setHeight(value);
 }
 
-function openDialog() {
-    
+function toggleDialog() {
+    $('#dialog').toggleClass('scale-100 opacity-100');
+    $('#dialog').toggleClass('scale-95 opacity-0');
 }

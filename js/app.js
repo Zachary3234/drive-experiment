@@ -2,6 +2,7 @@ const app = new (function Application() {
     //初始化3D场景
     var renderer = new THREE.WebGLRenderer({
         canvas: document.querySelector('canvas'),
+        antialias: true
     });
     renderer.setSize($('#render').width(), $('#render').height());
     renderer.setClearColor(0xcccccc);
@@ -41,10 +42,11 @@ const app = new (function Application() {
     //控制参数
     var control = {
         pause: false,
-        maxSpeed: 0.15,
+        maxSpeed: 0.2,
         maxHeight: 170,
         decision: false,
     };
+    this.control = control;
 
     //加载场景
     loadObjects().then((sceneObjects) => {
@@ -79,6 +81,7 @@ const app = new (function Application() {
         camera.updateProjectionMatrix();
     }
     //渲染画面
+    var distance = 0;
     function update() {
         viewControl && viewControl.update();
         if (!control.pause) {
@@ -87,10 +90,18 @@ const app = new (function Application() {
         }
 
         //触发决策框
-        if (!control.decision && void 0 != carsControl) {
-            if (carsControl.carSelf.getWorldPosition().z - carsControl.carOther.getWorldPosition().z < 60){
-                toggleDialog(control.decision = true);
-            }
+        distance = Math.abs(carsControl.carSelf.getWorldPosition().z - carsControl.carOther.getWorldPosition().z);
+        if (void 0 != carsControl && 
+            !control.decision && 
+            distance < 60 && distance > 50) {
+            toggleDialog(control.decision = true);
+        }
+        //决策结束
+        if (void 0 != carsControl && 
+            control.decision && 
+            distance <= 20) {
+            toggleDialog(control.decision = false);
+            app.stopOther();
         }
 
         renderer.render(scene, camera);
@@ -119,10 +130,10 @@ const app = new (function Application() {
     };
     //其他控制
     this.setSpeed = function (val) {
-        control.maxSpeed = val;
+        control.maxSpeed = parseFloat(val);
     };
     this.setHeight = function (val) {
-        control.maxHeight = val;
+        control.maxHeight = parseFloat(val);
     };
 
 
@@ -147,7 +158,7 @@ const app = new (function Application() {
                 camera.position.z = 0.1;
                 camera.position.y = control.maxHeight;
             } else {
-                camera.position.z = 80;
+                camera.position.z = 80.1;
                 camera.position.y += .05 * (targetHeight - camera.position.y);
             }
             camera.lookAt(_center);

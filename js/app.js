@@ -55,15 +55,15 @@ const app = new (function Application() {
         objects.blocks = sceneObjects.getObjectByName("blocks").children;
         objects.lanes = sceneObjects.getObjectByName("lanes").children;
         objects.intersections = sceneObjects.getObjectByName("intersections").children;
-        objects.cars = sceneObjects.getObjectByName("cars").children;
+        objects.carsOri = sceneObjects.getObjectByName("cars").children;
         objects.clouds = sceneObjects.getObjectByName("clouds").children;
         // 去掉一些不要的对象
         objects.lanes = [objects.lanes.find((ele) => { return ele.name === "Road_Lane_01_fixed" })];
         objects.intersections = [objects.intersections.find((ele) => { return ele.name === "Road_Intersection_03_merged_fixed" })];
-        objects.cars.splice(13, 1); //"Vehicle_Police Car"
-        objects.cars.splice(0, 1); //"Vehicle_Ambulance"
+        objects.carsOri.splice(13, 1); //"Vehicle_Police Car"
+        objects.carsOri.splice(0, 1); //"Vehicle_Ambulance"
         // 给车加上车灯
-        objects.cars = addLightForCars(objects.cars);
+        objects.cars = addLightForCars(objects.carsOri);
 
         //搭建场景
         viewControl = new initView();
@@ -89,20 +89,23 @@ const app = new (function Application() {
             carsControl && carsControl.update();
         }
 
-        //触发决策框
-        distance = Math.abs(carsControl.carSelf.getWorldPosition().z - carsControl.carOther.getWorldPosition().z);
+        //触发决策
+        carsControl && carsControl.carSelf && carsControl.carOther && (distance = carsControl.carSelf.getWorldPosition().z - carsControl.carOther.getWorldPosition().z);
         if (void 0 != carsControl && 
             !control.decision && 
-            distance < 60 && distance > 50) {
-            toggleDialog(control.decision = true);
+            distance > 50 && distance < 60) {
+            control.decision = true;
+            exp.startDecision();
         }
         //决策结束
         if (void 0 != carsControl && 
             control.decision && 
-            distance <= 20) {
-            toggleDialog(control.decision = false);
-            app.stopOther();
+            distance > 10 && distance < 20) {
+            control.decision = false;
+            exp.endDecision();
         }
+        //刷新车辆
+        // this.carOther = initCar((new THREE.Vector3(-3.4, 0, -60-spawnRange)).add(meetChunk.position), new THREE.Euler(0, Math.PI, 0));
 
         renderer.render(scene, camera);
         requestAnimationFrame(update);
@@ -112,8 +115,7 @@ const app = new (function Application() {
     this.reset = function () {
         worldControl && worldControl.reset();
         carsControl && (carsControl.reset(), carsControl.carOther.turn = 1);
-
-        toggleDialog(control.decision = false);
+        control.decision = false;
     };
     this.pause = function () {
         control.pause = !control.pause;
@@ -127,6 +129,9 @@ const app = new (function Application() {
     };
     this.turnOther = function () {
         carsControl && carsControl.carOther && (carsControl.carOther.turn = 1);
+    };
+    this.resetOther = function () {
+        carsControl && carsControl.resetOther();
     };
     //其他控制
     this.setSpeed = function (val) {
@@ -167,7 +172,7 @@ const app = new (function Application() {
     // 初始化世界
     function initWorld() {
         var nRows = 8;
-        var nCols = 4;
+        var nCols = 6;
         // nRows = 4;
         // nCols = 4;
         var chunkSize = 60;
@@ -206,16 +211,16 @@ const app = new (function Application() {
         var offset = new THREE.Vector2;
         this.update = function () {
             // 跟随主车辆
-            carsControl && carsControl.carSelf && (offset.y = -carsControl.carSelf.position.z);
+            carsControl && carsControl.carSelf && (offset.y = -carsControl.carSelf.position.z, offset.x = carsControl.carSelf.position.x-3.4);
             sceneOffset.z = offset.y;
             sceneOffset.x = -offset.x;
             chunkScene.position.lerp(sceneOffset, .05);
             refreshPosition();
         }
         this.reset = function () {
-            if (chunkScene.position.z > citySizeZ) {
-                chunkScene.position.copy(new THREE.Vector3(0, 0, 0));
-            }
+            // if (chunkScene.position.z > citySizeZ) {
+            //     chunkScene.position.copy(new THREE.Vector3(0, 0, 0));
+            // }
         }
 
         function buildChunk() {
@@ -295,8 +300,13 @@ const app = new (function Application() {
 
     // 初始化车辆
     function initCars() {
-        this.carSelf = initCar(new THREE.Vector3(3.4, 0, 6.5));
-        this.carOther = initCar(new THREE.Vector3(-3.4, 0, -180), new THREE.Euler(0, Math.PI, 0));
+        var currCord = {x:1,y:1};
+        var meetChunk = worldControl.chunkTable[currCord.x][currCord.y];
+        this.meetChunk = meetChunk;
+        var spawnRange0 = 40;
+        var spawnRange = 20;
+        this.carSelf = initCar((new THREE.Vector3(3.4, 0, 6.5+spawnRange0)).add(meetChunk.position));
+        this.carOther = initCar((new THREE.Vector3(-3.4, 0, -60-spawnRange0)).add(meetChunk.position), new THREE.Euler(0, Math.PI, 0));
 
         // for (let i = 0; i < objects.cars.length; i++) {
         //     initCar(new THREE.Vector3(4*i-30-40,0,-30),new THREE.Euler(0,Math.PI,0),false,i);
@@ -307,14 +317,26 @@ const app = new (function Application() {
             this.carOther && this.carOther.moveUpdate();
         }
         this.reset = function () {
-            this.carSelf && this.carSelf.reset();
+            // this.carSelf && this.carSelf.reset();
             // this.carOther && this.carOther.reset();
-            chunkScene.remove(this.carOther);
-            this.carOther = initCar(new THREE.Vector3(-3.4, 0, -180), new THREE.Euler(0, Math.PI, 0));
+            // worldControl.chunkTable[2][1].add(this.carSelf);
+            this.carSelf.remove();
+            this.carOther.remove();
+            currCord.x += randomPick([0,1,2]);
+            if (currCord.x<0) currCord.x += worldControl.chunkTable.length;
+            else currCord.x = currCord.x % worldControl.chunkTable.length;
+            currCord.y += randomPick([-2,-1]);
+            if (currCord.y<0) currCord.y += worldControl.chunkTable[0].length;
+            else currCord.y = currCord.y % worldControl.chunkTable[0].length;
+            console.log(currCord);
+            meetChunk = worldControl.chunkTable[currCord.x][currCord.y];
+            this.carSelf = initCar((new THREE.Vector3(3.4, 0, 6.5+spawnRange)).add(meetChunk.position));
+            this.carOther = initCar((new THREE.Vector3(-3.4, 0, -60-spawnRange)).add(meetChunk.position), new THREE.Euler(0, Math.PI, 0));
         }
 
         function initCar(position, rotation, stop, ind) {
-            var car = void 0 != ind ? objects.cars[ind].clone() : randomPick(objects.cars).clone();
+            var car = void 0 != ind ? objects.cars[ind].clone() : randomPop(objects.cars).clone();
+            // console.log(car);
             chunkScene.add(car);
             position && (car.position.copy(position));
             rotation && (car.rotation.copy(rotation));
@@ -342,22 +364,28 @@ const app = new (function Application() {
             var lightSign = 0;
             car.moveUpdate = function () {
                 //转向
-                checkTurn = this.isOnIntersection(3, 1);
-                lightSign > 0 && lightSign--;
-                if (lightSign <= 10) {
+                // checkTurn = this.isOnIntersection(null, 3, 1);
+                checkTurn = this.isOnIntersection(meetChunk);
+                if (checkTurn >= 1) {
+                    if (this.turn != 0){
+                        //打转向灯
+                        lightSign--;
+                        if (lightSign <= 0) {
+                            if (this.turn > 0) {
+                                car.getObjectByName('leftLight').material.opacity = 1;
+                            } else if (this.turn < 0) {
+                                car.getObjectByName('rightLight').material.opacity = 1;
+                            }
+                            lightSign = 30;
+                        }else if(lightSign <= 10){
+                            car.getObjectByName('leftLight').material.opacity = 0;
+                            car.getObjectByName('rightLight').material.opacity = 0;
+                        }
+                        // console.log(lightSign);
+                    }
+                }else{
                     car.getObjectByName('leftLight').material.opacity = 0;
                     car.getObjectByName('rightLight').material.opacity = 0;
-                }
-                if (checkTurn >= 1 && this.turn != 0) {
-                    //打转向灯
-                    if (lightSign == 0) {
-                        if (this.turn > 0) {
-                            car.getObjectByName('leftLight').material.opacity = 1;
-                        } else if (this.turn < 0) {
-                            car.getObjectByName('rightLight').material.opacity = 1;
-                        }
-                        lightSign = 30;
-                    }
                 }
                 if (checkTurn == 2) {
                     if (this.turn > 0) {
@@ -396,30 +424,37 @@ const app = new (function Application() {
                 value.copy(this.direction).multiplyScalar(this.speed);
                 this.position.add(value);
             }
-            var testChunk;
             var testInterOffset = 0.6;
             var testCloseInterOffset = -15;
-            car.isOnIntersection = function (row, col) {
-                testChunk = worldControl.chunkTable[row][col];
+            car.isOnIntersection = function (checkChunk, row, col) {
+                checkChunk = checkChunk || worldControl.chunkTable[row][col];
                 // console.log(this.getWorldPosition().x,this.getWorldPosition().z);
                 // console.log(testChunk.getWorldPosition().x,testChunk.getWorldPosition().z);
-                return (this.getWorldPosition().x <= testChunk.getWorldPosition().x + 10 - testInterOffset) &&
-                    (this.getWorldPosition().x >= testChunk.getWorldPosition().x - 10 + testInterOffset) &&
-                    (this.getWorldPosition().z <= testChunk.getWorldPosition().z + 40 - testInterOffset) &&
-                    (this.getWorldPosition().z >= testChunk.getWorldPosition().z + 20 + testInterOffset)
-                    ? 2 : (this.getWorldPosition().x <= testChunk.getWorldPosition().x + 10 - testCloseInterOffset) &&
-                    (this.getWorldPosition().x >= testChunk.getWorldPosition().x - 10 + testCloseInterOffset) &&
-                    (this.getWorldPosition().z <= testChunk.getWorldPosition().z + 40 - testCloseInterOffset) &&
-                    (this.getWorldPosition().z >= testChunk.getWorldPosition().z + 20 + testCloseInterOffset);
+                return (this.getWorldPosition().x <= checkChunk.getWorldPosition().x + 10 - testInterOffset) &&
+                    (this.getWorldPosition().x >= checkChunk.getWorldPosition().x - 10 + testInterOffset) &&
+                    (this.getWorldPosition().z <= checkChunk.getWorldPosition().z - 20 - testInterOffset) &&
+                    (this.getWorldPosition().z >= checkChunk.getWorldPosition().z - 40 + testInterOffset)
+                    ? 2 : (this.getWorldPosition().x <= checkChunk.getWorldPosition().x + 10 - testCloseInterOffset) &&
+                    (this.getWorldPosition().x >= checkChunk.getWorldPosition().x - 10 + testCloseInterOffset) &&
+                    (this.getWorldPosition().z <= checkChunk.getWorldPosition().z - 20 - testCloseInterOffset) &&
+                    (this.getWorldPosition().z >= checkChunk.getWorldPosition().z - 40 + testCloseInterOffset);
             }
-            car.changeCar = function () {
-                this.car
+            car.remove = function () {
+                this.rotation.copy(new THREE.Euler(0, 0, 0));
+                objects.cars.push(this);
+                chunkScene.remove(this);
             }
             return car;
         }
     }
     function addLightForCars(cars) {
-        cars.map((car) => {
+        var carsMod = [];
+        cars.forEach(car0 => {
+            var car = new THREE.Object3D();
+            var carMesh = car0.clone();
+            car.add(carMesh);
+            car.name = carMesh.name;
+            carMesh.name = 'carMesh';
             var texture = new THREE.TextureLoader().load('assets/textures/light.png');
             var material = new THREE.SpriteMaterial({
                 map: texture,
@@ -437,16 +472,18 @@ const app = new (function Application() {
             leftLight = new THREE.Sprite(material);
             leftLight.name = "leftLight";
             car.add(leftLight);
-            // console.log(car.name);
+            // console.log(car);
             if (car.name.indexOf('_Bus_') != -1) {
-                rightLight.position.set(1.3, 1.12, -4.7);
-                leftLight.position.set(-1.3, 1.12, -4.7);
+                rightLight.position.set(1.3, 1.12, 1.5-4.7);
+                leftLight.position.set(-1.3, 1.12, 1.5-4.7);
+                carMesh.position.set(0,0,1.5);
             } else if (car.name.indexOf('_Car_') != -1) {
                 rightLight.position.set(1.1, 1.1, -3);
                 leftLight.position.set(-1.1, 1.1, -3);
             } else if (car.name.indexOf('_Container_') != -1) {
-                rightLight.position.set(1.2, 1.5, -4.6);
-                leftLight.position.set(-1.2, 1.5, -4.6);
+                rightLight.position.set(1.2, 1.5, 1.5-4.6);
+                leftLight.position.set(-1.2, 1.5, 1.5-4.6);
+                carMesh.position.set(0,0,1.5);
             } else if (car.name.indexOf('_Pick up Truck_') != -1) {
                 rightLight.position.set(1.2, 1.15, -3.2);
                 leftLight.position.set(-1.2, 1.15, -3.2);
@@ -457,15 +494,22 @@ const app = new (function Application() {
                 rightLight.position.set(1.05, 1.11, -3);
                 leftLight.position.set(-1.05, 1.11, -3);
             } else if (car.name.indexOf('_Truck_') != -1) {
-                rightLight.position.set(1.2, 1.5, -4.5);
-                leftLight.position.set(-1.2, 1.5, -4.5);
+                rightLight.position.set(1.2, 1.5, 1.5-4.5);
+                leftLight.position.set(-1.2, 1.5, 1.5-4.5);
+                carMesh.position.set(0,0,1.5);
             }
-            return car;
-        })
-        return cars;
-    }
-    //辅助函数
-    function randomPick(array) {
-        return array[Math.floor(Math.random() * array.length)];
+            carsMod.push(car);
+        });
+        return carsMod;
     }
 })();
+//辅助函数
+function randomPick(array) {
+    return array[Math.floor(Math.random() * array.length)];
+}
+function randomPop(array) {
+    return array.splice(Math.floor(Math.random() * array.length),1)[0];
+}
+function randomDecide(rate) {
+    return Math.random()<rate;
+}

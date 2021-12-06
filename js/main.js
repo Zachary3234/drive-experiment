@@ -178,6 +178,7 @@ const exp = new (function Experiment() {
     }
     function setRound(){
         round = 20-expTable.coop.length+1;
+        if (round>20) round-=20;
         $('#round')[0].innerHTML = round+"/20";
     }
 })();

@@ -42,7 +42,7 @@ const app = new (function Application() {
     //控制参数
     var control = {
         pause: false,
-        maxSpeed: 0.15,
+        maxSpeed: 0.13,
         maxHeight: 170,
         decision: false,
     };

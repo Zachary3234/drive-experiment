@@ -163,8 +163,9 @@ const exp = new (function Experiment() {
         setTimeout(()=>{setRound()},2000);
 
         //决策框控制
+        toggleDialog(false);
         setTimeout(()=>{
-            toggleDialog(false);
+            // toggleDialog(false);
             $('#exp')[0].innerHTML = "";
         }, 1000)
     }

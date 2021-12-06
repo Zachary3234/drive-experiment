@@ -419,6 +419,10 @@ const app = new (function Application() {
                         }
                         // console.log(lightSign);
                     }
+                    else{
+                        car.getObjectByName('leftLight').material.opacity = 0;
+                        car.getObjectByName('rightLight').material.opacity = 0;
+                    }
                 }else{
                     car.getObjectByName('leftLight').material.opacity = 0;
                     car.getObjectByName('rightLight').material.opacity = 0;

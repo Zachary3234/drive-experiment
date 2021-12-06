@@ -89,7 +89,13 @@ const app = new (function Application() {
         }
 
         //触发决策
-        carsControl && carsControl.carSelf && carsControl.carOther && (distance = carsControl.carSelf.getWorldPosition().z - carsControl.carOther.getWorldPosition().z);
+        if (carsControl && carsControl.carSelf && carsControl.carOther){
+            distance = carsControl.carSelf.getWorldPosition().z - carsControl.carOther.getWorldPosition().z;
+            if (carsControl.carSelf.isBigCar)
+                distance -= 1.5;
+            if (carsControl.carOther.isBigCar)
+                distance -= 1.5;
+        }
         if (void 0 != carsControl && 
             !control.decision && 
             distance > 50 && distance < 60) {
@@ -323,8 +329,6 @@ const app = new (function Application() {
             this.carOtherLast && this.carOtherLast.moveUpdate();
         }
         this.reset = function () {
-            // this.carSelf && this.carSelf.reset();
-            // this.carOther && this.carOther.reset();
             // worldControl.chunkTable[2][1].add(this.carSelf);
             this.carSelf && this.carSelf.remove();
             this.carOther && this.carOther.remove();
@@ -372,7 +376,7 @@ const app = new (function Application() {
         }
 
         function initCar(position, rotation, turn = 0, stop = false, ind) {
-            var car = void 0 != ind ? objects.cars[ind].clone() : randomPop(objects.cars).clone();
+            var car = void 0 != ind ? objects.cars[ind] : randomPop(objects.cars);
             // console.log(car);
             chunkScene.add(car);
             position && (car.position.copy(position));
@@ -384,16 +388,9 @@ const app = new (function Application() {
             car.turn = turn;
             car.speed = control.maxSpeed;
 
-            car.reset = function () {
-                position && (this.position.copy(position));
-                rotation && (this.rotation.copy(rotation));
-                this.direction = this.getWorldDirection().negate();
-                this.direction.set(Math.round(this.direction.x), Math.round(this.direction.y), Math.round(car.direction.z));
-
-                this.stop = false;
-                this.turn = 0;
-                this.speed = control.maxSpeed;
-            }
+            // if (car.isBigCar){
+            //     car.position.z -= 1.5*car.direction.z;
+            // }
 
             var turnCord = turn==0 ? null : {x:currCord.x, y:currCord.y};
             var value = new THREE.Vector3;
@@ -543,18 +540,24 @@ const app = new (function Application() {
 
             // console.log(car);
             if (car.name.indexOf('_Bus_') != -1) {
-                rightLight.position.set(1.3, 1.12, 1.5-4.7);
-                leftLight.position.set(-1.3, 1.12, 1.5-4.7);
-                carMesh.position.set(0,0,1.5);
+                // rightLight.position.set(1.3, 1.12, 1.5-4.7);
+                // leftLight.position.set(-1.3, 1.12, 1.5-4.7);
+                // carMesh.position.set(0,0,1.5);
+                rightLight.position.set(1.3, 1.12, -4.7);
+                leftLight.position.set(-1.3, 1.12, -4.7);
+                car.isBigCar = true;
                 // greenLight.position.z = 1.5;
                 // redLight.position.z = 1.5;
             } else if (car.name.indexOf('_Car_') != -1) {
                 rightLight.position.set(1.1, 1.1, -3);
                 leftLight.position.set(-1.1, 1.1, -3);
             } else if (car.name.indexOf('_Container_') != -1) {
-                rightLight.position.set(1.2, 1.5, 1.5-4.6);
-                leftLight.position.set(-1.2, 1.5, 1.5-4.6);
-                carMesh.position.set(0,0,1.5);
+                // rightLight.position.set(1.2, 1.5, 1.5-4.6);
+                // leftLight.position.set(-1.2, 1.5, 1.5-4.6);
+                // carMesh.position.set(0,0,1.5);
+                rightLight.position.set(1.2, 1.5, -4.6);
+                leftLight.position.set(-1.2, 1.5, -4.6);
+                car.isBigCar = true;
                 // greenLight.position.z = 1.5;
                 // redLight.position.z = 1.5;
             } else if (car.name.indexOf('_Pick up Truck_') != -1) {
@@ -567,9 +570,12 @@ const app = new (function Application() {
                 rightLight.position.set(1.05, 1.11, -3);
                 leftLight.position.set(-1.05, 1.11, -3);
             } else if (car.name.indexOf('_Truck_') != -1) {
-                rightLight.position.set(1.2, 1.5, 1.5-4.5);
-                leftLight.position.set(-1.2, 1.5, 1.5-4.5);
-                carMesh.position.set(0,0,1.5);
+                // rightLight.position.set(1.2, 1.5, 1.5-4.5);
+                // leftLight.position.set(-1.2, 1.5, 1.5-4.5);
+                // carMesh.position.set(0,0,1.5);
+                rightLight.position.set(1.2, 1.5, -4.5);
+                leftLight.position.set(-1.2, 1.5, -4.5);
+                car.isBigCar = true;
                 // greenLight.position.z = 1.5;
                 // redLight.position.z = 1.5;
             }

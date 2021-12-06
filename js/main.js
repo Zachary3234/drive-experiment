@@ -92,7 +92,7 @@ const exp = new (function Experiment() {
 
         //对方决策
         stopOther = wait ? true : false;
-        $('#exp')[0].innerHTML = wait ? "对方转向<br>" : "对方转向<br>";
+        $('#exp')[0].innerHTML = wait ? "对方等待<br>" : "对方转向<br>";
         $('#exp')[0].innerHTML += coop ? "我方合作" : "我方不合作";
         //我方默认决策
         if (waitRate>0.5){

@@ -14,6 +14,19 @@ function heightchange() {
     document.getElementById('camHeight').innerHTML = value;
     app.setHeight(value);
 }
+function coopchange() {
+    var value = document.getElementById('coop').value;
+    document.getElementById('coopRate').innerHTML = value;
+    // app.setHeight(value);
+}
+function waitchange() {
+    var value = document.getElementById('wait').value;
+    document.getElementById('waitRate').innerHTML = value;
+    // app.setHeight(value);
+}
+function setexp() {
+    exp.setExp(parseFloat(document.getElementById('coop').value),parseFloat(document.getElementById('wait').value));
+}
 
     
 function toggleDialog(open) {
@@ -37,20 +50,33 @@ function toggleDialog(open) {
 const exp = new (function Experiment() {
     //我方合作率
     var coopRateSelf = [0.1,0.3,0.5,0.7,0.9];
+    var coopRate = 0.5;
     //对方等待概率（亲社会、个人主义、无信息）
     var waitRateOther = [0.8,0.2,0.5];
-    //生成实验组
+    var waitRate = 0.5;
+    //实验组
     var expTable = {
-        coopRate:[],
-        waitRate:[],
+        coop:[],
+        wait:[],
     };
     
-    // for (let i = 0; i < coopRateSelf.length; i++) {
-    //     var coopRate = coopRateSelf[i];
-    //     var waitRate = randomPick(waitRateOther);
-    // }
-    expTable.coopRate.push(randomPick(coopRateSelf));
-    expTable.waitRate.push(randomPick(waitRateOther));
+    // 设置实验组
+    this.setExp = function (coopRateIndex,waitRateIndex) {
+        waitRate = waitRateIndex;
+        coopRate = coopRateIndex;
+        // waitRate = waitRateOther[waitRateIndex];
+        // coopRate = coopRateSelf[coopRateIndex];
+        var waitNum = Math.round(waitRate*20);
+        var coopNum = Math.round(coopRate*20);
+        expTable.wait = [];
+        expTable.coop = [];
+        for (let i = 0; i < 20; i++) {
+            if (waitNum-- > 0) expTable.wait.push(1);
+            else expTable.wait.push(0);
+            if (coopNum-- > 0) expTable.coop.push(1);
+            else expTable.coop.push(0);
+        }
+    }
 
     var stopSelf = true;
     var stopOther = true;
@@ -59,31 +85,31 @@ const exp = new (function Experiment() {
     }
     //开始决策
     this.startDecision = function () {
-        var coopRate = expTable.coopRate[0];
-        var waitRate = expTable.waitRate[0];
-        // var coopRate = expTable.coopRate.pop();
-        // var waitRate = expTable.waitRate.pop();
+        var coop = expTable.coop.pop();
+        var wait = expTable.wait.pop();
 
         //对方决策
-        stopOther = randomDecide(waitRate) ? true : false;
+        stopOther = wait ? true : false;
         //我方默认决策
         if (waitRate>0.5){
             //对方亲社会，直行合作
-            stopSelf = randomDecide(coopRate) ? false : true;
+            stopSelf = coop ? false : true;
+            app.setOther(true);
         }else if(waitRate<0.5){
             //对方个人主义，等待合作
-            stopSelf = randomDecide(coopRate) ? true : false;
+            stopSelf = coop ? true : false;
+            app.setOther(false);
         }else{//waitRate==0.5
             //无法识别，等待合作
-            stopSelf = randomDecide(coopRate) ? true : false;
+            stopSelf = coop ? true : false;
         }
 
         // stopSelf = true;
         // stopOther = true;
         // stopSelf = false;
         // stopOther = false;
-        stopSelf = randomPick([false,true]);
-        stopOther = randomPick([false,true]);
+        // stopSelf = randomPick([false,true]);
+        // stopOther = randomPick([false,true]);
         //决策框控制
         $('#auto-decition-text')[0].innerHTML = stopSelf ? "等待" : "直行";
         toggleDialog(true);

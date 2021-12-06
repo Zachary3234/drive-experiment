@@ -42,7 +42,7 @@ const app = new (function Application() {
     //控制参数
     var control = {
         pause: false,
-        maxSpeed: 0.2,
+        maxSpeed: 0.15,
         maxHeight: 170,
         decision: false,
     };
@@ -69,7 +69,6 @@ const app = new (function Application() {
         viewControl = new initView();
         worldControl = new initWorld();
         carsControl = new initCars();
-        carsControl.carOther && (carsControl.carOther.turn = 1);
         //启动
         update();
     });
@@ -114,7 +113,7 @@ const app = new (function Application() {
     //全局控制
     this.reset = function () {
         worldControl && worldControl.reset();
-        carsControl && (carsControl.reset(), carsControl.carOther.turn = 1);
+        carsControl && carsControl.reset();
         control.decision = false;
     };
     this.pause = function () {
@@ -297,16 +296,16 @@ const app = new (function Application() {
             }
         }
     }
-
     // 初始化车辆
     function initCars() {
-        var currCord = {x:1,y:1};
+        var currCord = {x:1,y:2};
         var meetChunk = worldControl.chunkTable[currCord.x][currCord.y];
         this.meetChunk = meetChunk;
         var spawnRange0 = 40;
         var spawnRange = 20;
         this.carSelf = initCar((new THREE.Vector3(3.4, 0, 6.5+spawnRange0)).add(meetChunk.position));
-        this.carOther = initCar((new THREE.Vector3(-3.4, 0, -60-spawnRange0)).add(meetChunk.position), new THREE.Euler(0, Math.PI, 0));
+        this.carOther = initCar((new THREE.Vector3(-3.4, 0, -60-spawnRange0)).add(meetChunk.position), new THREE.Euler(0, Math.PI, 0), 1);
+        this.carOtherLast = null;
 
         // for (let i = 0; i < objects.cars.length; i++) {
         //     initCar(new THREE.Vector3(4*i-30-40,0,-30),new THREE.Euler(0,Math.PI,0),false,i);
@@ -315,26 +314,48 @@ const app = new (function Application() {
         this.update = function () {
             this.carSelf && this.carSelf.moveUpdate();
             this.carOther && this.carOther.moveUpdate();
+            this.carOtherLast && this.carOtherLast.moveUpdate();
         }
         this.reset = function () {
             // this.carSelf && this.carSelf.reset();
             // this.carOther && this.carOther.reset();
             // worldControl.chunkTable[2][1].add(this.carSelf);
-            this.carSelf.remove();
-            this.carOther.remove();
-            currCord.x += randomPick([0,1,2]);
-            if (currCord.x<0) currCord.x += worldControl.chunkTable.length;
-            else currCord.x = currCord.x % worldControl.chunkTable.length;
-            currCord.y += randomPick([-2,-1]);
-            if (currCord.y<0) currCord.y += worldControl.chunkTable[0].length;
-            else currCord.y = currCord.y % worldControl.chunkTable[0].length;
-            console.log(currCord);
+            this.carSelf && this.carSelf.remove();
+            this.carOther && this.carOther.remove();
+            this.carOtherLast && this.carOtherLast.remove();
+
+            // currCord.x += randomPick([0,1,2]);
+            // if (currCord.x<0) currCord.x += worldControl.chunkTable.length;
+            // else currCord.x = currCord.x % worldControl.chunkTable.length;
+            // currCord.y += randomPick([-2,-1]);
+            // if (currCord.y<0) currCord.y += worldControl.chunkTable[0].length;
+            // else currCord.y = currCord.y % worldControl.chunkTable[0].length;
+            // console.log(currCord);
+
+            currCord.x++; currCord.x = currCord.x % worldControl.chunkTable.length;
             meetChunk = worldControl.chunkTable[currCord.x][currCord.y];
+
             this.carSelf = initCar((new THREE.Vector3(3.4, 0, 6.5+spawnRange)).add(meetChunk.position));
-            this.carOther = initCar((new THREE.Vector3(-3.4, 0, -60-spawnRange)).add(meetChunk.position), new THREE.Euler(0, Math.PI, 0));
+            this.carOther = initCar((new THREE.Vector3(-3.4, 0, -60-spawnRange)).add(meetChunk.position), new THREE.Euler(0, Math.PI, 0), 1);
+            this.carOtherLast = null;
+        }
+        this.resetOther = function () {
+            this.carOtherLast && this.carOtherLast.remove();
+            if (void 0 == this.carOther) return;
+            this.carOtherLast = this.carOther;
+            setTimeout(()=>{
+                carsControl.carOtherLast && carsControl.carOtherLast.remove();
+                carsControl.carOtherLast = null;
+            },5000);
+            // this.carOther.remove();
+            
+            currCord.x++; currCord.x = currCord.x % worldControl.chunkTable.length;
+            meetChunk = worldControl.chunkTable[currCord.x][currCord.y];
+
+            this.carOther = initCar((new THREE.Vector3(-3.4, 0, -60-(this.carSelf.position.z-meetChunk.position.z-6.5))).add(meetChunk.position), new THREE.Euler(0, Math.PI, 0), 1);
         }
 
-        function initCar(position, rotation, stop, ind) {
+        function initCar(position, rotation, turn = 0, stop = false, ind) {
             var car = void 0 != ind ? objects.cars[ind].clone() : randomPop(objects.cars).clone();
             // console.log(car);
             chunkScene.add(car);
@@ -343,8 +364,8 @@ const app = new (function Application() {
             car.direction = car.getWorldDirection().negate();
             car.direction.set(Math.round(car.direction.x), Math.round(car.direction.y), Math.round(car.direction.z));
 
-            car.stop = stop || false;
-            car.turn = 0;
+            car.stop = stop;
+            car.turn = turn;
             car.speed = control.maxSpeed;
 
             car.reset = function () {
@@ -358,6 +379,7 @@ const app = new (function Application() {
                 this.speed = control.maxSpeed;
             }
 
+            var turnCord = turn==0 ? null : {x:currCord.x, y:currCord.y};
             var value = new THREE.Vector3;
             var turnSpeed;
             var checkTurn;
@@ -365,7 +387,7 @@ const app = new (function Application() {
             car.moveUpdate = function () {
                 //转向
                 // checkTurn = this.isOnIntersection(null, 3, 1);
-                checkTurn = this.isOnIntersection(meetChunk);
+                checkTurn = turnCord ? this.isOnIntersection(null, turnCord.x, turnCord.y) : 0;
                 if (checkTurn >= 1) {
                     if (this.turn != 0){
                         //打转向灯

@@ -118,10 +118,10 @@ const app = new (function Application() {
 
     //全局控制
     this.reset = function () {
-        $(renderer.domElement).toggleClass('invisible');
-        setTimeout(()=>{
-            $(renderer.domElement).toggleClass('invisible');
-        },500);
+        // $(renderer.domElement).toggleClass('invisible');
+        // setTimeout(()=>{
+        //     $(renderer.domElement).toggleClass('invisible');
+        // },500);
         worldControl && worldControl.reset();
         carsControl && carsControl.reset();
         control.decision = false;
@@ -225,7 +225,7 @@ const app = new (function Application() {
             carsControl && carsControl.carSelf && (offset.y = -carsControl.carSelf.position.z, offset.x = carsControl.carSelf.position.x-3.4);
             sceneOffset.z = offset.y;
             sceneOffset.x = -offset.x;
-            chunkScene.position.lerp(sceneOffset, .05);
+            chunkScene.position.lerp(sceneOffset, .02);
             refreshPosition();
         }
         this.reset = function () {
@@ -334,15 +334,16 @@ const app = new (function Application() {
             this.carOther && this.carOther.remove();
             this.carOtherLast && this.carOtherLast.remove();
 
-            // currCord.x += randomPick([0,1,2]);
+            // currCord.x += randomPick([0,1]);
             // if (currCord.x<0) currCord.x += worldControl.chunkTable.length;
             // else currCord.x = currCord.x % worldControl.chunkTable.length;
             // currCord.y += randomPick([-2,-1]);
-            // if (currCord.y<0) currCord.y += worldControl.chunkTable[0].length;
-            // else currCord.y = currCord.y % worldControl.chunkTable[0].length;
+            currCord.y -= 2;
+            if (currCord.y<0) currCord.y += worldControl.chunkTable[0].length;
+            else currCord.y = currCord.y % worldControl.chunkTable[0].length;
             // console.log(currCord);
 
-            currCord.x++; currCord.x = currCord.x % worldControl.chunkTable.length;
+            // currCord.x++; currCord.x = currCord.x % worldControl.chunkTable.length;
             meetChunk = worldControl.chunkTable[currCord.x][currCord.y];
 
             this.carSelf = initCar((new THREE.Vector3(3.4, 0, 6.5+spawnRange)).add(meetChunk.position));

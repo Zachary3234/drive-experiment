@@ -42,13 +42,19 @@
             <button class="px-1.5 my-0.5 bg-black rounded-md bg-opacity-10 hover:bg-opacity-20"
                 onclick="setexp();app.reset();toggleDialog(false);">应用实验组</button>
             <br>
-            <span>当前实验组：</span><br>
+            <span>当前组决策：</span><br>
             <span id="exp"></span>
         </div>
         <div id="app" class="flex overflow-hidden bg-gray-50">
             <div id="monitor" class="relative mx-auto my-0">
-                <div id="render" class="overflow-hidden bg-gray-700 m-2 p-5 ring-4 ring-gray-400 rounded-3xl z-10">
+                <div id="render" class="overflow-hidden bg-gray-700 m-2 p-5 ring-4 ring-gray-400 rounded-3xl">
                     <canvas></canvas>
+                </div>
+                <div id="score" class="flex absolute h-10 w-36 top-8 right-8 z-20 bg-gray-600 bg-opacity-50 rounded-lg">
+                    <span class="my-auto ml-2 text-xl text-white">Score:</span>
+                </div>
+                <div id="round" class="flex absolute h-10 w-36 top-20 right-8 z-20 bg-gray-600 bg-opacity-50 rounded-lg">
+                    <span class="my-auto ml-2 text-xl text-white">Round:</span>
                 </div>
                 <div class="absolute top-2/3 bottom-0 inset-x-0 bg-white bg-opacity-0">
                     <div

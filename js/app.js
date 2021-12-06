@@ -112,6 +112,10 @@ const app = new (function Application() {
 
     //全局控制
     this.reset = function () {
+        $(renderer.domElement).toggleClass('invisible');
+        setTimeout(()=>{
+            $(renderer.domElement).toggleClass('invisible');
+        },500);
         worldControl && worldControl.reset();
         carsControl && carsControl.reset();
         control.decision = false;
@@ -146,10 +150,9 @@ const app = new (function Application() {
 
     // 初始化视角
     function initView() {
-        const _offsetZ = -10;
+        const _offsetZ = -12.5;
         const _center = new THREE.Vector3(0, 0, _offsetZ);
 
-        // var maxHeight = control.maxHeight;//180;
         var targetHeight = control.maxHeight;
         var len = 3000;
         camera.position.set(0, targetHeight + 60, 80 + _offsetZ);

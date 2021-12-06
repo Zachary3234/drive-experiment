@@ -14,7 +14,7 @@
         <link href="css/tailwind-2.2.19.min.css" rel="stylesheet">
 	</head>
 	<body>
-        <!-- <div class="panel bg-gray-200 rounded-xl m-1 p-2 z-50">
+        <div class="panel bg-gray-200 rounded-xl m-1 p-2 z-50">
             <button class="px-1.5 my-0.5 bg-black rounded-md bg-opacity-10 hover:bg-opacity-20"
                 onclick="app.reset();toggleDialog(false);">重置</button>
             <br>
@@ -44,14 +44,11 @@
             <br>
             <span>当前组决策：</span><br>
             <span id="exp"></span>
-        </div> -->
+        </div>
         <div id="app" class="flex overflow-hidden bg-gray-50">
             <div id="monitor" class="relative mx-auto my-0">
                 <div id="render" class="overflow-hidden bg-gray-700 m-2 p-5 ring-4 ring-gray-400 rounded-3xl">
                     <canvas></canvas>
-                    <div id="white" class="flex absolute inset-7 bg-gray-100 transition ease-in-out duration-200 opacity-0">
-                        <span id="white-text" class="m-auto text-4xl">Round: 1/20</span>
-                    </div>
                 </div>
                 <div class="flex absolute h-10 w-36 top-8 right-8 z-20 bg-gray-600 bg-opacity-50 rounded-lg">
                     <span class="my-auto ml-2 text-xl text-white">Score:</span>

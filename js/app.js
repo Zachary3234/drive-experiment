@@ -346,7 +346,7 @@ const app = new (function Application() {
             // if (currCord.x<0) currCord.x += worldControl.chunkTable.length;
             // else currCord.x = currCord.x % worldControl.chunkTable.length;
             // currCord.y += randomPick([-2,-1]);
-            if ($('#white')){
+            if ($('#white')[0]){
                 currCord.x++; currCord.x = currCord.x % worldControl.chunkTable.length;
             }else{
                 currCord.y -= 2;

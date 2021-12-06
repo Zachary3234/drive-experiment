@@ -28,7 +28,6 @@ function setexp() {
     exp.setExp(parseFloat(document.getElementById('coop').value),parseFloat(document.getElementById('wait').value));
 }
 
-    
 function toggleDialog(open) {
     if (void 0 != open){
         if (open){
@@ -85,20 +84,25 @@ const exp = new (function Experiment() {
     }
     //开始决策
     this.startDecision = function () {
-        var coop = expTable.coop.pop();
-        var wait = expTable.wait.pop();
+        if (expTable.coop.length==0){
+            setexp();
+        }
+        var coop = randomPop(expTable.coop);
+        var wait = randomPop(expTable.wait);
 
         //对方决策
         stopOther = wait ? true : false;
+        $('#exp')[0].innerHTML = wait ? "对方等待<br>" : "对方直行<br>";
+        $('#exp')[0].innerHTML += coop ? "我方合作" : "我方不合作";
         //我方默认决策
         if (waitRate>0.5){
             //对方亲社会，直行合作
             stopSelf = coop ? false : true;
-            app.setOther(true);
+            // app.setOther(true);
         }else if(waitRate<0.5){
             //对方个人主义，等待合作
             stopSelf = coop ? true : false;
-            app.setOther(false);
+            // app.setOther(false);
         }else{//waitRate==0.5
             //无法识别，等待合作
             stopSelf = coop ? true : false;
@@ -154,6 +158,7 @@ const exp = new (function Experiment() {
         //决策框控制
         setTimeout(()=>{
             toggleDialog(false);
+            $('#exp')[0].innerHTML = "";
         }, 1000)
     }
 })();

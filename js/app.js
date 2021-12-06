@@ -6,7 +6,7 @@ const app = new (function Application() {
     });
     renderer.setSize($('#render').width(), $('#render').height());
     renderer.setClearColor(0xcccccc);
-    renderer.setPixelRatio(2);
+    renderer.setPixelRatio(1.5);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     var scene = new THREE.Scene();
@@ -151,7 +151,7 @@ const app = new (function Application() {
 
         // var maxHeight = control.maxHeight;//180;
         var targetHeight = control.maxHeight;
-        var len = 1000;
+        var len = 3000;
         camera.position.set(0, targetHeight + 60, 80 + _offsetZ);
         camera.lookAt(_center);
         $(renderer.domElement).on('mousewheel', function (event) {
@@ -478,8 +478,8 @@ const app = new (function Application() {
                 this.rotation.copy(new THREE.Euler(0, 0, 0));
                 objects.cars.push(this);
                 chunkScene.remove(this);
-                this.getObjectByName('greenLight').material.opacity = 0;
-                this.getObjectByName('redLight').material.opacity = 0;
+                // this.getObjectByName('greenLight').material.opacity = 0;
+                // this.getObjectByName('redLight').material.opacity = 0;
             }
             return car;
         }
@@ -512,39 +512,39 @@ const app = new (function Application() {
             leftLight.name = "leftLight";
             car.add(leftLight);
 
-            //greenlight
-            var texture = new THREE.TextureLoader().load('assets/textures/greenlight.png');
-            var material = new THREE.MeshBasicMaterial({
-                map: texture,
-                transparent: true,
-                opacity: 0
-            });
-            var greenLight = new THREE.Mesh(new THREE.PlaneGeometry(8,8),material);
-            greenLight.name = "greenLight";
-            greenLight.rotation.x = -Math.PI/2;
-            greenLight.position.y = 0.01;
-            car.add(greenLight);
+            // //greenlight
+            // var texture = new THREE.TextureLoader().load('assets/textures/greenlight.png');
+            // var material = new THREE.MeshBasicMaterial({
+            //     map: texture,
+            //     transparent: true,
+            //     opacity: 0
+            // });
+            // var greenLight = new THREE.Mesh(new THREE.PlaneGeometry(8,8),material);
+            // greenLight.name = "greenLight";
+            // greenLight.rotation.x = -Math.PI/2;
+            // greenLight.position.y = 0.01;
+            // car.add(greenLight);
             
-            //redlight
-            var texture = new THREE.TextureLoader().load('assets/textures/redlight.png');
-            var material = new THREE.MeshBasicMaterial({
-                map: texture,
-                transparent: true,
-                opacity: 0
-            });
-            var redLight = new THREE.Mesh(new THREE.PlaneGeometry(8,8),material);
-            redLight.name = "redLight";
-            redLight.rotation.x = -Math.PI/2;
-            redLight.position.y = 0.05;
-            car.add(redLight);
+            // //redlight
+            // var texture = new THREE.TextureLoader().load('assets/textures/redlight.png');
+            // var material = new THREE.MeshBasicMaterial({
+            //     map: texture,
+            //     transparent: true,
+            //     opacity: 0
+            // });
+            // var redLight = new THREE.Mesh(new THREE.PlaneGeometry(8,8),material);
+            // redLight.name = "redLight";
+            // redLight.rotation.x = -Math.PI/2;
+            // redLight.position.y = 0.05;
+            // car.add(redLight);
 
             // console.log(car);
             if (car.name.indexOf('_Bus_') != -1) {
                 rightLight.position.set(1.3, 1.12, 1.5-4.7);
                 leftLight.position.set(-1.3, 1.12, 1.5-4.7);
                 carMesh.position.set(0,0,1.5);
-                greenLight.position.z = 1.5;
-                redLight.position.z = 1.5;
+                // greenLight.position.z = 1.5;
+                // redLight.position.z = 1.5;
             } else if (car.name.indexOf('_Car_') != -1) {
                 rightLight.position.set(1.1, 1.1, -3);
                 leftLight.position.set(-1.1, 1.1, -3);
@@ -552,8 +552,8 @@ const app = new (function Application() {
                 rightLight.position.set(1.2, 1.5, 1.5-4.6);
                 leftLight.position.set(-1.2, 1.5, 1.5-4.6);
                 carMesh.position.set(0,0,1.5);
-                greenLight.position.z = 1.5;
-                redLight.position.z = 1.5;
+                // greenLight.position.z = 1.5;
+                // redLight.position.z = 1.5;
             } else if (car.name.indexOf('_Pick up Truck_') != -1) {
                 rightLight.position.set(1.2, 1.15, -3.2);
                 leftLight.position.set(-1.2, 1.15, -3.2);
@@ -567,8 +567,8 @@ const app = new (function Application() {
                 rightLight.position.set(1.2, 1.5, 1.5-4.5);
                 leftLight.position.set(-1.2, 1.5, 1.5-4.5);
                 carMesh.position.set(0,0,1.5);
-                greenLight.position.z = 1.5;
-                redLight.position.z = 1.5;
+                // greenLight.position.z = 1.5;
+                // redLight.position.z = 1.5;
             }
 
 

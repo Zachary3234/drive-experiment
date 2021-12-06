@@ -1,14 +1,14 @@
 const debug = true;
 
-document.getElementById('speed').value = app.control.maxSpeed;
-document.getElementById('carSpeed').innerHTML = app.control.maxSpeed;
+document.getElementById('speed') && (document.getElementById('speed').value = app.control.maxSpeed);
+document.getElementById('carSpeed') && (document.getElementById('carSpeed').innerHTML = app.control.maxSpeed);
 function speedchange() {
     var value = document.getElementById('speed').value;
     document.getElementById('carSpeed').innerHTML = value;
     app.setSpeed(value);
 }
-document.getElementById('height').value = app.control.maxHeight;
-document.getElementById('camHeight').innerHTML = app.control.maxHeight;
+document.getElementById('height') && (document.getElementById('height').value = app.control.maxHeight);
+document.getElementById('camHeight') && (document.getElementById('camHeight').innerHTML = app.control.maxHeight);
 function heightchange() {
     var value = document.getElementById('height').value;
     document.getElementById('camHeight').innerHTML = value;
@@ -25,7 +25,10 @@ function waitchange() {
     // app.setHeight(value);
 }
 function setexp() {
-    exp.setExp(parseFloat(document.getElementById('coop').value),parseFloat(document.getElementById('wait').value));
+    if(document.getElementById('coop') && document.getElementById('wait'))
+        exp.setExp(parseFloat(document.getElementById('coop').value),parseFloat(document.getElementById('wait').value));
+    else
+        exp.setExp(0.5,0.8);
 }
 
 function toggleDialog(open) {
@@ -94,8 +97,7 @@ const exp = new (function Experiment() {
 
         //对方决策
         stopOther = wait ? true : false;
-        $('#exp')[0].innerHTML = wait ? "对方等待<br>" : "对方转向<br>";
-        $('#exp')[0].innerHTML += coop ? "我方合作" : "我方不合作";
+        $('#exp')[0] && ($('#exp')[0].innerHTML = (wait ? "对方等待<br>" : "对方转向<br>") + (coop ? "我方合作" : "我方不合作"));
         //我方默认决策
         if (waitRate>0.5){
             //对方亲社会，直行合作
@@ -166,7 +168,7 @@ const exp = new (function Experiment() {
         toggleDialog(false);
         setTimeout(()=>{
             // toggleDialog(false);
-            $('#exp')[0].innerHTML = "";
+            $('#exp')[0] && ($('#exp')[0].innerHTML = "");
         }, 1000)
     }
 

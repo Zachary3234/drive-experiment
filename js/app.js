@@ -156,7 +156,7 @@ const app = new (function Application() {
 
     // 初始化视角
     function initView() {
-        const _offsetZ = -12.5;
+        const _offsetZ = -20;
         const _center = new THREE.Vector3(0, 0, _offsetZ);
 
         var targetHeight = control.maxHeight;

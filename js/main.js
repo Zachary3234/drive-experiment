@@ -47,6 +47,8 @@ function toggleDialog(open) {
 }
 
 const exp = new (function Experiment() {
+    var score = 0;
+    var round = 1;
     //我方合作率
     var coopRateSelf = [0.1,0.3,0.5,0.7,0.9];
     var coopRate = 0.5;
@@ -133,12 +135,14 @@ const exp = new (function Experiment() {
             setTimeout(()=>{
                 app.reset();
             },2000)
+            addScore(-2);
         }
         else if (stopSelf && stopOther){
             //双方都等待
             setTimeout(()=>{
                 app.reset();
             },1500)
+            addScore(-1);
         }
         else if (!stopSelf && stopOther){
             //我方直行，对方等待
@@ -146,6 +150,7 @@ const exp = new (function Experiment() {
                 app.stopOther();
                 app.resetOther();
             },2000)
+            addScore(2);
         }
         else if (stopSelf && !stopOther){
             //我方等待，对方转向
@@ -153,12 +158,23 @@ const exp = new (function Experiment() {
                 app.stopSelf();
                 app.resetOther();
             },2000)
+            addScore(0);
         }
+        setTimeout(()=>{setRound()},2000);
 
         //决策框控制
         setTimeout(()=>{
             toggleDialog(false);
             $('#exp')[0].innerHTML = "";
         }, 1000)
+    }
+
+    function addScore(val){
+        score += val;
+        $('#score')[0].innerHTML = score;
+    }
+    function setRound(){
+        round = 20-expTable.coop.length+1;
+        $('#round')[0].innerHTML = round+"/20";
     }
 })();

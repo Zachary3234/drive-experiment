@@ -136,6 +136,7 @@ const exp = new (function Experiment() {
             },500)
             setTimeout(()=>{
                 app.reset();
+                setRound()
             },2000)
             addScore(-2);
         }
@@ -143,6 +144,7 @@ const exp = new (function Experiment() {
             //双方都等待
             setTimeout(()=>{
                 app.reset();
+                setRound()
             },1500)
             addScore(-1);
         }
@@ -151,6 +153,7 @@ const exp = new (function Experiment() {
             setTimeout(()=>{
                 app.stopOther();
                 app.resetOther();
+                setRound()
             },2000)
             addScore(2);
         }
@@ -159,10 +162,11 @@ const exp = new (function Experiment() {
             setTimeout(()=>{
                 app.stopSelf();
                 app.resetOther();
+                setRound()
             },2000)
             addScore(0);
         }
-        setTimeout(()=>{setRound()},2000);
+        // setTimeout(()=>{setRound()},2000);
 
         //决策框控制
         toggleDialog(false);
@@ -180,5 +184,6 @@ const exp = new (function Experiment() {
         round = 20-expTable.coop.length+1;
         if (round>20) round-=20;
         $('#round')[0].innerHTML = round+"/20";
+        $('#white-text')[0] && ($('#white-text')[0].innerHTML = "Round: "+round+"/20");
     }
 })();

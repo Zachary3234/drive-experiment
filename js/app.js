@@ -118,13 +118,21 @@ const app = new (function Application() {
 
     //全局控制
     this.reset = function () {
-        // $(renderer.domElement).toggleClass('invisible');
-        // setTimeout(()=>{
-        //     $(renderer.domElement).toggleClass('invisible');
-        // },500);
-        worldControl && worldControl.reset();
-        carsControl && carsControl.reset();
-        control.decision = false;
+        if($('#white')){
+            $('#white').toggleClass('opacity-0');
+            setTimeout(()=>{
+                worldControl && worldControl.reset();
+                carsControl && carsControl.reset();
+                control.decision = false;
+            },200);
+            setTimeout(()=>{
+                $('#white').toggleClass('opacity-0');
+            },1200);
+        }else{
+            worldControl && worldControl.reset();
+            carsControl && carsControl.reset();
+            control.decision = false;
+        }
     };
     this.pause = function () {
         control.pause = !control.pause;
@@ -338,9 +346,13 @@ const app = new (function Application() {
             // if (currCord.x<0) currCord.x += worldControl.chunkTable.length;
             // else currCord.x = currCord.x % worldControl.chunkTable.length;
             // currCord.y += randomPick([-2,-1]);
-            currCord.y -= 2;
-            if (currCord.y<0) currCord.y += worldControl.chunkTable[0].length;
-            else currCord.y = currCord.y % worldControl.chunkTable[0].length;
+            if ($('#white')){
+                currCord.x++; currCord.x = currCord.x % worldControl.chunkTable.length;
+            }else{
+                currCord.y -= 2;
+                if (currCord.y<0) currCord.y += worldControl.chunkTable[0].length;
+                else currCord.y = currCord.y % worldControl.chunkTable[0].length;
+            }
             // console.log(currCord);
 
             // currCord.x++; currCord.x = currCord.x % worldControl.chunkTable.length;

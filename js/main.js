@@ -23,6 +23,7 @@ function waitchange() {
     var value = document.getElementById('wait').value;
     document.getElementById('waitRate').innerHTML = value;
     // app.setHeight(value);
+    
 }
 function setexp() {
     if(document.getElementById('coop') && document.getElementById('wait'))
@@ -86,6 +87,13 @@ const exp = new (function Experiment() {
     var stopOther = true;
     this.changeStop = function (stop) {
         stopSelf = stop;
+        if (stopSelf){
+            $('#movebtnsvg').addClass('hidden');
+            $('#waitbtnsvg').removeClass('hidden');
+        }else{
+            $('#movebtnsvg').removeClass('hidden');
+            $('#waitbtnsvg').addClass('hidden');
+        }
     }
     //开始决策
     this.startDecision = function () {
@@ -120,6 +128,13 @@ const exp = new (function Experiment() {
         // stopOther = randomPick([false,true]);
         //决策框控制
         $('#auto-decition-text')[0].innerHTML = stopSelf ? "等待" : "直行";
+        if (stopSelf){
+            $('#movebtnsvg').addClass('hidden');
+            $('#waitbtnsvg').removeClass('hidden');
+        }else{
+            $('#movebtnsvg').removeClass('hidden');
+            $('#waitbtnsvg').addClass('hidden');
+        }
         toggleDialog(true);
     }
 
@@ -133,18 +148,40 @@ const exp = new (function Experiment() {
             setTimeout(()=>{
                 app.stopSelf();
                 app.stopOther();
-            },500)
+            },600)
             setTimeout(()=>{
-                app.reset();
-                setRound()
+                if($('#white')){
+                    setRound()
+                    $('#white').toggleClass('opacity-0');
+                    setTimeout(()=>{
+                        app.reset();
+                    },200);
+                    setTimeout(()=>{
+                        $('#white').toggleClass('opacity-0');
+                    },1200);
+                }else{
+                    app.reset();
+                    setRound()
+                }
             },2000)
             addScore(-2);
         }
         else if (stopSelf && stopOther){
             //双方都等待
             setTimeout(()=>{
-                app.reset();
-                setRound()
+                if($('#white')){
+                    setRound()
+                    $('#white').toggleClass('opacity-0');
+                    setTimeout(()=>{
+                        app.reset();
+                    },200);
+                    setTimeout(()=>{
+                        $('#white').toggleClass('opacity-0');
+                    },1200);
+                }else{
+                    app.reset();
+                    setRound()
+                }
             },1500)
             addScore(-1);
         }
@@ -152,8 +189,19 @@ const exp = new (function Experiment() {
             //我方直行，对方等待
             setTimeout(()=>{
                 app.stopOther();
-                app.resetOther();
-                setRound()
+                if($('#white')){
+                    setRound()
+                    $('#white').toggleClass('opacity-0');
+                    setTimeout(()=>{
+                        app.resetOther();
+                    },200);
+                    setTimeout(()=>{
+                        $('#white').toggleClass('opacity-0');
+                    },1200);
+                }else{
+                    app.resetOther();
+                    setRound()
+                }
             },2000)
             addScore(2);
         }
@@ -161,12 +209,22 @@ const exp = new (function Experiment() {
             //我方等待，对方转向
             setTimeout(()=>{
                 app.stopSelf();
-                app.resetOther();
-                setRound()
+                if($('#white')){
+                    setRound()
+                    $('#white').toggleClass('opacity-0');
+                    setTimeout(()=>{
+                        app.resetOther();
+                    },200);
+                    setTimeout(()=>{
+                        $('#white').toggleClass('opacity-0');
+                    },1200);
+                }else{
+                    app.resetOther();
+                    setRound()
+                }
             },2000)
             addScore(0);
         }
-        // setTimeout(()=>{setRound()},2000);
 
         //决策框控制
         toggleDialog(false);
@@ -187,3 +245,7 @@ const exp = new (function Experiment() {
         $('#white-text')[0] && ($('#white-text')[0].innerHTML = "Round: "+round+"/20");
     }
 })();
+
+
+toggleDialog(true);
+app.pause();

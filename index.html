@@ -1,84 +1,107 @@
-<html>
-	<head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>自动驾驶合作实验</title>
-		<style>
-			html,body { width: 100%; height: 100%; margin: 0; }
-            #app { width: 100%; height: 100%;}
-            #monitor { width: 100vh; max-width: 100%; height: 100vh; }
-            #render { width: calc(100% - 1rem); height: calc(100% - 1rem); }
-            /* #dialog { z-index: 100; } */
-            .panel { position: fixed; }
-		</style>
-        <link href="css/tailwind-2.2.19.min.css" rel="stylesheet">
-	</head>
-	<body>
-        <!-- <div class="panel bg-gray-200 rounded-xl m-1 p-2 z-50">
-            <button class="px-1.5 my-0.5 bg-black rounded-md bg-opacity-10 hover:bg-opacity-20"
-                onclick="app.reset();toggleDialog(false);">重置</button>
-            <br>
-            <button class="px-1.5 my-0.5 bg-black rounded-md bg-opacity-10 hover:bg-opacity-20"
-                onclick="app.pause()">暂停</button>
-            <br>
-            <button class="px-1.5 my-0.5 bg-black rounded-md bg-opacity-10 hover:bg-opacity-20"
-                onclick="app.stopSelf()">己方停车</button>
-            <br>
-            <button class="px-1.5 my-0.5 bg-black rounded-md bg-opacity-10 hover:bg-opacity-20"
-                onclick="app.stopOther()">对方停车</button>
-            <br>
-            <button class="px-1.5 my-0.5 bg-black rounded-md bg-opacity-10 hover:bg-opacity-20"
-                onclick="toggleDialog()">开关决策框</button>
-            <br>
-            <span>车速：</span><span id="carSpeed">0.15</span><br><input id="speed" type="range" min="0" max="0.5" step="0.01" value="0.15" onchange="speedchange()">
-            <br>
-            <span>高度：</span><span id="camHeight">170</span><br><input id="height" type="range" min="100" max="200" step="10" value="170" onchange="heightchange()">
-            <br>
-            <br>
-            <span>合作率：</span><span id="coopRate">0.5</span><br><input id="coop" type="range" min="0.1" max="0.9" step="0.2" value="0.5" onchange="coopchange()">
-            <br>
-            <span>等待概率：</span><span id="waitRate">0.5</span><br><input id="wait" type="range" min="0.2" max="0.8" step="0.3" value="0.5" onchange="waitchange()">
-            <br>
-            <button class="px-1.5 my-0.5 bg-black rounded-md bg-opacity-10 hover:bg-opacity-20"
-                onclick="setexp();app.reset();toggleDialog(false);">应用实验组</button>
-            <br>
-            <span>当前组决策：</span><br>
-            <span id="exp"></span>
-        </div> -->
-        <div id="app" class="flex overflow-hidden bg-gray-50">
-            <div id="monitor" class="relative mx-auto my-0">
-                <div id="render" class="overflow-hidden bg-gray-700 m-2 p-5 ring-4 ring-gray-400 rounded-3xl">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自动驾驶合作实验</title>
+    <link href="css/tailwind-2.2.19.min.css" rel="stylesheet">
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+        #monitor-area {
+            width: 100vh;
+            max-width: 100%;
+            height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="debug" class="fixed m-1 p-2 bg-gray-200 rounded-xl z-50 hidden">
+        <button class="px-1.5 my-0.5 bg-black rounded-md bg-opacity-10 hover:bg-opacity-20"
+            onclick="toggleDialog()">开关决策框</button>
+        <br>
+        <button class="px-1.5 my-0.5 bg-black rounded-md bg-opacity-10 hover:bg-opacity-20"
+            onclick="app.pause()">暂停</button>
+    </div>
+    <div id="app" class="h-full w-full overflow-hidden bg-gray-50">
+        <div id="monitor-area" class="relative mx-auto select-none">
+            <div id="monitor" class="absolute inset-2 p-5 bg-gray-700 ring-4 ring-gray-400 rounded-3xl">
+                <div id="render" class="absolute inset-5 bg-gray-400">
                     <canvas></canvas>
-                    <div id="white" class="select-none flex absolute inset-7 bg-gray-100 transition ease-in-out duration-200 opacity-0">
-                        <span id="white-text" class="m-auto text-4xl">Round: 1/20</span>
+                </div>
+                <div id="cut"
+                    class="absolute inset-5 flex bg-gray-100 transition-opacity duration-200 ease-in-out opacity-0">
+                    <span id="cut-text" class="m-auto text-gray-700 text-4xl">
+                        Round: <span id="cut-round">1</span>/20
+                    </span>
+                </div>
+                <div id="tip" class="absolute top-5 right-7 flex-col">
+                    <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-50 rounded-lg text-xl text-white">
+                        <span class="my-auto ml-2">Score:</span>
+                        <span id="tip-score" class="my-auto ml-1.5">0</span>
+                    </div>
+                    <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-50 rounded-lg text-xl text-white">
+                        <span class="my-auto ml-2">Round:</span>
+                        <span id="tip-round" class="my-auto ml-1.5">1</span>
+                        <span class="my-auto">/20</span>
                     </div>
                 </div>
-                <div class="flex absolute h-10 w-36 top-8 right-8 z-20 bg-gray-600 bg-opacity-50 rounded-lg">
-                    <span class="my-auto ml-2 text-xl text-white">Score:</span>
-                    <span id="score" class="my-auto ml-2 text-xl text-white">0</span>
-                </div>
-                <div class="flex absolute h-10 w-36 top-20 right-8 z-20 bg-gray-600 bg-opacity-50 rounded-lg">
-                    <span class="my-auto ml-2 text-xl text-white">Round:</span>
-                    <span id="round" class="my-auto ml-2 text-xl text-white">1/20</span>
-                </div>
-                <div class="absolute top-2/3 bottom-0 inset-x-0 bg-white bg-opacity-0">
-                    <div
-                        id="dialog" class="w-80 py-4 px-6 mx-auto overflow-hidden align-middle transition-all transform bg-white shadow-xl rounded-2xl transition aduration-200 ease-in-out scale-95 opacity-0 invisible"
-                    >
-                        <embed class="mx-auto mb-1" src="css/zondicons/information-outline.svg" width="24" type="image/svg+xml"/>
-                        <h3 class="text-center text-lg leading-6 text-gray-900">
-                            检测到对方车辆即将左转<br>
-                            我方车辆默认<b><span id="auto-decition-text">等待</span></b>，是否更改？
-                        </h3>
-                        <div class="mt-3 flex">
-                            <button type="button"
-                                class="mx-auto inline-flex justify-center px-8 py-1 text-lg text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200"
-                                onclick="exp.changeStop(false)">
+                <div id="dialog-area" class="absolute bottom-5 inset-x-5 transition-all delay-200 invisible">
+                    <div id="dialog" class="mx-auto mb-8 w-80 max-w-full py-4 px-0 overflow-hidden align-middle bg-white shadow-xl rounded-2xl 
+                        transition aduration-200 ease-in-out transform scale-95 opacity-0">
+                        <div id="dialog-sign" class="absolute -mt-1 w-full transition duration-500 ease-in-out transform scale-95 opacity-10">
+                            <svg id="move-sign" xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 mx-auto text-gray-700 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 11l3-3m0 0l3 3m-3-3v8m0-13a9 9 0 110 18 9 9 0 010-18z" />
+                            </svg>
+                            <svg id="wait-sign" xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 mx-auto text-gray-700 transition-opacity hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                            </svg>
+                        </div>
+                        <div id="dialog-text" class="transition-opacity ease-in-out opacity-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            <h3 class="text-center text-lg leading-6 text-gray-900">
+                                检测到对方车辆即将左转<br>
+                                我方车辆默认<b><span id="auto-decition-text">等待</span></b>，是否更改？
+                            </h3>
+                        </div>
+                        <div id="dialog-btns" class="mt-3 flex px-6">
+                            <button id="move-btn" type="button"
+                                class="mx-auto rounded-md inline-flex justify-center sm:px-8 px-6 py-1 text-lg text-blue-900
+                                    transition-colors duration-200 ease-in-out bg-blue-100 hover:bg-blue-200"
+                                onclick="clickMove();exp.changeStop(false);">
+                                <div id="move-btn-svg" class="my-auto -ml-2 mr-2 w-6 flex hidden">
+                                    <svg class="btn-doing animate-spin h-5 w-5 m-auto text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-50" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-100" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <svg class="btn-done h-6 w-6 m-auto text-blue-500 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
                                 直行
                             </button>
-                            <button type="button"
-                                class="mx-auto inline-flex justify-center px-8 py-1 text-lg text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200"
-                                onclick="exp.changeStop(true)">
+                            <button id="wait-btn" type="button"
+                                class="mx-auto rounded-md inline-flex justify-center sm:px-8 px-6 py-1 text-lg text-blue-900
+                                    transition-colors duration-200 ease-in-out bg-blue-100 hover:bg-blue-200"
+                                onclick="clickWait();exp.changeStop(true);">
+                                <div id="wait-btn-svg" class="my-auto -ml-2 mr-2 w-6 flex">
+                                    <svg class="btn-doing animate-spin h-5 w-5 m-auto text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-50" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-100" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <svg class="btn-done h-6 w-6 m-auto text-blue-500 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
                                 等待
                             </button>
                         </div>
@@ -86,11 +109,83 @@
                 </div>
             </div>
         </div>
+    </div>
+    <script src="js/lib/jquery-3.6.0.min.js"></script>
+    <script src="js/lib/three.js"></script>
+    <script src="js2/load.js"></script>
+    <script src="js2/app.js"></script>
+    <script src="js2/main.js"></script>
+    <script>
+        const debug = false;
+        if (debug){
+            $('#debug').removeClass('hidden');
+
+            // $('#cut').toggleClass('opacity-0 opacity-100');
+            // toggleDialog();
+            // app.pause();
+            // toggleDialog();
+        }
         
-        <script src="js/lib/jquery-3.6.0.min.js"></script>
-        <script src="js/lib/three.js"></script>
-        <script src="js/load.js"></script>
-        <script src="js/app.js"></script>
-        <script src="js/main.js"></script>
-	</body>
+        function toggleDialog(open) {
+            if (void 0==open){
+                $('#dialog').toggleClass('scale-95 opacity-0 scale-100 opacity-100');
+                $('#dialog-area').toggleClass('delay-200 invisible');
+            }else if (open){
+                $('#dialog').removeClass('scale-95 opacity-0');
+                $('#dialog').addClass('scale-100 opacity-100');
+                $('#dialog-area').removeClass('delay-200 invisible');
+            }else{
+                $('#dialog').addClass('scale-95 opacity-0');
+                $('#dialog').removeClass('scale-100 opacity-100');
+                $('#dialog-area').addClass('delay-200 invisible');
+            }
+        }
+
+        function toggleCut(time) {
+            $('#cut').toggleClass('opacity-0 opacity-100');
+            if (void 0 != time)
+                setTimeout(()=>{$('#cut').toggleClass('opacity-0 opacity-100');},time);
+        }
+
+        function setScore(score){
+            $('#tip-score')[0].innerHTML = score;
+        }
+        function getScore(){
+            return parseInt($('#tip-score')[0].innerHTML);
+        }
+        function addScore(val){
+            setScore(getScore()+val);
+        }
+        function setRound(round){
+            if (round>20) round-=20;
+            $('#tip-round')[0].innerHTML = round;
+            $('#cut-round')[0].innerHTML = round;
+        }
+        function getRound(){
+            return parseInt($('#tip-round')[0].innerHTML);
+        }
+        function addRound(){
+            setRound(getRound()+1);
+        }
+
+        function clickMove() {
+            $('#move-btn-svg').removeClass('hidden');
+            $('#wait-btn-svg').addClass('hidden');
+            $('#move-sign').removeClass('hidden');
+            $('#wait-sign').addClass('hidden');
+        }
+        function clickWait() {
+            $('#move-btn-svg').addClass('hidden');
+            $('#wait-btn-svg').removeClass('hidden');
+            $('#move-sign').addClass('hidden');
+            $('#wait-sign').removeClass('hidden');
+        }
+
+        function toggleSign(){
+            $('#dialog-sign').toggleClass('opacity-10 scale-80 opacity-100 scale-100');
+            $('#dialog-text').toggleClass('opacity-0 opacity-100');
+        }
+    </script>
+</body>
+
 </html>

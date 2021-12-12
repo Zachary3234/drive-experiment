@@ -1,55 +1,3 @@
-const debug = true;
-
-document.getElementById('speed') && (document.getElementById('speed').value = app.control.maxSpeed);
-document.getElementById('carSpeed') && (document.getElementById('carSpeed').innerHTML = app.control.maxSpeed);
-function speedchange() {
-    var value = document.getElementById('speed').value;
-    document.getElementById('carSpeed').innerHTML = value;
-    app.setSpeed(value);
-}
-document.getElementById('height') && (document.getElementById('height').value = app.control.maxHeight);
-document.getElementById('camHeight') && (document.getElementById('camHeight').innerHTML = app.control.maxHeight);
-function heightchange() {
-    var value = document.getElementById('height').value;
-    document.getElementById('camHeight').innerHTML = value;
-    app.setHeight(value);
-}
-function coopchange() {
-    var value = document.getElementById('coop').value;
-    document.getElementById('coopRate').innerHTML = value;
-    // app.setHeight(value);
-}
-function waitchange() {
-    var value = document.getElementById('wait').value;
-    document.getElementById('waitRate').innerHTML = value;
-    // app.setHeight(value);
-    
-}
-function setexp() {
-    if(document.getElementById('coop') && document.getElementById('wait'))
-        exp.setExp(parseFloat(document.getElementById('coop').value),parseFloat(document.getElementById('wait').value));
-    else
-        exp.setExp(0.5,0.8);
-}
-
-function toggleDialog(open) {
-    if (void 0 != open){
-        if (open){
-            $('#dialog').addClass('scale-100 opacity-100');
-            $('#dialog').removeClass('scale-95 opacity-0 invisible');
-        }else{
-            $('#dialog').removeClass('scale-100 opacity-100');
-            $('#dialog').addClass('scale-95 opacity-0');
-            setTimeout(()=>{
-                $('#dialog').addClass('invisible');
-            },200);
-        }
-    }else{
-        $('#dialog').toggleClass('scale-100 opacity-100');
-        $('#dialog').toggleClass('scale-95 opacity-0 invisible');
-    }
-}
-
 const exp = new (function Experiment() {
     var score = 0;
     var round = 1;
@@ -66,11 +14,28 @@ const exp = new (function Experiment() {
     };
     
     // 设置实验组
-    this.setExp = function (coopRateIndex,waitRateIndex) {
-        waitRate = waitRateIndex;
-        coopRate = coopRateIndex;
-        // waitRate = waitRateOther[waitRateIndex];
-        // coopRate = coopRateSelf[coopRateIndex];
+    this.setExp = function (_coopRate,_waitRate) {
+        coopRate = void 0==_coopRate ? randomPop(coopRateSelf) : _coopRate;
+        waitRate = void 0==_waitRate ? randomPop(waitRateOther) : _waitRate;
+        if (coopRate==undefined) return false;
+        
+        if (waitRate>0.5){
+            //对方亲社会
+            $('#tip-social').removeClass('hidden');
+            $('#tip-self').addClass('hidden');
+            $('#tip-none').addClass('hidden');
+        }else if(waitRate<0.5){
+            //对方亲自我
+            $('#tip-self').removeClass('hidden');
+            $('#tip-social').addClass('hidden');
+            $('#tip-none').addClass('hidden');
+        }else{//waitRate==0.5
+            //对方无倾向
+            $('#tip-none').removeClass('hidden');
+            $('#tip-social').addClass('hidden');
+            $('#tip-self').addClass('hidden');
+        }
+
         var waitNum = Math.round(waitRate*20);
         var coopNum = Math.round(coopRate*20);
         expTable.wait = [];
@@ -81,59 +46,42 @@ const exp = new (function Experiment() {
             if (coopNum-- > 0) expTable.coop.push(1);
             else expTable.coop.push(0);
         }
+        return true;
     }
 
     var stopSelf = true;
     var stopOther = true;
     this.changeStop = function (stop) {
         stopSelf = stop;
-        if (stopSelf){
-            $('#movebtnsvg').addClass('hidden');
-            $('#waitbtnsvg').removeClass('hidden');
-        }else{
-            $('#movebtnsvg').removeClass('hidden');
-            $('#waitbtnsvg').addClass('hidden');
-        }
     }
     //开始决策
     this.startDecision = function () {
-        if (expTable.coop.length==0){
-            setexp();
+        if (expTable.coop.length==0 && !this.setExp()){
+            app.pause();
         }
         var coop = randomPop(expTable.coop);
         var wait = randomPop(expTable.wait);
 
         //对方决策
         stopOther = wait ? true : false;
-        $('#exp')[0] && ($('#exp')[0].innerHTML = (wait ? "对方等待<br>" : "对方转向<br>") + (coop ? "我方合作" : "我方不合作"));
         //我方默认决策
         if (waitRate>0.5){
             //对方亲社会，直行合作
             stopSelf = coop ? false : true;
-            // app.setOther(true);
         }else if(waitRate<0.5){
             //对方个人主义，等待合作
             stopSelf = coop ? true : false;
-            // app.setOther(false);
         }else{//waitRate==0.5
             //无法识别，等待合作
             stopSelf = coop ? true : false;
         }
 
-        // stopSelf = true;
-        // stopOther = true;
-        // stopSelf = false;
-        // stopOther = false;
-        // stopSelf = randomPick([false,true]);
-        // stopOther = randomPick([false,true]);
         //决策框控制
         $('#auto-decition-text')[0].innerHTML = stopSelf ? "等待" : "直行";
         if (stopSelf){
-            $('#movebtnsvg').addClass('hidden');
-            $('#waitbtnsvg').removeClass('hidden');
+            clickWait();
         }else{
-            $('#movebtnsvg').removeClass('hidden');
-            $('#waitbtnsvg').addClass('hidden');
+            clickMove();
         }
         toggleDialog(true);
     }
@@ -150,102 +98,77 @@ const exp = new (function Experiment() {
                 app.stopOther();
             },600)
             setTimeout(()=>{
-                if($('#white')){
-                    setRound()
-                    $('#white').toggleClass('opacity-0');
-                    setTimeout(()=>{
-                        app.reset();
-                    },200);
-                    setTimeout(()=>{
-                        $('#white').toggleClass('opacity-0');
-                    },1200);
-                }else{
+                addRound();
+                addScore(-2);
+                toggleCut(1200);
+                setTimeout(()=>{
                     app.reset();
-                    setRound()
-                }
+                },200);
             },2000)
-            addScore(-2);
         }
         else if (stopSelf && stopOther){
             //双方都等待
             setTimeout(()=>{
-                if($('#white')){
-                    setRound()
-                    $('#white').toggleClass('opacity-0');
-                    setTimeout(()=>{
-                        app.reset();
-                    },200);
-                    setTimeout(()=>{
-                        $('#white').toggleClass('opacity-0');
-                    },1200);
-                }else{
+                addRound();
+                addScore(-1);
+                toggleCut(1200);
+                setTimeout(()=>{
                     app.reset();
-                    setRound()
-                }
-            },1500)
-            addScore(-1);
+                },200);
+            },2000)
         }
         else if (!stopSelf && stopOther){
             //我方直行，对方等待
             setTimeout(()=>{
                 app.stopOther();
-                if($('#white')){
-                    setRound()
-                    $('#white').toggleClass('opacity-0');
-                    setTimeout(()=>{
-                        app.resetOther();
-                    },200);
-                    setTimeout(()=>{
-                        $('#white').toggleClass('opacity-0');
-                    },1200);
-                }else{
+                addRound();
+                addScore(2);
+                toggleCut(1200);
+                setTimeout(()=>{
                     app.resetOther();
-                    setRound()
-                }
+                },200);
             },2000)
-            addScore(2);
         }
         else if (stopSelf && !stopOther){
             //我方等待，对方转向
             setTimeout(()=>{
                 app.stopSelf();
-                if($('#white')){
-                    setRound()
-                    $('#white').toggleClass('opacity-0');
-                    setTimeout(()=>{
-                        app.resetOther();
-                    },200);
-                    setTimeout(()=>{
-                        $('#white').toggleClass('opacity-0');
-                    },1200);
-                }else{
+                addRound();
+                // addScore(0);
+                toggleCut(1200);
+                setTimeout(()=>{
                     app.resetOther();
-                    setRound()
-                }
+                },200);
             },2000)
-            addScore(0);
+        }
+
+        //设置下一组
+        if (expTable.coop.length==0){
+            setTimeout(()=>{
+                if(!this.setExp())
+                    app.pause();
+            },2000);
         }
 
         //决策框控制
-        toggleDialog(false);
+        toggleSign();
+        $("#move-btn").attr({"disabled":"true"});
+        $("#wait-btn").attr({"disabled":"true"});
+        $("#move-btn").toggleClass('hover:bg-blue-200');
+        $("#wait-btn").toggleClass('hover:bg-blue-200');
+        $(".btn-doing").toggleClass('hidden');
+        $(".btn-done").toggleClass('hidden');
         setTimeout(()=>{
-            // toggleDialog(false);
-            $('#exp')[0] && ($('#exp')[0].innerHTML = "");
-        }, 1000)
-    }
-
-    function addScore(val){
-        score += val;
-        $('#score')[0].innerHTML = score;
-    }
-    function setRound(){
-        round = 20-expTable.coop.length+1;
-        if (round>20) round-=20;
-        $('#round')[0].innerHTML = round+"/20";
-        $('#white-text')[0] && ($('#white-text')[0].innerHTML = "Round: "+round+"/20");
+            setTimeout(()=>{
+                toggleSign();
+                $("#move-btn").removeAttr("disabled");
+                $("#wait-btn").removeAttr("disabled");
+                $("#move-btn").toggleClass('hover:bg-blue-200');
+                $("#wait-btn").toggleClass('hover:bg-blue-200');
+                $(".btn-doing").toggleClass('hidden');
+                $(".btn-done").toggleClass('hidden');
+            },200)
+            toggleDialog(false);
+        },1500)
     }
 })();
-
-
-toggleDialog(true);
-app.pause();

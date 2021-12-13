@@ -46,14 +46,14 @@
         <div id="monitor-area" class="relative mx-auto select-none">
             <div id="monitor" class="absolute inset-2 p-5 bg-gray-700 ring-4 ring-gray-400 rounded-3xl">
                 <div id="page" class="absolute inset-5 bg-gray-100 text-xl flex-col
-                        transition-all ease-in-out opacity-100 z-50">
+                        transition duration-500 ease-in-out opacity-100 z-50">
                     <div class="flex w-full h-4/5 p-8">
                         <div id="page-0" class="m-auto">
                             <h1>自动驾驶合作实验</h1>
                             <br>
                             <div class="flex justify-center m-auto">
                                 <span class="my-auto">请输入实验编号：</span>
-                                <input type="text" class="w-32 h-8 px-2 py-1 text-base leading-3 border rounded-md">
+                                <input id="id-input" type="text" class="w-32 h-8 px-2 py-1 text-base leading-3 border rounded-md">
                             </div>
                             <br>
                             <span class="my-auto">
@@ -128,8 +128,14 @@
                             <button class="absolute left-1/2 bottom-12 transform -translate-x-40 w-20 h-10 bg-gray-300 rounded-lg"
                                 onclick="back()">返回</button>
                         </div>
+                        <div id="page-8" class="m-auto hidden">
+                            <h1>实验结束</h1>
+                            <p>感谢您的参与！在实验数据发送完毕前请勿关闭网页。</p>
+                            <button id="send-btn" class="z-50 absolute left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10 bg-gray-300 rounded-lg"
+                                onclick="send()">发送数据</button>
+                        </div>
                     </div>
-                    <button class="absolute left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10 bg-gray-300 rounded-lg"
+                    <button id="next-btn" class="absolute left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10 bg-gray-300 rounded-lg"
                         onclick="next()">下一页</button>
                 </div>
                 <div id="render" class="absolute inset-5 bg-gray-400">
@@ -143,12 +149,12 @@
                 </div>
                 <div id="tip" class="absolute top-5 right-7 flex-col">
                     <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-50 rounded-lg text-xl text-white">
-                        <span class="my-auto ml-3">轮次：</span>
+                        <span class="my-auto ml-3 flex-shrink-0">轮次：</span>
                         <span id="tip-round" class="my-auto">1</span>
                         <span id="tip-round-tail" class="my-auto">/20</span>
                     </div>
                     <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-50 rounded-lg text-xl text-white">
-                        <span class="my-auto ml-3">得分：</span>
+                        <span class="my-auto ml-3 flex-shrink-0">得分：</span>
                         <span id="tip-score" class="my-auto">0</span>
                     </div>
                     <div id="tip-social" class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-50 rounded-lg text-xl text-white hidden">
@@ -243,16 +249,12 @@
     <script src="js/lib/three.js"></script>
     <script src="js/load.js"></script>
     <script src="js/app.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/exp.js"></script>
     <script>
         const debug = false;
         if (debug) {
             $('#debug').removeClass('hidden');
-
-            // $('#cut').toggleClass('opacity-0 opacity-100');
-            // toggleDialog();
-            // $('#cut-text').toggleClass('hidden');
-            // $('#cut').toggleClass('opacity-0 opacity-100');
         }
 
         function toggleDialog(open) {
@@ -270,8 +272,9 @@
             }
         }
 
-        function toggleCut(time) {
+        function toggleCut(time,fn) {
             $('#cut').toggleClass('opacity-0 opacity-100');
+            fn && setTimeout(fn,200);
             if (void 0 != time)
                 setTimeout(() => { $('#cut').toggleClass('opacity-0 opacity-100'); }, time);
         }
@@ -285,9 +288,9 @@
         function addScore(val) {
             var newval = getScore() + val;
             if (val>=0)
-                $('#tip-score')[0].innerHTML += '(+'+val+')';
+                $('#tip-score')[0].innerHTML += '+'+val;
             else
-                $('#tip-score')[0].innerHTML += '('+val+')';
+                $('#tip-score')[0].innerHTML += val;
             setTimeout(()=>{
                 setScore(newval);
             },2000);
@@ -329,23 +332,29 @@
                 currentPage = page;
                 next();
             }
-            $('#page').toggleClass('duration-500 opacity-0 opacity-100 invisible');
+            $('#page').toggleClass('opacity-0 opacity-100 invisible');
         }
 
         var currentPage = 0;
         function next(){
             if (currentPage==4){
-                togglePage();
-                app.reset(60,false);
+                toggleCut(1200,()=>{togglePage();});
+                app.reset(50,false);
                 app.pause();
-                exp.startPreExp();
+                exp.startPreExp(5);
             }else if (currentPage==6){
-                togglePage();
-                app.reset(60,false);
+                toggleCut(1200,()=>{togglePage();});
+                app.reset(50,false);
                 app.pause();
-                exp.setExp();
+                exp.startExp();
+            }else if (currentPage==8){
+                //最后一页
             }else{
-                $('#page-'+currentPage++).addClass('hidden');
+                if (currentPage==0){
+                    data.setID($('#id-input').val());
+                }
+                $('#page-'+currentPage).addClass('hidden');
+                currentPage++;
                 $('#page-'+currentPage).removeClass('hidden');
             }
         }

@@ -117,9 +117,9 @@ const app = new (function Application() {
     }
 
     //全局控制
-    this.reset = function (range,cut) {
+    this.reset = function (range,keepSelf) {
         worldControl && worldControl.reset();
-        carsControl && carsControl.reset(range,cut);
+        carsControl && carsControl.reset(range,keepSelf);
         control.decision = false;
     };
     this.pause = function () {
@@ -131,9 +131,6 @@ const app = new (function Application() {
     };
     this.stopOther = function () {
         carsControl && carsControl.carOther && (carsControl.carOther.stop = !carsControl.carOther.stop);
-    };
-    this.turnOther = function () {
-        carsControl && carsControl.carOther && (carsControl.carOther.turn = 1);
     };
     this.resetOther = function () {
         carsControl && carsControl.resetOther();
@@ -216,9 +213,9 @@ const app = new (function Application() {
         this.update = function () {
             // 跟随主车辆
             carsControl && carsControl.carSelf && (offset.y = -carsControl.carSelf.position.z, offset.x = carsControl.carSelf.position.x-3.4);
-            sceneOffset.z = offset.y;
+            sceneOffset.z = offset.y-10;
             sceneOffset.x = -offset.x;
-            chunkScene.position.lerp(sceneOffset, .015);
+            chunkScene.position.lerp(sceneOffset, .05);
             refreshPosition();
         }
         this.reset = function () {
@@ -316,8 +313,8 @@ const app = new (function Application() {
             this.carOther && this.carOther.moveUpdate();
             this.carOtherLast && this.carOtherLast.moveUpdate();
         }
-        this.reset = function (range = spawnRange,cut = true) {
-            if (cut){
+        this.reset = function (range = spawnRange,keepSelf = true) {
+            if (keepSelf){
                 chunkScene.remove(this.carSelf);
                 this.carOther && this.carOther.remove();
                 this.carOtherLast && this.carOtherLast.remove();
@@ -333,12 +330,15 @@ const app = new (function Application() {
                 this.carOther && this.carOther.remove();
                 this.carOtherLast && this.carOtherLast.remove();
                 
-                currCord.x++; currCord.x = currCord.x % worldControl.chunkTable.length;
-                meetChunk = worldControl.chunkTable[currCord.x][currCord.y];
+                // currCord.x++; currCord.x = currCord.x % worldControl.chunkTable.length;
+                // meetChunk = worldControl.chunkTable[currCord.x][currCord.y];
     
                 this.carSelf = initCar((new THREE.Vector3(3.4, 0, 6.5+range)).add(meetChunk.position));
                 this.carOther = initCar((new THREE.Vector3(-3.4, 0, -60-range)).add(meetChunk.position), new THREE.Euler(0, Math.PI, 0), 1);
                 this.carOtherLast = null;
+                
+                chunkScene.position.z = -this.carSelf.position.z;
+                chunkScene.position.x = this.carSelf.position.x-3.4;
             }
         }
         this.resetOther = function () {

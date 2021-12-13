@@ -117,9 +117,9 @@ const app = new (function Application() {
     }
 
     //全局控制
-    this.reset = function () {
+    this.reset = function (range,cut) {
         worldControl && worldControl.reset();
-        carsControl && carsControl.reset();
+        carsControl && carsControl.reset(range,cut);
         control.decision = false;
     };
     this.pause = function () {
@@ -137,9 +137,6 @@ const app = new (function Application() {
     };
     this.resetOther = function () {
         carsControl && carsControl.resetOther();
-    };
-    this.setOther = function (green) {
-        carsControl && carsControl.setOther(green);
     };
     //其他控制
     this.setSpeed = function (val) {
@@ -309,46 +306,40 @@ const app = new (function Application() {
         var currCord = {x:1,y:2};
         var meetChunk = worldControl.chunkTable[currCord.x][currCord.y];
         this.meetChunk = meetChunk;
-        var spawnRange0 = 40;
-        var spawnRange = 20;
-        this.carSelf = initCar((new THREE.Vector3(3.4, 0, 6.5+spawnRange0)).add(meetChunk.position));
-        this.carOther = initCar((new THREE.Vector3(-3.4, 0, -60-spawnRange0)).add(meetChunk.position), new THREE.Euler(0, Math.PI, 0), 1);
+        var spawnRange = 40;
+        this.carSelf = initCar((new THREE.Vector3(3.4, 0, 6.5+spawnRange)).add(meetChunk.position));
+        this.carOther = initCar((new THREE.Vector3(-3.4, 0, -60-spawnRange)).add(meetChunk.position), new THREE.Euler(0, Math.PI, 0), 1);
         this.carOtherLast = null;
-
-        // for (let i = 0; i < objects.cars.length; i++) {
-        //     initCar(new THREE.Vector3(4*i-30-40,0,-30),new THREE.Euler(0,Math.PI,0),false,i);
-        // }
 
         this.update = function () {
             this.carSelf && this.carSelf.moveUpdate();
             this.carOther && this.carOther.moveUpdate();
             this.carOtherLast && this.carOtherLast.moveUpdate();
         }
-        this.reset = function () {
-            // worldControl.chunkTable[2][1].add(this.carSelf);
-            this.carSelf && this.carSelf.remove();
-            this.carOther && this.carOther.remove();
-            this.carOtherLast && this.carOtherLast.remove();
+        this.reset = function (range = spawnRange,cut = true) {
+            if (cut){
+                chunkScene.remove(this.carSelf);
+                this.carOther && this.carOther.remove();
+                this.carOtherLast && this.carOtherLast.remove();
 
-            // currCord.x += randomPick([0,1]);
-            // if (currCord.x<0) currCord.x += worldControl.chunkTable.length;
-            // else currCord.x = currCord.x % worldControl.chunkTable.length;
-            // currCord.y += randomPick([-2,-1]);
-            if ($('#cut')[0]){
                 currCord.x++; currCord.x = currCord.x % worldControl.chunkTable.length;
+                meetChunk = worldControl.chunkTable[currCord.x][currCord.y];
+    
+                this.carSelf = initCar((new THREE.Vector3(3.4, 0, 6.5+range)).add(meetChunk.position),null,0,false,this.carSelf);
+                this.carOther = initCar((new THREE.Vector3(-3.4, 0, -60-range)).add(meetChunk.position), new THREE.Euler(0, Math.PI, 0), 1);
+                this.carOtherLast = null;
             }else{
-                currCord.y -= 2;
-                if (currCord.y<0) currCord.y += worldControl.chunkTable[0].length;
-                else currCord.y = currCord.y % worldControl.chunkTable[0].length;
+                this.carSelf && this.carSelf.remove();
+                this.carOther && this.carOther.remove();
+                this.carOtherLast && this.carOtherLast.remove();
+                
+                currCord.x++; currCord.x = currCord.x % worldControl.chunkTable.length;
+                meetChunk = worldControl.chunkTable[currCord.x][currCord.y];
+    
+                this.carSelf = initCar((new THREE.Vector3(3.4, 0, 6.5+range)).add(meetChunk.position));
+                this.carOther = initCar((new THREE.Vector3(-3.4, 0, -60-range)).add(meetChunk.position), new THREE.Euler(0, Math.PI, 0), 1);
+                this.carOtherLast = null;
             }
-            // console.log(currCord);
-
-            // currCord.x++; currCord.x = currCord.x % worldControl.chunkTable.length;
-            meetChunk = worldControl.chunkTable[currCord.x][currCord.y];
-
-            this.carSelf = initCar((new THREE.Vector3(3.4, 0, 6.5+spawnRange)).add(meetChunk.position));
-            this.carOther = initCar((new THREE.Vector3(-3.4, 0, -60-spawnRange)).add(meetChunk.position), new THREE.Euler(0, Math.PI, 0), 1);
-            this.carOtherLast = null;
         }
         this.resetOther = function () {
             this.carOtherLast && this.carOtherLast.remove();
@@ -357,7 +348,7 @@ const app = new (function Application() {
             setTimeout(()=>{
                 carsControl.carOtherLast && carsControl.carOtherLast.remove();
                 carsControl.carOtherLast = null;
-            },5000);
+            },8000);
             // this.carOther.remove();
             
             currCord.x++; currCord.x = currCord.x % worldControl.chunkTable.length;
@@ -365,19 +356,9 @@ const app = new (function Application() {
 
             this.carOther = initCar((new THREE.Vector3(-3.4, 0, -60-(this.carSelf.position.z-meetChunk.position.z-6.5))).add(meetChunk.position), new THREE.Euler(0, Math.PI, 0), 1);
         }
-        this.setOther = function (green) {
-            if (void 0 == this.carOther) return;
-            if (green){
-                this.carOther.getObjectByName('greenLight').material.opacity = 0.8;
-                this.carOther.getObjectByName('redLight').material.opacity = 0;
-            } else {
-                this.carOther.getObjectByName('redLight').material.opacity = 0.8;
-                this.carOther.getObjectByName('greenLight').material.opacity = 0;
-            }
-        }
-
-        function initCar(position, rotation, turn = 0, stop = false, ind) {
-            var car = void 0 != ind ? objects.cars[ind] : randomPop(objects.cars);
+        
+        function initCar(position, rotation, turn = 0, stop = false, iniCar) {
+            var car = void 0 != iniCar ? iniCar : randomPop(objects.cars);
             // console.log(car);
             chunkScene.add(car);
             position && (car.position.copy(position));
@@ -483,8 +464,6 @@ const app = new (function Application() {
                 this.rotation.copy(new THREE.Euler(0, 0, 0));
                 objects.cars.push(this);
                 chunkScene.remove(this);
-                // this.getObjectByName('greenLight').material.opacity = 0;
-                // this.getObjectByName('redLight').material.opacity = 0;
             }
             return car;
         }
@@ -517,54 +496,17 @@ const app = new (function Application() {
             leftLight.name = "leftLight";
             car.add(leftLight);
 
-            // //greenlight
-            // var texture = new THREE.TextureLoader().load('assets/textures/greenlight.png');
-            // var material = new THREE.MeshBasicMaterial({
-            //     map: texture,
-            //     transparent: true,
-            //     opacity: 0
-            // });
-            // var greenLight = new THREE.Mesh(new THREE.PlaneGeometry(8,8),material);
-            // greenLight.name = "greenLight";
-            // greenLight.rotation.x = -Math.PI/2;
-            // greenLight.position.y = 0.01;
-            // car.add(greenLight);
-            
-            // //redlight
-            // var texture = new THREE.TextureLoader().load('assets/textures/redlight.png');
-            // var material = new THREE.MeshBasicMaterial({
-            //     map: texture,
-            //     transparent: true,
-            //     opacity: 0
-            // });
-            // var redLight = new THREE.Mesh(new THREE.PlaneGeometry(8,8),material);
-            // redLight.name = "redLight";
-            // redLight.rotation.x = -Math.PI/2;
-            // redLight.position.y = 0.05;
-            // car.add(redLight);
-
-            // console.log(car);
             if (car.name.indexOf('_Bus_') != -1) {
-                // rightLight.position.set(1.3, 1.12, 1.5-4.7);
-                // leftLight.position.set(-1.3, 1.12, 1.5-4.7);
-                // carMesh.position.set(0,0,1.5);
                 rightLight.position.set(1.3, 1.12, -4.7);
                 leftLight.position.set(-1.3, 1.12, -4.7);
                 car.isBigCar = true;
-                // greenLight.position.z = 1.5;
-                // redLight.position.z = 1.5;
             } else if (car.name.indexOf('_Car_') != -1) {
                 rightLight.position.set(1.1, 1.1, -3);
                 leftLight.position.set(-1.1, 1.1, -3);
             } else if (car.name.indexOf('_Container_') != -1) {
-                // rightLight.position.set(1.2, 1.5, 1.5-4.6);
-                // leftLight.position.set(-1.2, 1.5, 1.5-4.6);
-                // carMesh.position.set(0,0,1.5);
                 rightLight.position.set(1.2, 1.5, -4.6);
                 leftLight.position.set(-1.2, 1.5, -4.6);
                 car.isBigCar = true;
-                // greenLight.position.z = 1.5;
-                // redLight.position.z = 1.5;
             } else if (car.name.indexOf('_Pick up Truck_') != -1) {
                 rightLight.position.set(1.2, 1.15, -3.2);
                 leftLight.position.set(-1.2, 1.15, -3.2);
@@ -575,16 +517,10 @@ const app = new (function Application() {
                 rightLight.position.set(1.05, 1.11, -3);
                 leftLight.position.set(-1.05, 1.11, -3);
             } else if (car.name.indexOf('_Truck_') != -1) {
-                // rightLight.position.set(1.2, 1.5, 1.5-4.5);
-                // leftLight.position.set(-1.2, 1.5, 1.5-4.5);
-                // carMesh.position.set(0,0,1.5);
                 rightLight.position.set(1.2, 1.5, -4.5);
                 leftLight.position.set(-1.2, 1.5, -4.5);
                 car.isBigCar = true;
-                // greenLight.position.z = 1.5;
-                // redLight.position.z = 1.5;
             }
-
 
             carsMod.push(car);
         });

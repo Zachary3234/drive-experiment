@@ -14,7 +14,7 @@ const exp = new (function Experiment() {
     };
     
     // 设置实验组
-    this.setExp = function (_coopRate,_waitRate) {
+    this.setExp = function (nRound = 20,_coopRate,_waitRate) {
         coopRate = void 0==_coopRate ? randomPop(coopRateSelf) : _coopRate;
         waitRate = void 0==_waitRate ? randomPop(waitRateOther) : _waitRate;
         if (coopRate==undefined) return false;
@@ -36,11 +36,11 @@ const exp = new (function Experiment() {
             $('#tip-self').addClass('hidden');
         }
 
-        var waitNum = Math.round(waitRate*20);
-        var coopNum = Math.round(coopRate*20);
+        var waitNum = Math.round(waitRate*nRound);
+        var coopNum = Math.round(coopRate*nRound);
         expTable.wait = [];
         expTable.coop = [];
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < nRound; i++) {
             if (waitNum-- > 0) expTable.wait.push(1);
             else expTable.wait.push(0);
             if (coopNum-- > 0) expTable.coop.push(1);
@@ -56,9 +56,6 @@ const exp = new (function Experiment() {
     }
     //开始决策
     this.startDecision = function () {
-        if (expTable.coop.length==0 && !this.setExp()){
-            app.pause();
-        }
         var coop = randomPop(expTable.coop);
         var wait = randomPop(expTable.wait);
 
@@ -98,22 +95,18 @@ const exp = new (function Experiment() {
                 app.stopOther();
             },600)
             setTimeout(()=>{
-                addRound();
-                addScore(-2);
-                toggleCut(1200);
+                nextRound(-2);
                 setTimeout(()=>{
-                    app.reset();
+                    app.reset(50,true);
                 },200);
             },2000)
         }
         else if (stopSelf && stopOther){
             //双方都等待
             setTimeout(()=>{
-                addRound();
-                addScore(-1);
-                toggleCut(1200);
+                nextRound(-1);
                 setTimeout(()=>{
-                    app.reset();
+                    app.reset(40,true);
                 },200);
             },2000)
         }
@@ -121,9 +114,7 @@ const exp = new (function Experiment() {
             //我方直行，对方等待
             setTimeout(()=>{
                 app.stopOther();
-                addRound();
-                addScore(2);
-                toggleCut(1200);
+                nextRound(2);
                 setTimeout(()=>{
                     app.resetOther();
                 },200);
@@ -132,22 +123,14 @@ const exp = new (function Experiment() {
         else if (stopSelf && !stopOther){
             //我方等待，对方转向
             setTimeout(()=>{
-                app.stopSelf();
-                addRound();
-                // addScore(0);
-                toggleCut(1200);
+                nextRound(0);
                 setTimeout(()=>{
                     app.resetOther();
                 },200);
             },2000)
-        }
-
-        //设置下一组
-        if (expTable.coop.length==0){
             setTimeout(()=>{
-                if(!this.setExp())
-                    app.pause();
-            },2000);
+                app.stopSelf();
+            },1700)
         }
 
         //决策框控制
@@ -170,5 +153,43 @@ const exp = new (function Experiment() {
             },200)
             toggleDialog(false);
         },1500)
+    }
+    //设置下一轮
+    function nextRound(score) {
+        if (preExp>0){
+            if (--preExp<=0){
+                app.pause();
+                setRound(1);
+                setScore(0);
+                exp.setExp();
+                $('#tip-round-tail')[0].innerHTML = '/20';
+                $('#cut-round-tail')[0].innerHTML = '/20';
+                togglePage(5);
+            }else{
+                addRound();
+                addScore(score);
+                toggleCut(1200);
+                exp.setExp(1,randomPick(coopRateSelf),randomPick(waitRateOther));
+            }
+        }else{
+            addRound();
+            addScore(score);
+            toggleCut(1200);
+            //设置下一组
+            if (expTable.coop.length==0){
+                if(!exp.setExp()){
+                    app.pause();
+                }
+            }
+        }
+    }
+    // 设置预实验
+    var preExp = 0;
+    this.startPreExp = function () {
+        preExp = 5;
+        setRound(1);
+        setScore(0);
+        $('#tip-round-tail')[0].innerHTML = '/'+preExp;
+        $('#cut-round-tail')[0].innerHTML = '/'+preExp;
     }
 })();

@@ -21,8 +21,15 @@
             height: 100vh;
         }
 
-        #page {
+        #page p{
             text-indent: 2.5rem;
+        }
+        #page h1 {
+            text-indent: 0rem;
+            text-align: center;
+            font-size: x-large;
+            font-weight: bold;
+            line-height: 4rem;
         }
     </style>
 </head>
@@ -39,9 +46,22 @@
         <div id="monitor-area" class="relative mx-auto select-none">
             <div id="monitor" class="absolute inset-2 p-5 bg-gray-700 ring-4 ring-gray-400 rounded-3xl">
                 <div id="page" class="absolute inset-5 bg-gray-100 text-xl flex-col
-                        transition-opacity duration-200 ease-in-out opacity-100 z-50">
+                        transition-all ease-in-out opacity-100 z-50">
                     <div class="flex w-full h-4/5 p-8">
-                        <div id="page-1" class="my-auto">
+                        <div id="page-0" class="m-auto">
+                            <h1>自动驾驶合作实验</h1>
+                            <br>
+                            <div class="flex justify-center m-auto">
+                                <span class="my-auto">请输入实验编号：</span>
+                                <input type="text" class="w-32 h-8 px-2 py-1 text-base leading-3 border rounded-md">
+                            </div>
+                            <br>
+                            <span class="my-auto">
+                                注意，完成实验前请勿刷新网页，否则将丢失所有进度
+                            </span>
+                        </div>
+                        <div id="page-1" class="m-auto hidden">
+                            <h1>实验背景</h1>
                             <p>
                                 在道路车辆高峰期，十字路口会发生直行车辆与转弯车辆拥堵现象，虽然我国交规要求转弯车辆应避让直行车辆，但仍可能发生转弯车辆会抢先行驶的情况。在这种情况下，你会选择让行，还是选择继续行驶呢？
                             </p>
@@ -49,7 +69,8 @@
                                 本实验中你将作为自动驾驶汽车的车主，朝十字路口方向直行，十字路口对面有一辆即将左转的车辆，自动驾驶汽车可对对方车辆进行社会价值取向的检测（亲社会、亲自我、无），并自行做出直行或让行的决策，你可以对该决策进行修改。
                             </p>
                         </div>
-                        <div id="page-2" class="my-auto hidden">
+                        <div id="page-2" class="m-auto hidden">
+                            <h1>实验说明</h1>
                             <p>
                                 本实验中，你将与左转车辆车主进行是否让行的博弈，实验绩效将与你的得分相关。在十字路口：
                             </p>
@@ -80,7 +101,8 @@
                                 </table>
                             </p>
                         </div>
-                        <div id="page-3" class="my-auto hidden">
+                        <div id="page-3" class="m-auto hidden">
+                            <h1>实验说明</h1>
                             <p>
                                 实验中，实验程序中的路况界面为你驾驶的自动驾驶汽车车内显示屏界面。为控制实验变量，实验程序中将不展示路面上的其他车辆，只保留我方直行车辆及对方左转车辆。
                             </p>
@@ -88,11 +110,22 @@
                                 检测到的对方社会价值取向标注在屏幕右上角，并自动做出直行或等待的决策显示在屏幕上，此时你可以对系统决策进行更改，若到达路口时未做出更改，则车辆按照系统决策行动。
                             </p>
                         </div>
-                        <div id="page-4" class="my-auto hidden">
+                        <div id="page-4" class="m-auto hidden">
+                            <h1>预实验</h1>
                             <p>
-                                为确保大家对实验的理解，现将进行预实验，预实验默认进行五轮次，如在预实验过程中遇到不解，可返回查看实验说明直至理解实验内容，点击按钮进入正式实验。
+                                为确保大家对实验的理解，现将进行预实验，预实验默认进行五轮次，如在预实验过程中遇到不解，可返回查看实验说明直至理解实验内容，点击按钮进入预实验。
                             </p>
-                            <button class="absolute left-1/4 bottom-12 w-20 h-10 bg-gray-300 rounded-lg"
+                            <button class="absolute left-1/2 bottom-12 transform -translate-x-40 w-20 h-10 bg-gray-300 rounded-lg"
+                                onclick="back()">返回</button>
+                            <button id="skip-btn" class=" absolute left-1/2 bottom-12 transform translate-x-20 w-20 h-10 bg-gray-300 rounded-lg"
+                                onclick="skip()">跳过</button>
+                        </div>
+                        <div id="page-6" class="m-auto hidden">
+                            <h1>正式实验</h1>
+                            <p>
+                                如在预实验过程中遇到不解，可返回查看实验说明直至理解实验内容，点击按钮进入正式实验。
+                            </p>
+                            <button class="absolute left-1/2 bottom-12 transform -translate-x-40 w-20 h-10 bg-gray-300 rounded-lg"
                                 onclick="back()">返回</button>
                         </div>
                     </div>
@@ -105,18 +138,18 @@
                 <div id="cut"
                     class="absolute inset-5 flex bg-gray-100 transition-opacity duration-200 ease-in-out opacity-0">
                     <span id="cut-text" class="m-auto text-gray-700 text-4xl">
-                        Round: <span id="cut-round">1</span>/20
+                        Round: <span id="cut-round">1</span><span id="cut-round-tail">/20</span>
                     </span>
                 </div>
                 <div id="tip" class="absolute top-5 right-7 flex-col">
                     <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-50 rounded-lg text-xl text-white">
-                        <span class="my-auto ml-2">Score:</span>
-                        <span id="tip-score" class="my-auto ml-1.5">0</span>
+                        <span class="my-auto ml-3">轮次：</span>
+                        <span id="tip-round" class="my-auto">1</span>
+                        <span id="tip-round-tail" class="my-auto">/20</span>
                     </div>
                     <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-50 rounded-lg text-xl text-white">
-                        <span class="my-auto ml-2">Round:</span>
-                        <span id="tip-round" class="my-auto ml-1.5">1</span>
-                        <span class="my-auto">/20</span>
+                        <span class="my-auto ml-3">得分：</span>
+                        <span id="tip-score" class="my-auto">0</span>
                     </div>
                     <div id="tip-social" class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-50 rounded-lg text-xl text-white hidden">
                         <span class="m-auto text-green-300">亲社会</span>
@@ -129,7 +162,7 @@
                     </div>
                 </div>
                 <div id="dialog-area" class="absolute bottom-5 inset-x-5 transition-all delay-200 invisible">
-                    <div id="dialog" class="mx-auto mb-8 w-80 max-w-full py-4 px-0 overflow-hidden align-middle bg-white shadow-xl rounded-2xl 
+                    <div id="dialog" class="mx-auto mb-6 w-80 max-w-full py-4 px-0 overflow-hidden align-middle bg-white shadow-xl rounded-2xl 
                         transition aduration-200 ease-in-out transform scale-95 opacity-0">
                         <div id="dialog-sign"
                             class="absolute -mt-1 w-full transition duration-500 ease-in-out transform scale-95 opacity-10">
@@ -221,7 +254,6 @@
             // $('#cut-text').toggleClass('hidden');
             // $('#cut').toggleClass('opacity-0 opacity-100');
         }
-        app.pause();
 
         function toggleDialog(open) {
             if (void 0 == open) {
@@ -251,7 +283,14 @@
             return parseInt($('#tip-score')[0].innerHTML);
         }
         function addScore(val) {
-            setScore(getScore() + val);
+            var newval = getScore() + val;
+            if (val>=0)
+                $('#tip-score')[0].innerHTML += '(+'+val+')';
+            else
+                $('#tip-score')[0].innerHTML += '('+val+')';
+            setTimeout(()=>{
+                setScore(newval);
+            },2000);
         }
         function setRound(round) {
             if (round > 20) round -= 20;
@@ -282,15 +321,32 @@
             $('#dialog-sign').toggleClass('opacity-10 scale-80 opacity-100 scale-100');
             $('#dialog-text').toggleClass('opacity-0 opacity-100');
         }
+        
+        function togglePage(page) {
+            if (void 0!=page){
+                $('#skip-btn').removeClass('hidden');
+                $('#page-'+currentPage).addClass('hidden');
+                currentPage = page;
+                next();
+            }
+            $('#page').toggleClass('duration-500 opacity-0 opacity-100 invisible');
+        }
 
-        var currentPage = 1;
+        var currentPage = 0;
         function next(){
-            $('#page-'+currentPage++).addClass('hidden');
-            $('#page-'+currentPage).removeClass('hidden');
-            if (currentPage>4){
-                $('#page').addClass('hidden');
+            if (currentPage==4){
+                togglePage();
+                app.reset(60,false);
+                app.pause();
+                exp.startPreExp();
+            }else if (currentPage==6){
+                togglePage();
+                app.reset(60,false);
                 app.pause();
                 exp.setExp();
+            }else{
+                $('#page-'+currentPage++).addClass('hidden');
+                $('#page-'+currentPage).removeClass('hidden');
             }
         }
         function back(){
@@ -298,6 +354,13 @@
             currentPage = 1;
             $('#page-'+currentPage).removeClass('hidden');
         }
+        function skip(){
+            $('#page-'+currentPage).addClass('hidden');
+            currentPage = 6;
+            $('#page-'+currentPage).removeClass('hidden');
+        }
+
+        app.pause();
     </script>
 </body>
 

@@ -17,18 +17,8 @@ const data = new (function DataCollect() {
     this.setID = function (id){
         dataCollect.id = id;
     }
-    var set = 1;
-    var round = 1;
-    this.setData = function (coopRate,waitRate,stopOther,stopSelf){
-        if (round==1){
-            dataCollect[set+'-type'] = waitRate;
-        }
-        dataCollect[set+'-'+round] = stopSelf;
-        if (++round>20) {
-            dataCollect[set+'-coopRate'] = coopRate;
-            round = 1;
-            set++;
-        }
+    this.setData = function (prop,val){
+        dataCollect[prop] = val;
     }
     this.sendData = function (){
         

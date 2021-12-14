@@ -20,11 +20,16 @@ const exp = new (function Experiment() {
     }
     
     // 设置实验组
+    var set = 0;
+    var round = 0;
     this.setExp = function (nRound = 20,_coopRate,_waitRate) {
         if (void 0==_coopRate && void 0==_waitRate){
             var rateSet = randomPop(expSet);
             coopRate = rateSet[0];
             waitRate = rateSet[1];
+            //写入数据
+            // set++;
+            // data.setData(coopRate,waitRate,stopSelf,stopOther);
         }else{
             coopRate = void 0==_coopRate ? randomPick(coopRateSelf) : _coopRate;
             waitRate = void 0==_waitRate ? randomPick(waitRateOther) : _waitRate;
@@ -85,6 +90,9 @@ const exp = new (function Experiment() {
             stopSelf = coop ? true : false;
         }
 
+        //写入数据
+        // if (preExp<=0){round++;data.setData(coopRate,waitRate,stopSelf,stopOther);}
+
         //决策框控制
         $('#auto-decition-text')[0].innerHTML = stopSelf ? "等待" : "直行";
         if (stopSelf){
@@ -94,13 +102,13 @@ const exp = new (function Experiment() {
         }
         toggleDialog(true);
     }
-
     //结束决策
     this.endDecision = function () {
         stopSelf && app.stopSelf();
         stopOther && app.stopOther();
 
-        data.setData(coopRate,waitRate,stopSelf,stopOther);
+        //写入数据
+        // if (preExp<=0) data.setData(coopRate,waitRate,stopSelf,stopOther);
 
         if (!stopSelf && !stopOther){
             //双方都前进迫停
@@ -190,6 +198,7 @@ const exp = new (function Experiment() {
             if (expTable.coop.length==0){
                 setTimeout(()=>{app.reset(50,false);},200);
                 if(!exp.setExp()){
+                    //结束实验
                     app.pause();
                     togglePage(7);
                 }

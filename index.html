@@ -278,6 +278,12 @@
             if (void 0 != time)
                 setTimeout(() => { $('#cut').toggleClass('opacity-0 opacity-100'); }, time);
         }
+        function toggleCutTough(time,fn) {
+            $('#cut').toggleClass('duration-200 opacity-0 opacity-100');
+            fn && setTimeout(fn,200);
+            if (void 0 != time)
+                setTimeout(() => { $('#cut').toggleClass('duration-200 opacity-0 opacity-100'); }, time);
+        }
 
         function setScore(score) {
             $('#tip-score')[0].innerHTML = score;
@@ -338,12 +344,12 @@
         var currentPage = 0;
         function next(){
             if (currentPage==4){
-                toggleCut(1200,()=>{togglePage();});
+                toggleCutTough(1200,()=>{togglePage();});
                 app.reset(50,false);
                 app.pause();
                 exp.startPreExp(5);
             }else if (currentPage==6){
-                toggleCut(1200,()=>{togglePage();});
+                toggleCutTough(1200,()=>{togglePage();});
                 app.reset(50,false);
                 app.pause();
                 exp.startExp();
@@ -352,6 +358,8 @@
             }else{
                 if (currentPage==0){
                     data.setID($('#id-input').val());
+                }else if (currentPage==7){
+                    data.sendData();
                 }
                 $('#page-'+currentPage).addClass('hidden');
                 currentPage++;

@@ -2,8 +2,8 @@ const exp = new (function Experiment() {
     //我方合作率
     var coopRateSelf = [0.1,0.3,0.5,0.7,0.9];
     var coopRate = 0.5;
-    //对方等待概率（亲社会、个人主义、无信息）
-    var waitRateOther = [0.8,0.2,0.5];
+    //对方等待概率（个人主义、亲社会、无信息）
+    var waitRateOther = [0.2,0.8,0.5];
     var waitRate = 0.5;
     //实验组
     var expSet = [];
@@ -20,21 +20,27 @@ const exp = new (function Experiment() {
     }
     
     // 设置实验组
-    var set = 0;
+    var set = '';
+    var tag = 0;
     var round = 0;
-    this.setExp = function (nRound = 20,_coopRate,_waitRate) {
+    var coopUser = 0;
+    var score = 0;
+    this.setTable = function (nRound = 20,_coopRate,_waitRate) {
         if (void 0==_coopRate && void 0==_waitRate){
             var rateSet = randomPop(expSet);
             coopRate = rateSet[0];
             waitRate = rateSet[1];
             //写入数据
-            // set++;
-            // data.setData(coopRate,waitRate,stopSelf,stopOther);
+            coopUser = 0;
+            setProg(set++);
+            tag = (waitRateOther.findIndex((e)=>waitRate==e)+1);
+            tag += '-'+(coopRateSelf.findIndex((e)=>coopRate==e)+1);
+            data.setData(tag+'-对方类型',waitRate);
+            data.setData(tag+'-系统合作率',coopRate);
         }else{
             coopRate = void 0==_coopRate ? randomPick(coopRateSelf) : _coopRate;
             waitRate = void 0==_waitRate ? randomPick(waitRateOther) : _waitRate;
         }
-        if (coopRate==undefined) return false;
         
         if (waitRate>0.5){
             //对方亲社会
@@ -63,7 +69,6 @@ const exp = new (function Experiment() {
             if (coopNum-- > 0) expTable.coop.push(1);
             else expTable.coop.push(0);
         }
-        return true;
     }
 
     var stopSelf = true;
@@ -91,7 +96,12 @@ const exp = new (function Experiment() {
         }
 
         //写入数据
-        // if (preExp<=0){round++;data.setData(coopRate,waitRate,stopSelf,stopOther);}
+        if (preExp<=0){
+            round = round%20;
+            round++;
+            data.setData(tag+'-'+round+'-对方',stopOther);
+            data.setData(tag+'-'+round+'-系统',stopSelf);
+        }
 
         //决策框控制
         $('#auto-decition-text')[0].innerHTML = stopSelf ? "等待" : "直行";
@@ -106,54 +116,6 @@ const exp = new (function Experiment() {
     this.endDecision = function () {
         stopSelf && app.stopSelf();
         stopOther && app.stopOther();
-
-        //写入数据
-        // if (preExp<=0) data.setData(coopRate,waitRate,stopSelf,stopOther);
-
-        if (!stopSelf && !stopOther){
-            //双方都前进迫停
-            setTimeout(()=>{
-                app.stopSelf();
-                app.stopOther();
-            },600)
-            setTimeout(()=>{
-                nextRound(-2);
-                setTimeout(()=>{
-                    app.reset(50,true);
-                },500);
-            },2000)
-        }
-        else if (stopSelf && stopOther){
-            //双方都等待
-            setTimeout(()=>{
-                nextRound(-1);
-                setTimeout(()=>{
-                    app.reset(40,true);
-                },500);
-            },2000)
-        }
-        else if (!stopSelf && stopOther){
-            //我方直行，对方等待
-            setTimeout(()=>{
-                app.stopOther();
-                nextRound(2);
-                setTimeout(()=>{
-                    app.resetOther();
-                },500);
-            },2000)
-        }
-        else if (stopSelf && !stopOther){
-            //我方等待，对方转向
-            setTimeout(()=>{
-                nextRound(0);
-                setTimeout(()=>{
-                    app.resetOther();
-                },500);
-            },2000)
-            setTimeout(()=>{
-                app.stopSelf();
-            },1700)
-        }
 
         //决策框控制
         toggleSign();
@@ -175,51 +137,125 @@ const exp = new (function Experiment() {
             },200)
             toggleDialog(false);
         },1500)
-    }
-    
-    //设置下一轮
-    function nextRound(score) {
-        if (preExp>0){
-            if (--preExp<=0){
-                app.pause();
-                togglePage(5);
-            }else{
-                addRound();
-                addScore(score);
-                toggleCut(1200);
-                exp.setExp(1,randomPick(coopRateSelf),randomPick(waitRateOther));
-            }
-        }else{
-            addRound();
-            addScore(score);
-            toggleCut(1200);
-            data.addScore(score);
-            //设置下一组
-            if (expTable.coop.length==0){
-                setTimeout(()=>{app.reset(50,false);},200);
-                if(!exp.setExp()){
-                    //结束实验
-                    app.pause();
-                    togglePage(7);
-                }
+        
+        //我方合作率
+        if (waitRate>0.5){
+            //对方亲社会，直行合作
+            if (!stopSelf) coopUser++;
+        }else if(waitRate<0.5){
+            //对方个人主义，等待合作
+            if (stopSelf) coopUser++;
+        }else{//waitRate==0.5
+            //无法识别，等待合作
+            if (stopSelf) coopUser++;
+        }
+
+        //判断情况
+        var addscore = 0;
+        var fn = null;
+        if (!stopSelf && !stopOther){
+            //双方都前进，迫停
+            setTimeout(()=>{
+                app.stopSelf();
+                app.stopOther();
+            },600)
+            addscore = -2;
+            // reset
+            fn = ()=>{
+                app.setSelf(-10);
+                app.setOther();
             }
         }
+        else if (stopSelf && stopOther){
+            //双方都等待
+            addscore = -1;
+            // reset
+            fn = ()=>{
+                app.setSelf(-20);
+                app.setOther();
+            }
+        }
+        else if (!stopSelf && stopOther){
+            //我方直行，对方等待
+            addscore = 2;
+            setTimeout(()=>{
+                app.stopOther();
+                app.setOther();
+            },2000)
+        }
+        else if (stopSelf && !stopOther){
+            //我方等待，对方转向
+            addscore = 0;
+            setTimeout(()=>{
+                app.stopSelf();
+                app.setOther();
+            },1800)
+        }
+        
+        //写入数据
+        if (preExp<=0){
+            data.setData(tag+'-'+round+'-用户',stopSelf);
+            data.setData(tag+'-'+round+'-得分',addscore);
+        }
+
+        //结算分数
+        setTimeout(()=>{
+            addScore(addscore);
+            score += addscore;
+            //设置下一轮
+            if (preExp>0){
+                if (--preExp<=0){
+                    //结束预实验
+                    // endPreExp();
+                    setTimeout(endPreExp,1000);
+                    return;
+                }
+                exp.setTable(1,randomPick(coopRateSelf),randomPick(waitRateOther));
+            }else if (expTable.coop.length==0){
+                if (expSet.length==0){
+                    //结束实验
+                    // endExp();
+                    setTimeout(()=>{
+                        endExp(score);
+                    },1000);
+                    return;
+                }
+                //写入数据
+                data.setData(tag+'-合作率',coopUser/20);
+                //设置下一组
+                exp.setTable();
+                //换车
+                fn = ()=>{
+                    app.reset();
+                    app.setSelf(30);
+                    app.setOther();
+                }
+            }
+            addRound();
+            if(fn) toggleCut(1200,fn);
+            else toggleCut(1200);
+        },2000)
+
     }
+    
     // 设置预实验
     var preExp = 0;
     this.startPreExp = function (nPreExp = 5) {
         preExp = nPreExp;
         setRound(1);
         setScore(0);
-        exp.setExp(1,randomPick(coopRateSelf),randomPick(waitRateOther));
+        exp.setTable(1,randomPick(coopRateSelf),randomPick(waitRateOther));
         $('#tip-round-tail')[0].innerHTML = '/'+preExp;
         $('#cut-round-tail')[0].innerHTML = '/'+preExp;
     }
     this.startExp = function () {
         preExp = 0;
+        set = 1;
+        round = 1;
+        score = 0;
         setRound(1);
         setScore(0);
-        exp.setExp();
+        exp.setTable();
         $('#tip-round-tail')[0].innerHTML = '/20';
         $('#cut-round-tail')[0].innerHTML = '/20';
     }

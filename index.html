@@ -597,12 +597,9 @@
         function endExp(score) {
             $('#over-score')[0].innerHTML = score;
             endPreExp();
-            data.setSVO(calcSVO());
+            data.setSVO();
             data.setScore(score);
             data.sendData();
-        }
-        function calcSVO() {
-            return 0;
         }
     </script>
 </body>

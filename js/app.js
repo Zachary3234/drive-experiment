@@ -112,7 +112,9 @@ const app = new (function Application() {
         //刷新车辆
         // this.carOther = initCar((new THREE.Vector3(-3.4, 0, -60-spawnRange)).add(meetChunk.position), new THREE.Euler(0, Math.PI, 0));
 
-        renderer.render(scene, camera);
+        if (!pause) {
+            renderer.render(scene, camera);
+        }
         requestAnimationFrame(update);
     }
 

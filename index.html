@@ -569,19 +569,18 @@
             $('#page-area').addClass('hidden');
             $('#page-area').toggleClass('opacity-0 opacity-100');
             toggleCutTough(1000);
+            app.pause();
             app.reset();
             app.setSelf(40);
             app.setOther();
             exp.startPreExp(5);
         }
         function endPreExp() {
+            app.pause();
             $('#page-area').removeClass('hidden');
             $('#skip-btn').removeClass('hidden');
             setTimeout(() => {
                 $('#page-area').toggleClass('opacity-0 opacity-100');
-                setTimeout(() => {
-                    app.reset();
-                }, 500);
             }, 100);
             next();
         }
@@ -589,6 +588,7 @@
             $('#page-area').addClass('opacity-0 hidden');
             $('#page-area').removeClass('opacity-100');
             toggleCutTough(1000);
+            app.pause();
             app.reset();
             app.setSelf(40);
             app.setOther();
@@ -601,6 +601,7 @@
             data.setScore(score);
             data.sendData();
         }
+        app.pause();
     </script>
 </body>
 

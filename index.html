@@ -37,6 +37,28 @@
             opacity: 100%;
         }
         
+        #svo-table .grid-cols-def {
+            grid-template-columns: 1.5fr repeat(9, minmax(0, 1fr));
+        }
+        #svo-table .label~div {
+            cursor: pointer;
+            position: relative;
+        }
+        #svo-table .label~div::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            height: 0.25rem;
+            width: 0.25rem;
+            max-width: 100%;
+            background-color: rgb(104, 179, 223);
+            border-radius: 9999px;
+        }
+        #svo-table .label~div.selected::before {
+            width: 2rem;
+        }
     </style>
 </head>
 
@@ -53,7 +75,8 @@
             <div id="monitor" class="absolute inset-2 p-5 bg-gray-700 ring-4 ring-gray-400 rounded-3xl">
                 <div id="page-area" class="absolute inset-5 bg-gray-100 text-xl flex-col z-50
                         transition-opacity duration-500 ease-in-out opacity-100">
-                    <div id="pages" class="flex w-full h-4/5 p-8">
+                    <div id="pages" class="h-4/5 flex p-8 overflow-x-hidden"
+                        style="overflow-y: overlay;">
                         <div id="page-id" class="page m-auto hidden">
                             <h1>自动驾驶合作实验</h1>
                             <br>
@@ -70,11 +93,97 @@
                         <div id="page-svo" class="page m-auto hidden">
                             <h1>SVO测试</h1>
                             <p>
-                                歪比八不
+                                本页面将对你的社会价值取向进行测量。在这个任务中，你被随机地与另一个人配对，我们称他为“其他人”。这个人是你不认识的人，你们将保持匿名，你所有的选择都是完全保密的。
                             </p>
                             <p>
-                                歪比八不
+                                <b>你要做一系列的决定，在你和这个人之间分配资源。</b>
                             </p>
+                            <div id="svo-table" class="w-full mt-2 bg-blue-50">
+                                <div id="svo-row-0" class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
+                                    <div class="grid grid-cols-def gap-x-2">
+                                        <div class="label whitespace-nowrap"> <div>你得到</div> <div>其他人</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div class="selected"> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                    </div>
+                                </div>
+                                <div id="svo-row-1" class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
+                                    <div class="grid grid-cols-def gap-x-2">
+                                        <div class="label whitespace-nowrap"> <div>你得到</div> <div>其他人</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div class="selected"> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                    </div>
+                                </div>
+                                <div id="svo-row-1" class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
+                                    <div class="grid grid-cols-def gap-x-2">
+                                        <div class="label whitespace-nowrap"> <div>你得到</div> <div>其他人</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div class="selected"> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                    </div>
+                                </div>
+                                <div id="svo-row-1" class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
+                                    <div class="grid grid-cols-def gap-x-2">
+                                        <div class="label whitespace-nowrap"> <div>你得到</div> <div>其他人</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div class="selected"> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                    </div>
+                                </div>
+                                <div id="svo-row-1" class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
+                                    <div class="grid grid-cols-def gap-x-2">
+                                        <div class="label whitespace-nowrap"> <div>你得到</div> <div>其他人</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div class="selected"> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                    </div>
+                                </div>
+                                <div id="svo-row-1" class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
+                                    <div class="grid grid-cols-def gap-x-2">
+                                        <div class="label whitespace-nowrap"> <div>你得到</div> <div>其他人</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div class="selected"> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div> <div>85</div> <div>85</div> </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div id="page-back" class="page m-auto hidden">
                             <h1>实验背景</h1>
@@ -123,7 +232,7 @@
                                 实验中，实验程序中的路况界面为你驾驶的自动驾驶汽车车内显示屏界面。为控制实验变量，实验程序中将不展示路面上的其他车辆，只保留我方直行车辆及对方左转车辆。
                             </p>
                             <p>
-                                检测到的对方社会价值取向标注在屏幕右上角，并自动做出直行或等待的决策显示在屏幕上，此时你可以对系统决策进行更改，若到达路口时未做出更改，则车辆按照系统决策行动。
+                                我方汽车检测到的对方车辆社会价值取向将显示在屏幕右上角，所作决策将显示在屏幕中下方，此时你可对系统决策进行更改，若到达路口时未作出更改，则车辆按照系统决策行动。
                             </p>
                         </div>
                         <div id="page-preexp" class="page m-auto hidden">
@@ -138,7 +247,7 @@
                                 class="z-50 absolute left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10 bg-gray-300 rounded-lg"
                                 onclick="startPreExp()">预实验</button>
                             <button id="skip-btn"
-                                class=" absolute left-1/2 bottom-12 transform translate-x-20 w-20 h-10 bg-gray-300 rounded-lg"
+                                class=" absolute left-1/2 bottom-12 transform translate-x-20 w-20 h-10 bg-gray-300 rounded-lg hidden"
                                 onclick="goto('page-exp')">跳过</button>
                         </div>
                         <div id="page-exp" class="page m-auto hidden">
@@ -169,14 +278,17 @@
                 <div id="render" class="absolute inset-5 bg-gray-400">
                     <canvas></canvas>
                 </div>
-                <div id="progress" class="flex absolute left-5 top-5 z-50 transition-opacity opacity-80 hover:opacity-100 hidden">
+                <div id="progress"
+                    class="flex absolute left-5 top-5 z-50 transition-opacity opacity-80 hover:opacity-100 hidden">
                     <div id="prog-svg" class="h-10 w-10 transform -rotate-90">
                         <svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-                            <circle id="prog-pie" stroke-dasharray="30 95" stroke="white" stroke-width="30" fill="none" r="15" cx="50" cy="50"/>
+                            <circle id="prog-pie" stroke-dasharray="30 95" stroke="white" stroke-width="30" fill="none"
+                                r="15" cx="50" cy="50" />
                             <circle stroke="white" stroke-width="6" fill="none" r="30" cx="50" cy="50" />
                         </svg>
                     </div>
-                    <div id="prog-text" class="h-10 w-36 flex rounded-lg text-xl text-white opacity-0 transition-opacity">
+                    <div id="prog-text"
+                        class="h-10 w-36 flex rounded-lg text-xl text-white opacity-0 transition-opacity">
                         <span class="my-auto ml-1 flex-shrink-0">组次：</span>
                         <span id="prog-set" class="my-auto">1</span>
                         <span id="prog-set-tail" class="my-auto">/15</span>
@@ -350,8 +462,8 @@
         function setProg(set) {
             $('#progress').removeClass('hidden');
             $('#prog-set')[0].innerHTML = set;
-            var piePart = Math.round(set/15*95*10)/10;
-            $('#prog-pie').attr('stroke-dasharray',piePart+' 95');
+            var piePart = Math.round(set / 15 * 95 * 10) / 10;
+            $('#prog-pie').attr('stroke-dasharray', piePart + ' 95');
         }
         function setRound(round) {
             if (round > 20) round -= 20;
@@ -374,7 +486,7 @@
         function toggleCutTough(time) {
             $('#cut').removeClass('transition-opacity duration-200 ease-in-out ');
             $('#cut').toggleClass('opacity-0 opacity-100');
-            setTimeout(()=>{$('#cut').addClass('transition-opacity duration-200 ease-in-out ');}, 10);
+            setTimeout(() => { $('#cut').addClass('transition-opacity duration-200 ease-in-out '); }, 10);
             if (void 0 != time)
                 setTimeout(() => { $('#cut').toggleClass('opacity-0 opacity-100'); }, time);
         }
@@ -424,7 +536,7 @@
             $('.page:eq(' + currPage + ')').removeClass('hidden');
         }
 
-        function startPreExp(){
+        function startPreExp() {
             $('#page-area').addClass('hidden');
             $('#page-area').toggleClass('opacity-0 opacity-100');
             toggleCutTough(1000);
@@ -433,18 +545,18 @@
             app.setOther();
             exp.startPreExp(5);
         }
-        function endPreExp(){
+        function endPreExp() {
             $('#page-area').removeClass('hidden');
             $('#skip-btn').removeClass('hidden');
-            setTimeout(()=>{
+            setTimeout(() => {
                 $('#page-area').toggleClass('opacity-0 opacity-100');
-                setTimeout(()=>{
+                setTimeout(() => {
                     app.reset();
-                },500);
-            },100);
+                }, 500);
+            }, 100);
             next();
         }
-        function startExp(){
+        function startExp() {
             $('#page-area').addClass('opacity-0 hidden');
             $('#page-area').removeClass('opacity-100');
             toggleCutTough(1000);
@@ -453,7 +565,7 @@
             app.setOther();
             exp.startExp();
         }
-        function endExp(score){
+        function endExp(score) {
             $('#over-score')[0].innerHTML = score;
             endPreExp();
             data.setID($('#id-input')[0].value);
@@ -461,7 +573,7 @@
             data.setScore(score);
             data.sendData();
         }
-        function calcSVO(){
+        function calcSVO() {
             return 0;
         }
     </script>

@@ -40,24 +40,28 @@
         #svo-table .grid-cols-def {
             grid-template-columns: 1.5fr repeat(9, minmax(0, 1fr));
         }
-        #svo-table .label~div {
+        #svo-table .svo-row>div {
             cursor: pointer;
             position: relative;
         }
-        #svo-table .label~div::before {
+        #svo-table .svo-row>div::before {
             content: '';
             position: absolute;
             left: 50%;
             top: 50%;
             transform: translateX(-50%) translateY(-50%);
             height: 0.25rem;
-            width: 0.25rem;
+            width: 0.35rem;
             max-width: 100%;
             background-color: rgb(104, 179, 223);
             border-radius: 9999px;
+
+            transition-property: width;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
         }
-        #svo-table .label~div.selected::before {
-            width: 2rem;
+        #svo-table .svo-row>div.selected::before {
+            width: 1.75rem;
         }
     </style>
 </head>
@@ -98,89 +102,101 @@
                             <p>
                                 <b>你要做一系列的决定，在你和这个人之间分配资源。</b>
                             </p>
-                            <div id="svo-table" class="w-full mt-2 bg-blue-50">
-                                <div id="svo-row-0" class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
+                            <div id="svo-table" class="w-full mt-2 bg-blue-50 text-lg">
+                                <div class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
                                     <div class="grid grid-cols-def gap-x-2">
                                         <div class="label whitespace-nowrap"> <div>你得到</div> <div>其他人</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div class="selected"> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div id="svo-row-0" class="svo-row col-span-9 grid grid-cols-9">
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div class="selected"> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div id="svo-row-1" class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
+                                <div class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
                                     <div class="grid grid-cols-def gap-x-2">
                                         <div class="label whitespace-nowrap"> <div>你得到</div> <div>其他人</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div class="selected"> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div id="svo-row-1" class="svo-row col-span-9 grid grid-cols-9">
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div class="selected"> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div id="svo-row-1" class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
+                                <div class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
                                     <div class="grid grid-cols-def gap-x-2">
                                         <div class="label whitespace-nowrap"> <div>你得到</div> <div>其他人</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div class="selected"> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div id="svo-row-2" class="svo-row col-span-9 grid grid-cols-9">
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div class="selected"> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div id="svo-row-1" class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
+                                <div class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
                                     <div class="grid grid-cols-def gap-x-2">
                                         <div class="label whitespace-nowrap"> <div>你得到</div> <div>其他人</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div class="selected"> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div id="svo-row-3" class="svo-row col-span-9 grid grid-cols-9">
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div class="selected"> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div id="svo-row-1" class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
+                                <div class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
                                     <div class="grid grid-cols-def gap-x-2">
                                         <div class="label whitespace-nowrap"> <div>你得到</div> <div>其他人</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div class="selected"> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div id="svo-row-4" class="svo-row col-span-9 grid grid-cols-9">
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div class="selected"> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div id="svo-row-1" class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
+                                <div class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
                                     <div class="grid grid-cols-def gap-x-2">
                                         <div class="label whitespace-nowrap"> <div>你得到</div> <div>其他人</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div class="selected"> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
-                                        <div> <div>85</div> <div>85</div> </div>
+                                        <div id="svo-row-5" class="svo-row col-span-9 grid grid-cols-9">
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div class="selected"> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                            <div> <div>85</div> <div>85</div> </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -232,7 +248,7 @@
                                 实验中，实验程序中的路况界面为你驾驶的自动驾驶汽车车内显示屏界面。为控制实验变量，实验程序中将不展示路面上的其他车辆，只保留我方直行车辆及对方左转车辆。
                             </p>
                             <p>
-                                我方汽车检测到的对方车辆社会价值取向将显示在屏幕右上角，所作决策将显示在屏幕中下方，此时你可对系统决策进行更改，若到达路口时未作出更改，则车辆按照系统决策行动。
+                                我方汽车检测到的对方车辆社会价值取向将显示在屏幕右上角，所作决策将显示在屏幕中下方，决策框出现时你可对系统决策进行更改，若到达路口时未作出更改，则车辆按照系统决策行动。
                             </p>
                         </div>
                         <div id="page-preexp" class="page m-auto hidden">
@@ -576,6 +592,8 @@
         function calcSVO() {
             return 0;
         }
+
+        next();
     </script>
 </body>
 

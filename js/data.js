@@ -66,6 +66,21 @@ const svoGains = [
     [50,54,59,63,68,72,76,81,85]
 ];
 
+for (let i = 0; i < 6; i++) {
+    $('#svo-row-'+i)[0].innerHTML = '';
+    for (let j = 0; j < 9; j++) {
+        if (j==4){
+            $('#svo-row-'+i)[0].innerHTML += '<div class="selected"><div>'+svoGains[i][j]+'</div><div>'+svoGains[6+i][j]+'</div></div>';
+        }else{
+            $('#svo-row-'+i)[0].innerHTML += '<div><div>'+svoGains[i][j]+'</div><div>'+svoGains[6+i][j]+'</div></div>';
+        }
+    }
+    $('#svo-row-'+i).children().click(function (){
+        $('#svo-row-'+i).children().removeClass('selected');
+        $(this).addClass('selected');
+    });
+}
+
 function downloadCSV(csvText,title="data",type=".csv"){
     let uri = "data:text/csv;charset=utf-8,\ufeff" + encodeURIComponent(csvText);
     var link = document.createElement('a');

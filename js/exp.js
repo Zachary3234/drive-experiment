@@ -162,7 +162,7 @@ const exp = new (function Experiment() {
             addscore = -2;
             // reset
             fn = ()=>{
-                app.setSelf(-10);
+                app.setSelf(-20);
                 app.setOther();
             }
         }
@@ -178,18 +178,28 @@ const exp = new (function Experiment() {
         else if (!stopSelf && stopOther){
             //我方直行，对方等待
             addscore = 2;
-            setTimeout(()=>{
-                app.stopOther();
+            // setTimeout(()=>{
+            //     app.stopOther();
+            //     app.setOther();
+            // },2000)
+            // reset
+            fn = ()=>{
+                app.setSelf(-20);
                 app.setOther();
-            },2000)
+            }
         }
         else if (stopSelf && !stopOther){
             //我方等待，对方转向
             addscore = 0;
-            setTimeout(()=>{
-                app.stopSelf();
+            // setTimeout(()=>{
+            //     app.stopSelf();
+            //     app.setOther();
+            // },1800)
+            // reset
+            fn = ()=>{
+                app.setSelf(-20);
                 app.setOther();
-            },1800)
+            }
         }
         
         //写入数据

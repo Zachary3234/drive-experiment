@@ -43,7 +43,7 @@ const app = new (function Application() {
     var pause = false;
     var decision = false;
     var control = {
-        maxSpeed: 0.13,
+        maxSpeed: 0.10,
         maxHeight: 170,
     };
     this.control = control;
@@ -98,7 +98,7 @@ const app = new (function Application() {
         }
         if (void 0 != carsControl && 
             !decision && 
-            distance > 50 && distance < 60) {
+            distance > 90 && distance < 100) {
             decision = true;
             exp.startDecision();
         }

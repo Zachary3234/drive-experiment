@@ -42,8 +42,10 @@ const app = new (function Application() {
     //控制参数
     var pause = false;
     var decision = false;
+    var reaction = false;
     var control = {
-        maxSpeed: 0.10,
+        baseSpeed: 0.1,
+        maxSpeed: 0.2,
         maxHeight: 170,
     };
     this.control = control;
@@ -79,43 +81,76 @@ const app = new (function Application() {
         camera.aspect = $('#render').width() / $('#render').height();
         camera.updateProjectionMatrix();
     }
-    //渲染画面
+    
     var distance = 0;
+    var deciRes = {stopSelf:true,stopOther:true};
+    //渲染画面
+    var timeS = 0;
+    var clock = new THREE.Clock();
+    var FPS = 60;
+    var renderT = 1 / FPS; //单位秒  间隔多长时间渲染渲染一次
     function update() {
-        viewControl && viewControl.update();
-        if (!pause) {
-            worldControl && worldControl.update();
-            carsControl && carsControl.update();
-        }
-
-        //触发决策
-        if (carsControl && carsControl.carSelf && carsControl.carOther){
-            distance = carsControl.carSelf.getWorldPosition().z - carsControl.carOther.getWorldPosition().z;
-            if (carsControl.carSelf.isBigCar)
-                distance -= 1.5;
-            if (carsControl.carOther.isBigCar)
-                distance -= 1.5;
-        }
-        if (void 0 != carsControl && 
-            !decision && 
-            distance > 90 && distance < 100) {
-            decision = true;
-            exp.startDecision();
-        }
-        //决策结束
-        if (void 0 != carsControl && 
-            decision && 
-            distance > 10 && distance < 20) {
-            decision = false;
-            exp.endDecision();
-        }
-        //刷新车辆
-        // this.carOther = initCar((new THREE.Vector3(-3.4, 0, -60-spawnRange)).add(meetChunk.position), new THREE.Euler(0, Math.PI, 0));
-
-        if (!pause) {
-            renderer.render(scene, camera);
-        }
         requestAnimationFrame(update);
+
+        timeS = timeS + clock.getDelta();
+        // requestAnimationFrame默认调用render函数60次，通过时间判断，降低renderer.render执行频率
+        if (timeS > renderT) {
+            // 控制台查看渲染器渲染方法的调用周期，也就是间隔时间是多少
+            // console.log(`调用.render时间间隔`,timeS*1000+'毫秒');
+            // renderer.render(scene, camera); //执行渲染操作
+            viewControl && viewControl.update();
+            if (!pause) {
+                worldControl && worldControl.update();
+                carsControl && carsControl.update();
+            }
+    
+            //触发决策
+            if (carsControl && carsControl.carSelf && carsControl.carOther){
+                distance = carsControl.carSelf.getWorldPosition().z - carsControl.carOther.getWorldPosition().z;
+                if (carsControl.carSelf.isBigCar)
+                    distance -= 1.5;
+                if (carsControl.carOther.isBigCar)
+                    distance -= 1.5;
+            }
+            if (void 0 != carsControl && 
+                !decision && 
+                distance > 80 && distance < 90) {
+                decision = true;
+                exp.startDecision();
+                control.maxSpeed = control.baseSpeed;
+            }
+            //决策结束
+            if (void 0 != carsControl && 
+                decision && 
+                distance > 10 && distance < 20) {
+                decision = false;
+                reaction = true;
+                deciRes = exp.endDecision();
+                // deciRes = {stopSelf:false,stopOther:false};
+                control.maxSpeed = control.baseSpeed*2;
+            }
+            //决策结果
+            if (void 0 != carsControl && reaction && distance < 20) {
+                deciRes.stopSelf && app.stopSelf();
+                deciRes.stopOther && app.stopOther();
+                
+                if (!deciRes.stopSelf && !deciRes.stopOther){
+                    //双方都前进，相撞
+                    if (distance < 7){
+                        app.crashCar();
+                        reaction = false;
+                    }
+                }else{
+                    reaction = false;
+                }
+            }
+            if (!pause) {
+                renderer.render(scene, camera);
+            }
+
+            //renderer.render每执行一次，timeS置0
+            timeS = 0;
+        }
     }
 
     //全局控制
@@ -123,6 +158,7 @@ const app = new (function Application() {
         worldControl && worldControl.reset();
         carsControl && carsControl.reset();
         decision = false;
+        reaction = false;
     };
     this.pause = function () {
         pause = !pause;
@@ -134,6 +170,11 @@ const app = new (function Application() {
     this.stopOther = function () {
         carsControl && carsControl.carOther && (carsControl.carOther.stop = !carsControl.carOther.stop);
     };
+    this.crashCar = function () {
+        carsControl && 
+        (carsControl.carSelf && (carsControl.carSelf.crash = true)),
+        (carsControl.carOther && (carsControl.carOther.crash = true));
+    };
     this.setSelf = function (zoffset) {
         carsControl && carsControl.setSelf(zoffset);
     };
@@ -142,7 +183,12 @@ const app = new (function Application() {
     };
     //其他控制
     this.setSpeed = function (val) {
-        control.maxSpeed = parseFloat(val);
+        control.maxSpeed = control.baseSpeed*parseFloat(val);
+        // console.log(parseFloat(val),control.maxSpeed);
+    };
+    this.setBaseSpeed = function (val) {
+        control.baseSpeed = 0.1*parseFloat(val);
+        // console.log(parseFloat(val),control.maxSpeed);
     };
     this.setHeight = function (val) {
         control.maxHeight = parseFloat(val);
@@ -307,6 +353,7 @@ const app = new (function Application() {
         this.setSelf = function (zoffset = 0) {
             if (this.carSelf){
                 this.carSelf.position.copy((new THREE.Vector3(3.4, 0, zoffset)).add(meetChunk.position));
+                this.carSelf.rotation.copy(new THREE.Euler(0, 0, 0));
                 this.carSelf.stop = false;
                 this.carOther && this.carOther.remove();
                 this.carOther = null;
@@ -406,14 +453,30 @@ const app = new (function Application() {
                     }
                 }
                 //启停
-                if (this.stop) {
-                    this.speedRatio -= .0375;
-                    this.speedRatio = Math.max(this.speedRatio, 0);
-                } else if (this.speedRatio < 1) {
-                    this.speedRatio += .0375;
-                    this.speedRatio = Math.min(this.speedRatio, 1);
-                } else if (this.speedRatio > 1) {
-                    this.speedRatio = 1;
+                if (this.crash) {
+                    this.stop = true;
+                    this.speedRatio -= .375 * 2 * control.maxSpeed;
+                    if (this == carsControl.carSelf)
+                        this.rotation.y -= 0.1 * control.maxSpeed *  Math.PI / 2;
+                    else
+                        this.rotation.y += 0.1 * control.maxSpeed *  Math.PI / 2;
+                    if (this.speedRatio <= 0) {
+                        this.speedRatio = 0;
+                        this.crash = false;
+                    }
+                    // else if (this.speedRatio <= 0.5) {
+                    //     this.turn = 0.5;
+                    // }
+                }else {
+                    if (this.stop) {
+                        this.speedRatio -= .375 * control.maxSpeed;
+                        this.speedRatio = Math.max(this.speedRatio, 0);
+                    } else if (this.speedRatio < 1) {
+                        this.speedRatio += .375 * control.maxSpeed;
+                        this.speedRatio = Math.min(this.speedRatio, 1);
+                    } else if (this.speedRatio > 1) {
+                        this.speedRatio = 1;
+                    }
                 }
                 // if (this.stop) {
                 //     this.speed -= .0375 * control.maxSpeed;

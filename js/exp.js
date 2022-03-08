@@ -42,21 +42,44 @@ const exp = new (function Experiment() {
             waitRate = void 0==_waitRate ? randomPick(waitRateOther) : _waitRate;
         }
         
+        if (coopRate>0.5){
+            //亲社会
+            $('#cut-set-self').text('亲社会');
+            $('#cut-set-self').removeClass();
+            $('#cut-set-self').addClass('text-green-400');
+        }else if(coopRate<0.5){
+            //亲自我
+            $('#cut-set-self').text('亲自我');
+            $('#cut-set-self').removeClass();
+            $('#cut-set-self').addClass('text-red-400');
+        }else{//coopRate==0.5
+            //无倾向
+            $('#cut-set-self').text('无倾向');
+            $('#cut-set-self').removeClass();
+        }
         if (waitRate>0.5){
             //对方亲社会
             $('#tip-social').removeClass('hidden');
             $('#tip-self').addClass('hidden');
             $('#tip-none').addClass('hidden');
+            $('#cut-set-other').text('亲社会');
+            $('#cut-set-other').removeClass();
+            $('#cut-set-other').addClass('text-green-400');
         }else if(waitRate<0.5){
             //对方亲自我
             $('#tip-self').removeClass('hidden');
             $('#tip-social').addClass('hidden');
             $('#tip-none').addClass('hidden');
+            $('#cut-set-other').text('亲自我');
+            $('#cut-set-other').removeClass();
+            $('#cut-set-other').addClass('text-red-400');
         }else{//waitRate==0.5
             //对方无倾向
             $('#tip-none').removeClass('hidden');
             $('#tip-social').addClass('hidden');
             $('#tip-self').addClass('hidden');
+            $('#cut-set-other').text('无倾向');
+            $('#cut-set-other').removeClass();
         }
 
         var waitNum = Math.round(waitRate*nRound);
@@ -68,6 +91,11 @@ const exp = new (function Experiment() {
             else expTable.wait.push(0);
             if (coopNum-- > 0) expTable.coop.push(1);
             else expTable.coop.push(0);
+        }
+
+        if (nRound != 1){
+            $('#cut-set').toggleClass('opacity-0 opacity-100'); // 显示组间说明
+            app.pause(); // 暂停
         }
     }
 
@@ -166,11 +194,6 @@ const exp = new (function Experiment() {
             //我方等待，对方转向
             addscore = 0;
         }
-        // reset
-        var fn = ()=>{
-            app.setSelf(-20);
-            app.setOther();
-        }
         
         //写入数据
         if (preExp<=0){
@@ -191,8 +214,12 @@ const exp = new (function Experiment() {
                     return;
                 }
                 exp.setTable(1,randomPick(coopRateSelf),randomPick(waitRateOther));
+                toggleCut(1200,()=>{
+                    app.setSelf(-20);
+                    app.setOther();
+                });
             }else if (expTable.coop.length==0){
-                console.log(expTable.coop);
+                // console.log(expTable.coop);
                 if (expSet.length==0){
                     //结束实验
                     // endExp();
@@ -205,16 +232,14 @@ const exp = new (function Experiment() {
                 data.setData(tag+'-合作率',coopUser/10);
                 //设置下一组
                 exp.setTable();
-                //换车
-                fn = ()=>{
-                    app.reset();
-                    app.setSelf(30);
+            }
+            else{
+                toggleCut(1200,()=>{
+                    app.setSelf(-20);
                     app.setOther();
-                }
+                });
             }
             addRound();
-            if(fn) toggleCut(1200,fn);
-            else toggleCut(1200);
         },2000)
 
         return {stopSelf,stopOther};

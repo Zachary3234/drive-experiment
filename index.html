@@ -450,7 +450,7 @@
                                 实验程序中的路况界面为你驾驶的自动驾驶汽车车内显示屏界面。为控制实验变量，实验程序中将不展示路面上的其他车辆，只保留我方直行车辆及对方左转车辆。
                             </p>
                             <p>
-                                实验共分为九组，每组实验开始前将对我方车辆和对方车辆社会价值取向类型进行说明。
+                                实验共分为九个单元，每个单元实验开始前将对我方车辆和对方车辆社会价值取向类型进行说明。
                             </p>
                             <p>
                                 实验开始后，我方汽车所做决策将体现在决策框中，决策框出现时，你可对系统决策进行更改，若到达路口处未作出更改，则车辆按照系统决策行动。
@@ -512,22 +512,6 @@
                         <span id="prog-set-tail" class="my-auto">/9</span>
                     </div>
                 </div>
-                <div id="cut-set"
-                    class="absolute inset-5 flex bg-gray-100 transition-opacity duration-200 ease-in-out opacity-0">
-                    <span id="cut-text" class="m-auto text-gray-700 text-2xl">
-                        本单元你将驾驶<span id="cut-set-self" class="text-green-400 text-red-400">亲社会</span>车辆，对方驾驶<span
-                            id="cut-set-other" class="text-green-400 text-red-400">亲社会</span>车辆。
-                    </span>
-                    <button id="cut-set-btn"
-                        class="z-50 absolute text-xl left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10 bg-gray-300 rounded-lg"
-                        onclick="closeSet()">确定</button>
-                </div>
-                <div id="cut"
-                    class="absolute inset-5 flex bg-gray-100 transition-opacity duration-200 ease-in-out opacity-0">
-                    <span id="cut-text" class="m-auto text-gray-700 text-4xl">
-                        Round: <span id="cut-round">1</span><span id="cut-round-tail">/10</span>
-                    </span>
-                </div>
                 <div id="tip" class="absolute bottom-7 right-7 flex-col">
                     <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-50 rounded-lg text-xl text-white">
                         <span class="my-auto ml-3 flex-shrink-0">轮次：</span>
@@ -559,6 +543,22 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+                <div id="cut-set"
+                    class="absolute inset-5 flex bg-gray-100 transition-opacity duration-200 ease-in-out opacity-0">
+                    <span id="cut-text" class="m-auto text-gray-700 text-2xl">
+                        本单元你将驾驶<span id="cut-set-self" class="text-green-400 text-red-400">亲社会</span>车辆，对方驾驶<span
+                            id="cut-set-other" class="text-green-400 text-red-400">亲社会</span>车辆。
+                    </span>
+                    <button id="cut-set-btn"
+                        class="z-50 absolute text-xl left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10 bg-gray-300 rounded-lg"
+                        onclick="closeSet()">确定</button>
+                </div>
+                <div id="cut"
+                    class="absolute inset-5 flex bg-gray-100 transition-opacity duration-200 ease-in-out opacity-0">
+                    <span id="cut-text" class="m-auto text-gray-700 text-4xl">
+                        Round: <span id="cut-round">1</span><span id="cut-round-tail">/10</span>
+                    </span>
                 </div>
                 <div id="dialog-area" class="absolute bottom-5 inset-x-5 transition-all delay-200 invisible">
                     <div id="dialog" class="flex justify-evenly mx-auto mb-6 w-64 max-w-full py-2 px-0 overflow-hidden align-middle bg-white shadow-xl rounded-2xl 
@@ -592,7 +592,7 @@
     <script src="js/data.js"></script>
     <script src="js/exp.js"></script>
     <script>
-        const debug = true;
+        const debug = false;
         if (debug) {
             $('#debug').removeClass('hidden');
             // toggleDialog(true);

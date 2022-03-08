@@ -53,8 +53,8 @@ const exp = new (function Experiment() {
             $('#cut-set-self').removeClass();
             $('#cut-set-self').addClass('text-red-400');
         }else{//coopRate==0.5
-            //无倾向
-            $('#cut-set-self').text('无倾向');
+            //中立
+            $('#cut-set-self').text('中立');
             $('#cut-set-self').removeClass();
         }
         if (waitRate>0.5){
@@ -74,11 +74,11 @@ const exp = new (function Experiment() {
             $('#cut-set-other').removeClass();
             $('#cut-set-other').addClass('text-red-400');
         }else{//waitRate==0.5
-            //对方无倾向
+            //对方中立
             $('#tip-none').removeClass('hidden');
             $('#tip-social').addClass('hidden');
             $('#tip-self').addClass('hidden');
-            $('#cut-set-other').text('无倾向');
+            $('#cut-set-other').text('中立');
             $('#cut-set-other').removeClass();
         }
 

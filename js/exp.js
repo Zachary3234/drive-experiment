@@ -133,7 +133,7 @@ const exp = new (function Experiment() {
         }
 
         //决策框控制
-        $('#auto-decition-text')[0].innerHTML = stopSelf ? "等待" : "直行";
+        // $('#auto-decition-text')[0].innerHTML = stopSelf ? "等待" : "直行";
         if (stopSelf){
             clickWait();
         }else{
@@ -145,22 +145,22 @@ const exp = new (function Experiment() {
     this.endDecision = function () {
         //决策框控制
         toggleSign();
-        $("#move-btn").attr({"disabled":"true"});
-        $("#wait-btn").attr({"disabled":"true"});
-        $("#move-btn").toggleClass('hover:bg-blue-200');
-        $("#wait-btn").toggleClass('hover:bg-blue-200');
-        $(".btn-doing").toggleClass('hidden');
-        $(".btn-done").toggleClass('hidden');
+        // $("#move-btn").attr({"disabled":"true"});
+        // $("#wait-btn").attr({"disabled":"true"});
+        // $("#move-btn").toggleClass('hover:bg-blue-200');
+        // $("#wait-btn").toggleClass('hover:bg-blue-200');
+        // $(".btn-doing").toggleClass('hidden');
+        // $(".btn-done").toggleClass('hidden');
         setTimeout(()=>{
-            setTimeout(()=>{
-                toggleSign();
-                $("#move-btn").removeAttr("disabled");
-                $("#wait-btn").removeAttr("disabled");
-                $("#move-btn").toggleClass('hover:bg-blue-200');
-                $("#wait-btn").toggleClass('hover:bg-blue-200');
-                $(".btn-doing").toggleClass('hidden');
-                $(".btn-done").toggleClass('hidden');
-            },200)
+            // setTimeout(()=>{
+            //     toggleSign();
+            //     $("#move-btn").removeAttr("disabled");
+            //     $("#wait-btn").removeAttr("disabled");
+            //     $("#move-btn").toggleClass('hover:bg-blue-200');
+            //     $("#wait-btn").toggleClass('hover:bg-blue-200');
+            //     $(".btn-doing").toggleClass('hidden');
+            //     $(".btn-done").toggleClass('hidden');
+            // },200)
             toggleDialog(false);
         },1500)
         

@@ -66,6 +66,16 @@
         #svo-table .svo-row>div.selected::before {
             width: 1.75rem;
         }
+
+        .transform .scale-85 {
+            --tw-scale-x: .85;
+            --tw-scale-y: .85;
+        }
+
+        .scale-100-hover:hover {
+            --tw-scale-x: 1;
+            --tw-scale-y: 1;
+        }
     </style>
 </head>
 
@@ -399,13 +409,13 @@
                                 在道路车辆高峰期，十字路口会发生直行车辆与转弯车辆拥堵现象，虽然我国交规要求转弯车辆应避让直行车辆，但仍可能发生转弯车辆会抢先行驶的情况。在这种情况下，你会选择让行，还是选择继续行驶呢？
                             </p>
                             <p>
-                                本实验中你将作为自动驾驶汽车的车主，朝十字路口方向直行，十字路口对面有一辆即将左转的车辆。自动驾驶汽车可以检测对方的社会价值取向（亲社会、亲自我、无信息），并自行做出直行或让行的决策，你可以对该决策进行修改。需要注意的是，社会价值取向只表示对方的一种倾向，并不与其是否让行相对应，如亲社会的汽车并不总是让行。
+                                本实验中你将作为自动驾驶汽车的车主，朝十字路口方向直行，十字路口对面有一辆即将左转的自动驾驶车辆。自动驾驶汽车可以检测对方的社会价值取向（亲社会、亲自我、中立），并自行做出直行或让行的决策，你可以对该决策进行修改。需要注意的是，社会价值取向只表示对方的一种倾向，并不和其是否让行相对应，如亲社会的汽车并不总是让行。
                             </p>
                         </div>
                         <div id="page-info-1" class="page m-auto hidden">
                             <h1>实验说明</h1>
                             <p>
-                                本实验中，你将与左转车辆车主进行是否让行的博弈，实验绩效将与你的得分相关。在十字路口：
+                                本实验中，你将与左转车辆进行是否让行的博弈，实验绩效将与你的得分相关。在十字路口：
                             </p>
                             <p>若你选择直行，对方选择左转，则两车均无法顺利通过，各得-2分；</p>
                             <p>若你选择直行，对方选择等待，则你可以顺利通过，得2分，对方得0分；</p>
@@ -527,7 +537,27 @@
                     </div>
                 </div>
                 <div id="dialog-area" class="absolute bottom-5 inset-x-5 transition-all delay-200 invisible">
-                    <div id="dialog" class="mx-auto mb-6 w-80 max-w-full py-4 px-0 overflow-hidden align-middle bg-white shadow-xl rounded-2xl 
+                    <div id="dialog" class="flex justify-evenly mx-auto mb-6 w-64 max-w-full py-2 px-0 overflow-hidden align-middle bg-white shadow-xl rounded-2xl 
+                        transition aduration-200 ease-in-out transform scale-95 opacity-0">
+                        
+                        <div onclick="clickMove();exp.changeStop(false);">
+                            <svg id="move-sign" xmlns="http://www.w3.org/2000/svg"
+                                class="h-24 w-24 text-gray-700 transition-all cursor-pointer scale-100-hover transform opacity-50 scale-85" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                    d="M9 11l3-3m0 0l3 3m-3-3v8m0-13a9 9 0 110 18 9 9 0 010-18z" />
+                            </svg>
+                        </div>
+                        <div onclick="clickWait();exp.changeStop(true);">
+                            <svg id="wait-sign" xmlns="http://www.w3.org/2000/svg"
+                                class="h-24 w-24 text-gray-700 transition-all cursor-pointer scale-100-hover transform opacity-50 scale-85" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                    d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                            </svg>
+                        </div>
+                    </div>
+                    <!-- <div id="dialog" class="mx-auto mb-6 w-80 max-w-full py-4 px-0 overflow-hidden align-middle bg-white shadow-xl rounded-2xl 
                         transition aduration-200 ease-in-out transform scale-95 opacity-0">
                         <div id="dialog-sign"
                             class="absolute -mt-1 w-full transition duration-500 ease-in-out transform scale-95 opacity-0">
@@ -599,7 +629,7 @@
                                 等待
                             </button>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -617,6 +647,9 @@
             // toggleDialog(true);
             // $('#page-area').addClass('hidden');
             $('#skip-btn').removeClass('hidden');
+
+            // $('#page-area').addClass('hidden');
+            // toggleDialog();
         }
 
         function toggleDialog(open) {
@@ -634,16 +667,22 @@
             }
         }
         function clickMove() {
-            $('#move-btn-svg').removeClass('hidden');
-            $('#wait-btn-svg').addClass('hidden');
-            $('#move-sign').removeClass('hidden');
-            $('#wait-sign').addClass('hidden');
+            // $('#move-btn-svg').removeClass('hidden');
+            // $('#wait-btn-svg').addClass('hidden');
+            $('#move-sign').removeClass('opacity-50 scale-85');
+            $('#move-sign').addClass('opacity-100 scale-100');
+            $('#wait-sign').addClass('opacity-50 scale-85');
+            $('#wait-sign').removeClass('opacity-100 scale-100');
         }
         function clickWait() {
-            $('#move-btn-svg').addClass('hidden');
-            $('#wait-btn-svg').removeClass('hidden');
-            $('#move-sign').addClass('hidden');
-            $('#wait-sign').removeClass('hidden');
+            // $('#move-btn-svg').addClass('hidden');
+            // $('#wait-btn-svg').removeClass('hidden');
+            // $('#move-sign').addClass('hidden');
+            // $('#wait-sign').removeClass('hidden');
+            $('#wait-sign').removeClass('opacity-50 scale-85');
+            $('#wait-sign').addClass('opacity-100 scale-100');
+            $('#move-sign').addClass('opacity-50 scale-85');
+            $('#move-sign').removeClass('opacity-100 scale-100');
         }
         function toggleSign() {
             // $('#dialog-sign').toggleClass('opacity-10 scale-80 opacity-100 scale-100');

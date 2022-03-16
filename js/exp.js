@@ -44,40 +44,55 @@ const exp = new (function Experiment() {
         
         if (coopRate>0.5){
             //亲社会
+            app.setSelfType(1);
+            $('#tip-self').text('亲社会');
+            $('#tip-self').removeClass();
+            $('#tip-self').addClass('my-auto text-green-400');
             $('#cut-set-self').text('亲社会');
             $('#cut-set-self').removeClass();
             $('#cut-set-self').addClass('text-green-400');
         }else if(coopRate<0.5){
             //亲自我
+            app.setSelfType(2);
+            $('#tip-self').text('亲自我');
+            $('#tip-self').removeClass();
+            $('#tip-self').addClass('my-auto text-red-400');
             $('#cut-set-self').text('亲自我');
             $('#cut-set-self').removeClass();
             $('#cut-set-self').addClass('text-red-400');
         }else{//coopRate==0.5
             //中立
+            app.setSelfType(0);
+            $('#tip-self').text('中立');
+            $('#tip-self').removeClass();
+            $('#tip-self').addClass('my-auto');
             $('#cut-set-self').text('中立');
             $('#cut-set-self').removeClass();
         }
         if (waitRate>0.5){
             //对方亲社会
-            $('#tip-social').removeClass('hidden');
-            $('#tip-self').addClass('hidden');
-            $('#tip-none').addClass('hidden');
+            app.setOtherType(1);
+            $('#tip-other').text('亲社会');
+            $('#tip-other').removeClass();
+            $('#tip-other').addClass('my-auto text-green-400');
             $('#cut-set-other').text('亲社会');
             $('#cut-set-other').removeClass();
             $('#cut-set-other').addClass('text-green-400');
         }else if(waitRate<0.5){
             //对方亲自我
-            $('#tip-self').removeClass('hidden');
-            $('#tip-social').addClass('hidden');
-            $('#tip-none').addClass('hidden');
+            app.setOtherType(2);
+            $('#tip-other').text('亲自我');
+            $('#tip-other').removeClass();
+            $('#tip-other').addClass('my-auto text-red-400');
             $('#cut-set-other').text('亲自我');
             $('#cut-set-other').removeClass();
             $('#cut-set-other').addClass('text-red-400');
         }else{//waitRate==0.5
             //对方中立
-            $('#tip-none').removeClass('hidden');
-            $('#tip-social').addClass('hidden');
-            $('#tip-self').addClass('hidden');
+            app.setOtherType(0);
+            $('#tip-other').text('中立');
+            $('#tip-other').removeClass();
+            $('#tip-other').addClass('my-auto');
             $('#cut-set-other').text('中立');
             $('#cut-set-other').removeClass();
         }
@@ -101,12 +116,14 @@ const exp = new (function Experiment() {
 
     var stopSelf = true;
     var stopOther = true;
+    this.waitDecision = false;
     this.changeStop = function (stop) {
         stopSelf = stop;
         app.setSpeed(2);
     }
     //开始决策
     this.startDecision = function () {
+        this.waitDecision = true;
         var coop = randomPop(expTable.coop);
         var wait = randomPop(expTable.wait);
 
@@ -143,24 +160,10 @@ const exp = new (function Experiment() {
     }
     //结束决策
     this.endDecision = function () {
+        this.waitDecision = false;
         //决策框控制
         toggleSign();
-        // $("#move-btn").attr({"disabled":"true"});
-        // $("#wait-btn").attr({"disabled":"true"});
-        // $("#move-btn").toggleClass('hover:bg-blue-200');
-        // $("#wait-btn").toggleClass('hover:bg-blue-200');
-        // $(".btn-doing").toggleClass('hidden');
-        // $(".btn-done").toggleClass('hidden');
         setTimeout(()=>{
-            // setTimeout(()=>{
-            //     toggleSign();
-            //     $("#move-btn").removeAttr("disabled");
-            //     $("#wait-btn").removeAttr("disabled");
-            //     $("#move-btn").toggleClass('hover:bg-blue-200');
-            //     $("#wait-btn").toggleClass('hover:bg-blue-200');
-            //     $(".btn-doing").toggleClass('hidden');
-            //     $(".btn-done").toggleClass('hidden');
-            // },200)
             toggleDialog(false);
         },1500)
         
@@ -215,6 +218,7 @@ const exp = new (function Experiment() {
                 }
                 exp.setTable(1,randomPick(coopRateSelf),randomPick(waitRateOther));
                 toggleCut(1200,()=>{
+                    app.reset();
                     app.setSelf(-20);
                     app.setOther();
                 });
@@ -254,6 +258,10 @@ const exp = new (function Experiment() {
         exp.setTable(1,randomPick(coopRateSelf),randomPick(waitRateOther));
         $('#tip-round-tail')[0].innerHTML = '/'+preExp;
         $('#cut-round-tail')[0].innerHTML = '/'+preExp;
+        app.reset();
+        app.setSelf(40);
+        app.setOther();
+        app.pause();
     }
     this.startExp = function () {
         preExp = 0;
@@ -265,5 +273,6 @@ const exp = new (function Experiment() {
         exp.setTable();
         $('#tip-round-tail')[0].innerHTML = '/10';
         $('#cut-round-tail')[0].innerHTML = '/10';
+        app.pause();
     }
 })();

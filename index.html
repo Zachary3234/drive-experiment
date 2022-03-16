@@ -52,20 +52,26 @@
             left: 50%;
             top: 50%;
             transform: translateX(-50%) translateY(-50%);
-            height: 0.25rem;
-            width: 0.35rem;
+            height: 0rem;
+            width: 0.65rem;
             max-width: 100%;
-            background-color: rgb(104, 179, 223);
-            border-radius: 9999px;
-
-            transition-property: width;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 150ms;
+            /* background-color: rgb(104, 179, 223); */
+            border-radius: 0.5rem;
+            border-color: rgb(104, 179, 223);
         }
 
         #svo-table .svo-row>div.selected::before {
-            width: 1.75rem;
+            width: 2.125rem;
+            height: 3.375rem;
+            border-width: 0.175rem;
         }
+
+        /* #svo-table .svo-row>div.selected {
+            background-color: rgb(104, 179, 223);
+        }
+        #svo-table .svo-row>div {
+            border-radius: 0.5rem;
+        } */
 
         .transform .scale-85 {
             --tw-scale-x: .85;
@@ -513,16 +519,24 @@
                     </div>
                 </div>
                 <div id="tip" class="absolute bottom-7 right-7 flex-col">
-                    <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-50 rounded-lg text-xl text-white">
+                    <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-80 rounded-lg text-xl text-white">
                         <span class="my-auto ml-3 flex-shrink-0">轮次：</span>
                         <span id="tip-round" class="my-auto">1</span>
                         <span id="tip-round-tail" class="my-auto">/10</span>
                     </div>
-                    <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-50 rounded-lg text-xl text-white">
+                    <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-80 rounded-lg text-xl text-white">
                         <span class="my-auto ml-3 flex-shrink-0">得分：</span>
                         <span id="tip-score" class="my-auto">0</span>
                     </div>
-                    <div class="h-36 w-36 mt-2 flex bg-gray-600 bg-opacity-50 rounded-lg text-md text-white">
+                    <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-80 rounded-lg text-xl text-white">
+                        <span class="my-auto ml-3 flex-shrink-0">对方：</span>
+                        <span id="tip-other" class="my-auto"></span>
+                    </div>
+                    <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-80 rounded-lg text-xl text-white">
+                        <span class="my-auto ml-3 flex-shrink-0">我方：</span>
+                        <span id="tip-self" class="my-auto"></span>
+                    </div>
+                    <div class="h-36 w-36 mt-2 flex bg-gray-600 bg-opacity-80 rounded-lg text-md text-white overflow-hidden">
                         <table class="mx-auto border-collapse border-2 border-blue-500x bg-blue-50x text-center">
                             <tbody>
                                 <tr class="bg-blue-100x">
@@ -564,7 +578,7 @@
                     <div id="dialog" class="flex justify-evenly mx-auto mb-6 w-64 max-w-full py-2 px-0 overflow-hidden align-middle bg-white shadow-xl rounded-2xl 
                         transition aduration-200 ease-in-out transform scale-95 opacity-0">
                         
-                        <div onclick="clickMove();exp.changeStop(false);">
+                        <div onclick="clickMove();">
                             <svg id="move-sign" xmlns="http://www.w3.org/2000/svg"
                                 class="h-24 w-24 text-gray-700 transition-all cursor-pointer scale-100-hover transform opacity-50 scale-85" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -572,7 +586,7 @@
                                     d="M9 11l3-3m0 0l3 3m-3-3v8m0-13a9 9 0 110 18 9 9 0 010-18z" />
                             </svg>
                         </div>
-                        <div onclick="clickWait();exp.changeStop(true);">
+                        <div onclick="clickWait();">
                             <svg id="wait-sign" xmlns="http://www.w3.org/2000/svg"
                                 class="h-24 w-24 text-gray-700 transition-all cursor-pointer scale-100-hover transform opacity-50 scale-85" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -620,20 +634,26 @@
         function clickMove() {
             // $('#move-btn-svg').removeClass('hidden');
             // $('#wait-btn-svg').addClass('hidden');
-            $('#move-sign').removeClass('opacity-50 scale-85');
-            $('#move-sign').addClass('opacity-100 scale-100');
-            $('#wait-sign').addClass('opacity-50 scale-85');
-            $('#wait-sign').removeClass('opacity-100 scale-100');
+            if (exp.waitDecision){
+                $('#move-sign').removeClass('opacity-50 scale-85');
+                $('#move-sign').addClass('opacity-100 scale-100');
+                $('#wait-sign').addClass('opacity-50 scale-85');
+                $('#wait-sign').removeClass('opacity-100 scale-100');
+                exp.changeStop(false);
+            }
         }
         function clickWait() {
             // $('#move-btn-svg').addClass('hidden');
             // $('#wait-btn-svg').removeClass('hidden');
             // $('#move-sign').addClass('hidden');
             // $('#wait-sign').removeClass('hidden');
-            $('#wait-sign').removeClass('opacity-50 scale-85');
-            $('#wait-sign').addClass('opacity-100 scale-100');
-            $('#move-sign').addClass('opacity-50 scale-85');
-            $('#move-sign').removeClass('opacity-100 scale-100');
+            if (exp.waitDecision){
+                $('#wait-sign').removeClass('opacity-50 scale-85');
+                $('#wait-sign').addClass('opacity-100 scale-100');
+                $('#move-sign').addClass('opacity-50 scale-85');
+                $('#move-sign').removeClass('opacity-100 scale-100');
+                exp.changeStop(true);
+            }
         }
         function toggleSign() {
             // $('#dialog-sign').toggleClass('opacity-10 scale-80 opacity-100 scale-100');
@@ -755,10 +775,6 @@
             $('#page-area').addClass('hidden');
             $('#page-area').toggleClass('opacity-0 opacity-100');
             toggleCutTough(1000);
-            app.pause();
-            app.reset();
-            app.setSelf(40);
-            app.setOther();
             exp.startPreExp(5);
         }
         function endPreExp() {
@@ -775,7 +791,6 @@
                 $('#page-area').addClass('opacity-0 hidden');
                 $('#page-area').removeClass('opacity-100');
             }, 200);
-            app.pause();
             exp.startExp();
         }
         function endExp(score) {
@@ -786,6 +801,10 @@
             data.sendData();
         }
         app.pause();
+
+        if (debug) {
+            next();
+        }
     </script>
 </body>
 

@@ -181,6 +181,12 @@ const app = new (function Application() {
     this.setOther = function () {
         carsControl && carsControl.setOther();
     };
+    this.setSelfType = function (type) {
+        carsControl && carsControl.setSelfType(type);
+    }
+    this.setOtherType = function (type) {
+        carsControl && carsControl.setOtherType(type);
+    }
     //其他控制
     this.setSpeed = function (val) {
         control.maxSpeed = control.baseSpeed*parseFloat(val);
@@ -360,7 +366,9 @@ const app = new (function Application() {
                 this.carOtherLast && this.carOtherLast.remove();
                 this.carOtherLast = null;
             }else{
-                this.carSelf = initCar((new THREE.Vector3(3.4, 0, zoffset)).add(meetChunk.position));
+                this.carSelf = initCar((new THREE.Vector3(3.4, 0, zoffset)).add(meetChunk.position),
+                                    null,null,null,
+                                    carSelfType>=0?carTypeSet[carSelfType]:null);
             }
         }
         this.setOther = function () {
@@ -372,7 +380,22 @@ const app = new (function Application() {
             currCord.row = checkChunkRow(this.carSelf,30);
             if(currCord.row == undefined) currCord.row = 1;
             meetChunk = worldControl.chunkTable[currCord.row][currCord.col];
-            this.carOther = initCar((new THREE.Vector3(-3.4, 0, meetChunk.position.z-this.carSelf.position.z-53.5)).add(meetChunk.position), new THREE.Euler(0, Math.PI, 0), 1);
+            this.carOther = initCar((new THREE.Vector3(-3.4, 0, meetChunk.position.z-this.carSelf.position.z-53.5)).add(meetChunk.position),
+                                    new THREE.Euler(0, Math.PI, 0), 1, null,
+                                    carOtherType>=0?carTypeSet[carOtherType]:null);
+        }
+
+        var carSelfType = -1;
+        var carOtherType = -1;
+        var carTypeNone    = [objects.cars[3],objects.cars[5],objects.cars[10],objects.cars[17]];
+        var carTypeSocial  = [objects.cars[1],objects.cars[6],objects.cars[14],objects.cars[16]];
+        var carTypeSelfish = [objects.cars[2],objects.cars[8],objects.cars[9]];
+        var carTypeSet = [carTypeNone,carTypeSocial,carTypeSelfish];
+        this.setSelfType = function (type) {
+            carSelfType = type;
+        }
+        this.setOtherType = function (type) {
+            carOtherType = type;
         }
         function checkChunkRow(car,offset = 0){
             for (let i=0;i<worldControl.chunkTable.length;i++){
@@ -382,8 +405,10 @@ const app = new (function Application() {
             }
         }
         
-        function initCar(position, rotation, turn = 0, stop = false, iniCar) {
-            var car = void 0 != iniCar ? iniCar : randomPop(objects.cars);
+        function initCar(position, rotation, turn = 0, stop = false, iniCars) {
+            var car = void 0 != iniCars ? randomPop(iniCars) : randomPop(objects.cars);//randomPop(objects.cars);
+
+            car.carSet = iniCars;
 
             chunkScene.add(car);
             position && (car.position.copy(position));
@@ -508,7 +533,7 @@ const app = new (function Application() {
             }
             car.remove = function () {
                 this.rotation.copy(new THREE.Euler(0, 0, 0));
-                objects.cars.push(this);
+                this.carSet.push(this);
                 chunkScene.remove(this);
             }
             return car;

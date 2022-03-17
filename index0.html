@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自动驾驶合作实验</title>
+    <link href="css/tailwind-2.2.19.min.css" rel="stylesheet">
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        #progress:hover #prog-text {
+            opacity: 100%;
+        }
+
+        .transform .scale-85 {
+            --tw-scale-x: .85;
+            --tw-scale-y: .85;
+        }
+
+        .scale-100-hover:hover {
+            --tw-scale-x: 1;
+            --tw-scale-y: 1;
+        }
+    </style>
+</head>
+
+<body class="overflow-hidden bg-gray-50">
+    <!-- 纵向高度占满，最大宽度与高度相同的方形区域 -->
+    <div id="app" class="relative mx-auto select-none" style="width: 100vh; max-width: 100%; height: 100vh;">
+        <!-- 显示器区域 -->
+        <div id="monitor" class="absolute inset-2 p-5 bg-gray-700 ring-4 ring-gray-400 rounded-3xl">
+            <!-- 画面渲染 -->
+            <div id="render" class="absolute inset-5 bg-gray-400">
+                <canvas></canvas>
+            </div>
+            <!-- 界面信息 -->
+            <div id="info" class="absolute inset-5">
+                <div id="progress" class="absolute left-5 top-5 flex transition-opacity opacity-80 hover:opacity-100">
+                    <div id="prog-svg" class="h-10 w-10 transform -rotate-90">
+                        <svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                            <circle id="prog-pie" stroke-dasharray="11 95" stroke="white" stroke-width="30" fill="none"
+                                r="15" cx="50" cy="50" />
+                            <circle stroke="white" stroke-width="6" fill="none" r="30" cx="50" cy="50" />
+                        </svg>
+                    </div>
+                    <div id="prog-text" class="h-10 flex rounded-lg text-xl text-white opacity-0 transition-opacity">
+                        <span class="my-auto ml-1">组次：</span>
+                        <span id="prog-text-num" class="my-auto">1</span>
+                        <span class="my-auto">/</span>
+                        <span id="prog-text-max" class="my-auto">9</span>
+                    </div>
+                </div>
+                <div id="tips" class="absolute right-2 bottom-2">
+                    <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-80 rounded-lg text-xl text-white">
+                        <span class="my-auto ml-3 flex-shrink-0">轮次：</span>
+                        <span id="tip-round-num" class="my-auto">1</span>
+                        <span class="my-auto">/</span>
+                        <span id="tip-round-max" class="my-auto">10</span>
+                    </div>
+                    <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-80 rounded-lg text-xl text-white">
+                        <span class="my-auto ml-3 flex-shrink-0">得分：</span>
+                        <span id="tip-score" class="my-auto">0</span>
+                        <span id="tip-score-tail" style="margin-top: auto; margin-bottom: auto;"></span>
+                    </div>
+                    <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-80 rounded-lg text-xl text-white">
+                        <span class="my-auto ml-3 flex-shrink-0">对方：</span>
+                        <span id="tip-other" style="margin-top: auto; margin-bottom: auto;">中立</span>
+                    </div>
+                    <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-80 rounded-lg text-xl text-white">
+                        <span class="my-auto ml-3 flex-shrink-0">我方：</span>
+                        <span id="tip-self" style="margin-top: auto; margin-bottom: auto;">中立</span>
+                    </div>
+                    <div
+                        class="h-36 w-36 mt-2 flex bg-gray-600 bg-opacity-80 rounded-lg text-md text-white overflow-hidden">
+                        <table class="mx-auto border-collapse border-2 text-center">
+                            <tbody>
+                                <tr>
+                                    <td class="border-2 border-opacity-20 w-16"></td>
+                                    <td class="border-2 border-opacity-20 w-20">左转</td>
+                                    <td class="border-2 border-opacity-20 w-20">等待</td>
+                                </tr>
+                                <tr>
+                                    <td class="border-2 border-opacity-20">直行</td>
+                                    <td class="border-2 border-opacity-20">(-2,-2)</td>
+                                    <td class="border-2 border-opacity-20">(2,0)</td>
+                                </tr>
+                                <tr>
+                                    <td class="border-2 border-opacity-20">等待</td>
+                                    <td class="border-2 border-opacity-20">(0,2)</td>
+                                    <td class="border-2 border-opacity-20">(-1,-1)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- 决策框 -->
+            <div id="dialog" class="absolute inset-x-5 bottom-5 w-64 max-w-full mx-auto mb-6 py-2 px-0 bg-white rounded-2xl shadow-xl 
+                        flex justify-evenly align-middle overflow-hidden 
+                        transition duration-200 ease-in-out transform scale-95 opacity-0">
+                <div onclick="clickMove()">
+                    <svg id="move-btn" xmlns="http://www.w3.org/2000/svg"
+                        class="h-24 w-24 text-gray-700 transition-all cursor-pointer scale-100-hover transform opacity-50 scale-85"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                            d="M9 11l3-3m0 0l3 3m-3-3v8m0-13a9 9 0 110 18 9 9 0 010-18z" />
+                    </svg>
+                </div>
+                <div onclick="clickWait()">
+                    <svg id="wait-btn" xmlns="http://www.w3.org/2000/svg"
+                        class="h-24 w-24 text-gray-700 transition-all cursor-pointer scale-100-hover transform opacity-50 scale-85"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                            d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                    </svg>
+                </div>
+            </div>
+            <!-- 转换界面 -->
+            <div id="cut" class="absolute inset-5 bg-gray-100 opacity-100 opacity-0x pointer-events-nonex
+                                flex
+                                transition-opacity duration-500 ease-in-out">
+                <span id="cut-text" class="m-auto text-gray-700 text-2xl">
+                    <span>本单元你将驾驶</span>
+                    <span id="cut-self">中立</span>
+                    <span>车辆，对方驾驶</span>
+                    <span id="cut-other">中立</span>
+                    <span>车辆。</span>
+                </span>
+                <button id="cut-btn"
+                    class="z-50 absolute text-xl left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10 bg-gray-300 rounded-lg"
+                    onclick="clickCut()">确定</button>
+                <span id="cut-round" class="m-auto text-gray-700 text-4xl hidden">
+                    <span>Round: </span>
+                    <span id="cut-round-num">1</span>
+                    <span>/</span>
+                    <span id="cut-round-max">10</span>
+                </span>
+            </div>
+            <!-- 说明页面 -->
+            <div id="pages" class="absolute inset-5 bg-gray-100 opacity-100 opacity-0x pointer-events-nonex
+                                transition-opacity duration-500 ease-in-out">
+                Pages
+            </div>
+        </div>
+    </div>
+    <script src="js/lib/jquery-3.6.0.min.js"></script>
+    <script src="js/lib/three.js"></script>
+    <!-- <script src="js/load.js?v=202203170310"></script>
+    <script src="js/app.js?v=202203170310"></script>
+    <script src="js/data.js?v=202203170310"></script>
+    <script src="js/exp.js?v=202203170310"></script> -->
+    <script>
+        const debug = true;
+        if (debug) {
+            toggleDialog(true);
+            // toggleCut(false);
+            togglePages(false);
+        }
+
+        exp = {
+            waitDecision: true,
+            changeStop: function (stop) {
+                stopSelf = stop;
+            }
+        };
+
+        // 界面信息
+        //进度
+        setProgress();
+        function setProgress(num = $('#prog-text-num').text(),
+            max = $('#prog-text-max').text()) {
+            $('#progress').removeClass('hidden');
+            $('#prog-text-num').text(num);
+            $('#prog-text-max').text(max);
+            var piePart = Math.round(num / max * 95 * 10) / 10;
+            $('#prog-pie').attr('stroke-dasharray', piePart + ' 95');
+            debug && console.log('Set progress:', num, '/', max);
+        }
+        //轮次
+        function setRound(num = $('#tip-round-num').text(),
+            max = $('#tip-round-max').text()) {
+            $('#tip-round-num').text(num);
+            $('#tip-round-max').text(max);
+            $('#cut-round-num').text(num);
+            $('#cut-round-max').text(max);
+            debug && console.log('Set round:', num, '/', max);
+        }
+        //得分
+        function setScore(score) {
+            $('#tip-score').text(score);
+        }
+        function getScore() {
+            return parseInt($('#tip-score').text());
+        }
+        function addScore(val = 0) {
+            var newval = parseInt($('#tip-score').text()) + val;
+            if (val > 0) {
+                $('#tip-score-tail').text('+' + val);
+                $('#tip-score-tail').addClass('text-green-400');
+            } else if (val < 0) {
+                $('#tip-score-tail').text(val);
+                $('#tip-score-tail').addClass('text-red-400');
+            } else {
+                $('#tip-score-tail').text('+' + val);
+            }
+            setTimeout(() => {
+                $('#tip-score').text(newval);
+                $('#tip-score-tail').text('');
+                $('#tip-score-tail').removeClass();
+                debug && console.log('Add score done:', $('#tip-score').text());
+            }, 2000);
+            debug && console.log('Add score:', val);
+        }
+        //车型倾向
+        function setType(coopRate = 0.5, waitRate = 0.5) {
+            setEleText('#tip-self', coopRate);
+            setEleText('#tip-other', waitRate);
+            setEleText('#cut-self', coopRate);
+            setEleText('#cut-other', waitRate);
+            function setEleText(ele, rate) {
+                if (rate > 0.5) {
+                    //亲社会
+                    $(ele).text('亲社会');
+                    $(ele).removeClass();
+                    $(ele).addClass('text-green-400');
+                } else if (rate < 0.5) {
+                    //亲自我
+                    $(ele).text('亲自我');
+                    $(ele).removeClass();
+                    $(ele).addClass('text-red-400');
+                } else {//==0.5
+                    //中立
+                    $(ele).text('中立');
+                    $(ele).removeClass();
+                }
+            }
+            debug && console.log('Set type:', $('#tip-self').text(), $('#tip-other').text());
+        }
+
+        // 决策框
+        function clickMove() {
+            if (exp.waitDecision) {
+                $('#move-btn').removeClass('opacity-50 scale-85');
+                $('#move-btn').addClass('opacity-100 scale-100');
+                $('#wait-btn').addClass('opacity-50 scale-85');
+                $('#wait-btn').removeClass('opacity-100 scale-100');
+                exp.changeStop(true);
+            }
+            debug && console.log('Click move-btn');
+        }
+        function clickWait() {
+            if (exp.waitDecision) {
+                $('#wait-btn').removeClass('opacity-50 scale-85');
+                $('#wait-btn').addClass('opacity-100 scale-100');
+                $('#move-btn').addClass('opacity-50 scale-85');
+                $('#move-btn').removeClass('opacity-100 scale-100');
+                exp.changeStop(false);
+            }
+            debug && console.log('Click wait-btn');
+        }
+        function toggleDialog(open) {
+            if (void 0 == open) {
+                $('#dialog').toggleClass('scale-95 opacity-0 scale-100 opacity-100');
+            } else if (open) {
+                $('#dialog').removeClass('scale-95 opacity-0');
+                $('#dialog').addClass('scale-100 opacity-100');
+            } else {
+                $('#dialog').addClass('scale-95 opacity-0');
+                $('#dialog').removeClass('scale-100 opacity-100');
+            }
+            debug && console.log('Toggle dialog:', $('#dialog').hasClass('scale-100 opacity-100'));
+        }
+
+        // 转换界面
+        function toggleCut(open) {
+            if (void 0 == open) {
+                $('#cut').toggleClass('opacity-100 opacity-0 pointer-events-none');
+            } else if (open) {
+                $('#cut').removeClass('opacity-0 pointer-events-none');
+                $('#cut').addClass('opacity-100');
+            } else {
+                $('#cut').addClass('opacity-0 pointer-events-none');
+                $('#cut').removeClass('opacity-100');
+            }
+            debug && console.log('Toggle cut:', !$('#cut').hasClass('opacity-0 pointer-events-none'));
+        }
+        function clickCut() {
+            $('#cut-round').removeClass('hidden');
+            $('#cut-text').addClass('hidden');
+            $('#cut-btn').addClass('hidden');
+        }
+
+        // 说明页面
+        function togglePages(open) {
+            if (void 0 == open) {
+                $('#pages').toggleClass('opacity-100 opacity-0 pointer-events-none');
+            } else if (open) {
+                $('#pages').removeClass('opacity-0 pointer-events-none');
+                $('#pages').addClass('opacity-100');
+            } else {
+                $('#pages').addClass('opacity-0 pointer-events-none');
+                $('#pages').removeClass('opacity-100');
+            }
+            debug && console.log('Toggle pages:', !$('#pages').hasClass('opacity-0 pointer-events-none'));
+        }
+    </script>
+</body>
+
+</html>

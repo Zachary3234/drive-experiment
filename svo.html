@@ -497,7 +497,6 @@
                 selfGain += svoGains[i][svoSelect[i]];
                 otherGain += svoGains[6+i][svoSelect[i]];
             }
-            console.log(selfGain, otherGain);
             return Math.atan((otherGain - 50 * svoSelect.length) / (selfGain - 50 * svoSelect.length)) * 180 / Math.PI;
         }
 

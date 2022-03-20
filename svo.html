@@ -451,6 +451,39 @@
                     this.dataObj["svo-"+(i+1)+"-other"] = otherGain;
                 }
                 return this.dataObj;
+            },
+            getCSV: function (dataArr) {
+                let text = '';
+                let keys = ["ID","SVO"];
+                for (let i = 0; i < this.svoSelect.length; i++) {
+                    keys.push("svo-"+(i+1)+"-self");
+                    keys.push("svo-"+(i+1)+"-other");
+                }
+                for (let i = 0; i < keys.length; i++) {
+                    const key = keys[i];
+                    text += key;
+                    if (i < keys.length-1)
+                        text += ',';
+                    else
+                        text += '\r\n';
+                }
+                for (let j = 0; j < dataArr.length; j++) {
+                    for (let i = 0; i < keys.length; i++) {
+                        const key = keys[i];
+                        text += dataArr[j][key];
+                        if (i < keys.length-1)
+                            text += ',';
+                        else
+                            text += '\r\n';
+                    }
+                }
+                let uri = "data:text/csv;charset=utf-8,\ufeff" + encodeURIComponent(text);
+                let link = document.createElement('a');
+                link.href = uri;
+                link.download = "data.csv";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             }
         });
 
@@ -552,6 +585,11 @@
                     $('#send-btn').removeClass('hidden');
                 });
                 debug && console.log('Send data:',data.getData());
+            }
+            function download() {
+                downloadDB('svo-test', (suc) => {
+                    data.getCSV(JSON.parse(suc));
+                }, (err) => {});
             }
         }
 

@@ -1,114 +1,24 @@
 const exp = new (function Experiment() {
-    debug && console.log('Import exp');
-
-    //我方合作率（亲自我、中立、亲社会）
-    const coopRateSelf = [0.1,0.5,0.9];
-    //对方等待概率（亲自我、中立、亲社会）
-    const waitRateOther = [0.1,0.5,0.9];
-    //实验组集合
-    var expSets = [];
-    //实验轮集合
-    var expRounds = {
+    //我方合作率
+    var coopRateSelf = [0.1,0.5,0.9];
+    var coopRate = 0.5;
+    //对方等待概率（个人主义、亲社会、无信息）
+    var waitRateOther = [0.1,0.9,0.5];
+    var waitRate = 0.5;
+    //实验组
+    var expSet = [];
+    var expTable = {
         coop:[],
         wait:[],
     };
-    //决策
-    var stopSelf = true;
-    var stopOther = true;
-    //结束实验出口
-    var endExpFunc = ()=>{};
-    //外部引用
-    this.waitDecision = true;
-
-    this.changeStop = function (stop) {
-        stopSelf = stop;
-        debug && console.log('Change stopSelf:', stopSelf);
-    }
-    this.startPreExp = function () {
-        // 初始化
-        expRounds.wait = [];
-        expRounds.coop = [];
-        expSets = [];
-        setRounds(coopRateSelf.randomPick(),waitRateOther.randomPick(),5);
-        // 开始预实验
-        startCut(); //startSet()
-    }
-    this.startExp = function () {
-        // 初始化
-        expRounds.wait = [];
-        expRounds.coop = [];
-        expSets = [];
-        for (let i = 0; i < waitRateOther.length; i++) {
-            var waitRate = waitRateOther[i];
-            for (let j = 0; j < coopRateSelf.length; j++) {
-                var coopRate = coopRateSelf[j];
-                expSets.push([coopRate,waitRate]);
-            }
+    for (let i = 0; i < waitRateOther.length; i++) {
+        waitRate = waitRateOther[i];
+        for (let j = 0; j < coopRateSelf.length; j++) {
+            coopRate = coopRateSelf[j];
+            expSet.push([coopRate,waitRate]);
         }
-        expSets.shuffle();
-        setProgress(1,expSets.length);
-        // 开始实验
-        endExpFunc = endExp;
-        this.startSet = nextRound;
-    }
-    this.startSet = function () {
-        setTimeout(()=>{
-            toggleCut(false);
-        },1000);
     }
     
-
-    function nextRound() {
-        if (expRounds.coop.length == 0) {
-            if (expSets.length == 0) {
-                //结束实验
-                endExpFunc();
-                return;
-            }
-            else {
-                //设置下一组
-                var set = expSets.pop();
-                setRounds(set[0],set[1]);
-            }
-        }
-        // toggleCut(true);
-        // setTimeout(()=>{
-        //     toggleCut(false);
-        // },1500);
-        console.log('nextRound');
-    }
-    
-    function setRounds(coopRate,waitRate,maxRound = 10) {
-        // 设置关联界面
-        setRound(1, maxRound);
-        setType(coopRate, waitRate);
-        // resetCut();
-        
-        // 初始化实验轮
-        expRounds.wait = [];
-        expRounds.coop = [];
-        // 计算等待、合作次数，并加入每轮实验决定
-        var waitNum = Math.round(waitRate*maxRound);
-        var coopNum = Math.round(coopRate*maxRound);
-        for (let i = 0; i < maxRound; i++) {
-            if (waitNum-- > 0) expRounds.wait.push(1);
-            else expRounds.wait.push(0);
-            if (coopNum-- > 0) expRounds.coop.push(1);
-            else expRounds.coop.push(0);
-        }
-        // 打乱决定顺序
-        expRounds.coop.shuffle();
-        expRounds.wait.shuffle();
-    }
-    //每轮实验
-    function startRound() {
-        if (expRounds.coop.length <= 0) return;
-        var coop = expRounds.coop.pop();
-        var wait = expRounds.wait.pop();
-        setType
-    }
-
-    return;
     // 设置实验组
     var set = '';
     var tag = 0;
@@ -117,7 +27,7 @@ const exp = new (function Experiment() {
     var score = 0;
     this.setTable = function (nRound = 10,_coopRate,_waitRate) {
         if (void 0==_coopRate && void 0==_waitRate){
-            var rateSet = randomPop(expSets);
+            var rateSet = randomPop(expSet);
             coopRate = rateSet[0];
             waitRate = rateSet[1];
             //写入数据
@@ -314,7 +224,7 @@ const exp = new (function Experiment() {
                 });
             }else if (expTable.coop.length==0){
                 // console.log(expTable.coop);
-                if (expSets.length==0){
+                if (expSet.length==0){
                     //结束实验
                     // endExp();
                     setTimeout(()=>{

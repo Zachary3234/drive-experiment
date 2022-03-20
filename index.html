@@ -545,11 +545,9 @@
                 $('#send-msg').removeClass('hidden');
                 upload(data.getData(),'drive-exp',(suc)=>{
                     $('#send-msg').text("发送完毕");
-                    console.log(suc);
                 },(err)=>{
                     $('#send-msg').addClass('hidden');
                     $('#send-btn').removeClass('hidden');
-                    console.log(err);
                 });
                 debug && console.log('Send data');
             }

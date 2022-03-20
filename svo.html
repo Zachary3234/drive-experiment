@@ -412,7 +412,7 @@
     <script src="js/lib/jquery-3.6.0.min.js"></script>
     <script src="js/utils.js?v=202203200212"></script>
     <script>
-        const debug = true;
+        const debug = false;
         if (debug) {
 
         }
@@ -549,11 +549,9 @@
                 console.log(data.getData());
                 upload(data.getData(), 'svo-test', (suc) => {
                     $('#send-msg').text("发送完毕");
-                    console.log(suc);
                 }, (err) => {
                     $('#send-msg').addClass('hidden');
                     $('#send-btn').removeClass('hidden');
-                    console.log(err);
                 });
                 debug && console.log('Send data');
             }

@@ -217,7 +217,7 @@
     </div>
     <script src="js/lib/jquery-3.6.0.min.js"></script>
     <script src="js/lib/three.js"></script>
-    <script src="js/utils.js?v=202203200212"></script>
+    <script src="js/utils.js?v=202203201700"></script>
     <script src="js/pages.js?v=202203201735"></script>
     <!-- <script src="js/load.js?v=202203170310"></script>
     <script src="js/app.js?v=202203170310"></script>
@@ -543,7 +543,7 @@
                 $('#next-btn').addClass('hidden');
                 $('#send-btn').addClass('hidden');
                 $('#send-msg').removeClass('hidden');
-                upload(data.getData(),'drive-exp',(suc)=>{
+                uploadDB(data.getData(),'drive-exp',(suc)=>{
                     $('#send-msg').text("发送完毕");
                 },(err)=>{
                     $('#send-msg').addClass('hidden');

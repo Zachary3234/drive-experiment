@@ -37,7 +37,7 @@ Array.prototype.sum = function(fn) {
 
 
 //数据库操作
-function upload(dataObj, targetCollection, onsuccess = ()=>{}, onfail = ()=>{}) {
+function uploadDB(dataObj, targetCollection, onsuccess = ()=>{}, onfail = ()=>{}) {
     var ajaxUpload = $.ajax({
         url: "https://559f0faa-50ee-4605-869c-eb432c954171.bspapp.com/database/upload/" + targetCollection, //请求的URL
         timeout: 10000, //超时时间设置，单位毫秒
@@ -53,7 +53,7 @@ function upload(dataObj, targetCollection, onsuccess = ()=>{}, onfail = ()=>{}) 
         },
     });
 }
-function download(targetCollection, onsuccess = ()=>{}, onfail = ()=>{}) {
+function downloadDB(targetCollection, onsuccess = ()=>{}, onfail = ()=>{}) {
     var ajaxUpload = $.ajax({
         url: "https://559f0faa-50ee-4605-869c-eb432c954171.bspapp.com/database/download/" + targetCollection, //请求的URL
         timeout: 10000, //超时时间设置，单位毫秒
@@ -68,7 +68,7 @@ function download(targetCollection, onsuccess = ()=>{}, onfail = ()=>{}) {
         },
     });
 }
-function check(targetCollection, onsuccess = ()=>{}, onfail = ()=>{}) {
+function checkDB(targetCollection, onsuccess = ()=>{}, onfail = ()=>{}) {
     var ajaxUpload = $.ajax({
         url: "https://559f0faa-50ee-4605-869c-eb432c954171.bspapp.com/database/check/" + targetCollection, //请求的URL
         timeout: 10000, //超时时间设置，单位毫秒
@@ -83,7 +83,7 @@ function check(targetCollection, onsuccess = ()=>{}, onfail = ()=>{}) {
         },
     });
 }
-function clear(password, targetCollection, onsuccess = ()=>{}, onfail = ()=>{}) {
+function clearDB(password, targetCollection, onsuccess = ()=>{}, onfail = ()=>{}) {
     var ajaxUpload = $.ajax({
         url: "https://559f0faa-50ee-4605-869c-eb432c954171.bspapp.com/database/clear/" + targetCollection + "?password=" + password, //请求的URL
         timeout: 10000, //超时时间设置，单位毫秒

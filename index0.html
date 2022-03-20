@@ -28,6 +28,67 @@
             --tw-scale-x: 1;
             --tw-scale-y: 1;
         }
+
+        #pages .page {
+            flex: none;
+            width: 100%;
+            margin: auto;
+            padding: 2rem;
+            overflow-y: overlay;
+            overflow-x: hidden;
+            font-size: 20px;
+        }
+
+        #pages .page p {
+            text-indent: 2.5rem;
+        }
+
+        #pages .page h1 {
+            text-indent: 0rem;
+            text-align: center;
+            font-size: x-large;
+            font-weight: bold;
+            line-height: 4rem;
+        }
+
+        #pages #page-svo.page {
+            width: 100%;
+            height: 100%;
+            padding: 2rem;
+            position: absolute;
+            inset: 0;
+            z-index: 20;
+            background-color: rgba(243, 244, 246, 1);
+        }
+
+        #svo-table .grid-cols-def {
+            grid-template-columns: 1.5fr repeat(9, minmax(0, 1fr));
+        }
+
+        #svo-table .svo-row>div {
+            cursor: pointer;
+            position: relative;
+        }
+
+        #svo-table .svo-row>div::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            height: 0rem;
+            width: 0.65rem;
+            max-width: 100%;
+            /* background-color: rgb(104, 179, 223); */
+            border-radius: 0.5rem;
+            border-color: rgb(104, 179, 223);
+        }
+
+        #svo-table .svo-row>div.selected::before {
+            width: 2.125rem;
+            height: 3.375rem;
+            border-width: 0.175rem;
+        }
     </style>
 </head>
 
@@ -41,8 +102,9 @@
                 <canvas></canvas>
             </div>
             <!-- 界面信息 -->
-            <div id="info" class="absolute inset-5">
-                <div id="progress" class="absolute left-5 top-5 flex transition-opacity opacity-80 hover:opacity-100">
+            <div id="info" class="absolute inset-5 overflow-hidden">
+                <!-- 进度提示 -->
+                <div id="progress" class="absolute left-5 top-5 flex transition-opacity opacity-80 hover:opacity-100 invisible">
                     <div id="prog-svg" class="h-10 w-10 transform -rotate-90">
                         <svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
                             <circle id="prog-pie" stroke-dasharray="11 95" stroke="white" stroke-width="30" fill="none"
@@ -57,18 +119,22 @@
                         <span id="prog-text-max" class="my-auto">9</span>
                     </div>
                 </div>
+                <!-- 提示信息 -->
                 <div id="tips" class="absolute right-2 bottom-2">
+                    <!-- 轮次提示 -->
                     <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-80 rounded-lg text-xl text-white">
                         <span class="my-auto ml-3 flex-shrink-0">轮次：</span>
                         <span id="tip-round-num" class="my-auto">1</span>
                         <span class="my-auto">/</span>
                         <span id="tip-round-max" class="my-auto">10</span>
                     </div>
+                    <!-- 得分提示 -->
                     <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-80 rounded-lg text-xl text-white">
                         <span class="my-auto ml-3 flex-shrink-0">得分：</span>
                         <span id="tip-score" class="my-auto">0</span>
                         <span id="tip-score-tail" style="margin-top: auto; margin-bottom: auto;"></span>
                     </div>
+                    <!-- 车型提示 -->
                     <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-80 rounded-lg text-xl text-white">
                         <span class="my-auto ml-3 flex-shrink-0">对方：</span>
                         <span id="tip-other" style="margin-top: auto; margin-bottom: auto;">中立</span>
@@ -77,6 +143,7 @@
                         <span class="my-auto ml-3 flex-shrink-0">我方：</span>
                         <span id="tip-self" style="margin-top: auto; margin-bottom: auto;">中立</span>
                     </div>
+                    <!-- 得分表 -->
                     <div
                         class="h-36 w-36 mt-2 flex bg-gray-600 bg-opacity-80 rounded-lg text-md text-white overflow-hidden">
                         <table class="mx-auto border-collapse border-2 text-center">
@@ -123,19 +190,14 @@
                 </div>
             </div>
             <!-- 转换界面 -->
-            <div id="cut" class="absolute inset-5 bg-gray-100 opacity-100 opacity-0x pointer-events-nonex
-                                flex
-                                transition-opacity duration-500 ease-in-out">
+            <div id="cut" class="absolute inset-5 p-8 bg-gray-100 opacity-100 opacity-0x pointer-events-nonex
+                                flex transition-opacity duration-500 ease-in-out">
                 <span id="cut-text" class="m-auto text-gray-700 text-2xl">
-                    <span>本单元你将驾驶</span>
-                    <span id="cut-self">中立</span>
-                    <span>车辆，对方驾驶</span>
-                    <span id="cut-other">中立</span>
-                    <span>车辆。</span>
+                    <span>本单元你将驾驶<span id="cut-self">中立</span>车辆，对方驾驶<span id="cut-other">中立</span>车辆。</span>
                 </span>
                 <button id="cut-btn"
-                    class="z-50 absolute text-xl left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10 bg-gray-300 rounded-lg"
-                    onclick="clickCut()">确定</button>
+                    class="absolute text-xl left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10 bg-gray-300 rounded-lg"
+                    onclick="startCut()">确定</button>
                 <span id="cut-round" class="m-auto text-gray-700 text-4xl hidden">
                     <span>Round: </span>
                     <span id="cut-round-num">1</span>
@@ -144,32 +206,70 @@
                 </span>
             </div>
             <!-- 说明页面 -->
-            <div id="pages" class="absolute inset-5 bg-gray-100 opacity-100 opacity-0x pointer-events-nonex
+            <div id="page" class="absolute inset-5 bg-gray-100 opacity-100 opacity-0x pointer-events-nonex
                                 transition-opacity duration-500 ease-in-out">
-                Pages
+                <div id="pages" class="h-4/5 flex overflow-x-hidden" style="overflow-y: overlay;"></div>
+                <button id="next-btn"
+                    class="z-10 absolute text-xl left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10 bg-gray-300 rounded-lg"
+                    onclick="next()">下一页</button>
             </div>
         </div>
     </div>
     <script src="js/lib/jquery-3.6.0.min.js"></script>
     <script src="js/lib/three.js"></script>
+    <script src="js/utils.js?v=202203190212"></script>
+    <script src="js/pages.js?v=202203181735"></script>
     <!-- <script src="js/load.js?v=202203170310"></script>
     <script src="js/app.js?v=202203170310"></script>
-    <script src="js/data.js?v=202203170310"></script>
-    <script src="js/exp.js?v=202203170310"></script> -->
+    <script src="js/data.js?v=202203170310"></script> -->
+    <script src="js/exp copy.js?v=20220318" defer></script>
     <script>
+        $('#pages')[0].innerHTML = pagesHtml;
         const debug = true;
         if (debug) {
+            $('#skip-btn').removeClass('hidden');
+
             toggleDialog(true);
             // toggleCut(false);
-            togglePages(false);
+            // togglePages(false);
         }
 
-        exp = {
+        typeof (exp) == 'undefined' && (exp = {
             waitDecision: true,
             changeStop: function (stop) {
                 stopSelf = stop;
+                console.log('Change stopSelf:', stopSelf);
+            },
+            startPreExp: function () {
+
+            },
+            startExp: function () {
+                
             }
-        };
+        });
+
+        typeof (data) == 'undefined' && (data = {
+            svoSelect: [4, 4, 4, 4, 4, 4],
+            svoGains: [
+                // self
+                [85, 85, 85, 85, 85, 85, 85, 85, 85],
+                [85, 87, 89, 91, 93, 94, 96, 98, 100],
+                [50, 54, 59, 63, 68, 72, 76, 81, 85],
+                [50, 54, 59, 63, 68, 72, 76, 81, 85],
+                [100, 94, 88, 81, 75, 69, 63, 56, 50],
+                [100, 98, 96, 94, 93, 91, 89, 87, 85],
+                // other
+                [85, 76, 68, 59, 50, 41, 33, 24, 15],
+                [15, 19, 24, 28, 33, 37, 41, 46, 50],
+                [100, 98, 96, 94, 93, 91, 89, 87, 85],
+                [100, 89, 79, 68, 58, 47, 36, 26, 15],
+                [50, 56, 63, 69, 75, 81, 88, 94, 100],
+                [50, 54, 59, 63, 68, 72, 76, 81, 85]
+            ],
+            setID: function (id) {
+                console.log('Set ID:', id);
+            },
+        });
 
         // 界面信息
         //进度
@@ -265,6 +365,27 @@
             }
             debug && console.log('Click wait-btn');
         }
+        function setDialogBtn(move) {
+            if (void 0 == move) {
+                $('#wait-btn').addClass('opacity-50 scale-85');
+                $('#wait-btn').removeClass('opacity-100 scale-100');
+                $('#move-btn').addClass('opacity-50 scale-85');
+                $('#move-btn').removeClass('opacity-100 scale-100');
+            } else if (move) {
+                $('#move-btn').removeClass('opacity-50 scale-85');
+                $('#move-btn').addClass('opacity-100 scale-100');
+                $('#wait-btn').addClass('opacity-50 scale-85');
+                $('#wait-btn').removeClass('opacity-100 scale-100');
+            } else {
+                $('#wait-btn').removeClass('opacity-50 scale-85');
+                $('#wait-btn').addClass('opacity-100 scale-100');
+                $('#move-btn').addClass('opacity-50 scale-85');
+                $('#move-btn').removeClass('opacity-100 scale-100');
+            }
+            debug && console.log('Set dialog button:',
+                $('#move-btn').hasClass('opacity-100 scale-100'),
+                $('#wait-btn').hasClass('opacity-100 scale-100'));
+        }
         function toggleDialog(open) {
             if (void 0 == open) {
                 $('#dialog').toggleClass('scale-95 opacity-0 scale-100 opacity-100');
@@ -291,25 +412,145 @@
             }
             debug && console.log('Toggle cut:', !$('#cut').hasClass('opacity-0 pointer-events-none'));
         }
-        function clickCut() {
+        function resetCut() {
+            $('#cut-round').addClass('hidden');
+            $('#cut-text').removeClass('hidden');
+            $('#cut-btn').removeClass('hidden');
+            debug && console.log('Reset cut',
+                $('#cut-round').hasClass('hidden'),
+                $('#cut-text').hasClass('hidden'),
+                $('#cut-btn').hasClass('hidden'));
+        }
+        function startCut() {
             $('#cut-round').removeClass('hidden');
             $('#cut-text').addClass('hidden');
             $('#cut-btn').addClass('hidden');
+            exp.startSet();
+            debug && console.log('Start cut',
+                $('#cut-round').hasClass('hidden'),
+                $('#cut-text').hasClass('hidden'),
+                $('#cut-btn').hasClass('hidden'));
         }
 
         // 说明页面
-        function togglePages(open) {
+        function togglePage(open) {
             if (void 0 == open) {
-                $('#pages').toggleClass('opacity-100 opacity-0 pointer-events-none');
+                $('#page').toggleClass('opacity-100 opacity-0 pointer-events-none');
             } else if (open) {
-                $('#pages').removeClass('opacity-0 pointer-events-none');
-                $('#pages').addClass('opacity-100');
+                $('#page').removeClass('opacity-0 pointer-events-none');
+                $('#page').addClass('opacity-100');
             } else {
-                $('#pages').addClass('opacity-0 pointer-events-none');
-                $('#pages').removeClass('opacity-100');
+                $('#page').addClass('opacity-0 pointer-events-none');
+                $('#page').removeClass('opacity-100');
             }
-            debug && console.log('Toggle pages:', !$('#pages').hasClass('opacity-0 pointer-events-none'));
+            debug && console.log('Toggle page:', !$('#page').hasClass('opacity-0 pointer-events-none'));
         }
+
+        // SVO
+        !(function initSVOTable() {
+            for (let i = 0; i < 6; i++) {
+                $('#svo-row-' + i).children().click(function () {
+                    $('#svo-row-' + i).children().removeClass('selected');
+                    $(this).addClass('selected');
+                    for (let j = 0; j < 9; j++) {
+                        if ($($('#svo-row-' + i).children()[j]).is($(this))) {
+                            data.svoSelect[i] = j;
+                            break;
+                        }
+                    }
+                    debug && console.log('Select SVO:', data.svoSelect);;
+                });
+            }
+            svoGains = data.svoGains;
+            for (let i = 0; i < 6; i++) {
+                for (let j = 0; j < 9; j++) {
+                    $('#svo-row-' + i).children()[j].innerHTML = '<div>' + svoGains[i][j] + '</div><div>' + svoGains[6 + i][j] + '</div>';
+                }
+            }
+        })();
+
+        // 流程控制
+        {
+            let currPage = 0;
+            $('.page:eq(' + currPage + ')').removeClass('hidden');
+            function next(addPage) {
+                if (currPage == 0) {
+                    if ($('#id-input')[0].value) {
+                        data.setID($('#id-input')[0].value);
+                    }
+                    else if (!debug) {
+                        window.alert("请输入实验编号！");
+                        return;
+                    }
+                }
+                if (void 0 != addPage) {
+                    currPage += addPage;
+                } else {
+                    currPage++;
+                }
+                debug && console.log('Next page:', currPage);
+                goto(currPage);
+            }
+            function goto(page) {
+                $('.page').addClass('hidden');
+                if (typeof (page) == 'number') {
+                    currPage = Math.max(page, 0);
+                }
+                else {
+                    var tempPage = -1;
+                    $('.page').each(function () {
+                        tempPage++;
+                        return !$(this).is('#' + page);
+                    });
+                    currPage = tempPage;
+                }
+                $('.page:eq(' + currPage + ')').removeClass('hidden');
+                debug && console.log('Goto page:', $('.page:eq(' + currPage + ')').attr('id'));
+            }
+            function startPreExp() {
+                exp.startPreExp();
+                togglePage(false);
+                debug && console.log('Start pre exp');
+            }
+            function endPreExp() {
+                $('#skip-btn').removeClass('hidden');
+                goto('page-exp');
+                togglePage(true);
+                debug && console.log('End pre exp');
+            }
+            function startExp() {
+                $('#progress').removeClass('invisible');
+                exp.startExp();
+                resetCut();
+                togglePage(false);
+                debug && console.log('Start exp');
+            }
+            function endExp() {
+                goto('page-over');
+                togglePage(true);
+                send();
+                debug && console.log('End exp');
+            }
+            function send() {
+                var tempData = {m:'214',n:123};
+                var ajaxUpload = $.ajax({
+                    url: "https://559f0faa-50ee-4605-869c-eb432c954171.bspapp.com/http/upload/collect1?a=1&b=qwer", //请求的URL
+                    timeout: 5000, //超时时间设置，单位毫秒
+                    type: 'post', //请求方式，get或post
+                    data: tempData,//JSON.stringify(tempData), //请求所传参数，json格式
+                    complete: function (XMLHttpRequest, status) { //请求完成后最终执行参数
+                        if (status == 'success') {
+                        }
+                        else{
+                        }
+                        console.log(status,XMLHttpRequest.responseText);
+                        ajaxUpload.abort();
+                    },
+                });
+                debug && console.log('Send data');
+            }
+        }
+
     </script>
 </body>
 

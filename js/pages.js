@@ -301,8 +301,7 @@ const pagesHtml = /* html */`
         </div>
     </div>
     <div class="sticky top-full w-full mt-6 mb-4 flex">
-        <button class="z-10 absolute text-xl left-1/2 bottom-0 transform -translate-x-1/2 w-32 h-10 bg-gray-300 rounded-lg"
-                onclick="next()">下一页</button>
+        <button class="z-10 mx-auto w-32 h-10 bg-gray-300 rounded-lg" onclick="next()">下一页</button>
     </div>
 </div>
 <!-- 实验背景页 -->
@@ -394,9 +393,12 @@ const pagesHtml = /* html */`
 <div id="page-over" class="page hidden">
     <h1>实验结束</h1>
     <h2 class="text-center mb-2">最终得分：<span id="final-score">0</span></h2>
-    <h2 class="text-center">感谢您的参与！在实验数据发送完毕前请勿关闭网页。</h2>
+    <h2 class="text-center">感谢您的参与！在数据发送完毕前请勿关闭网页。</h2>
     <button id="send-btn"
         class="z-30 absolute left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10 bg-gray-300 rounded-lg"
         onclick="send()">发送数据</button>
+    <div id="send-msg"
+        class="text-center hidden absolute left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10">
+        数据发送中...</div>
 </div>
 `;

@@ -249,6 +249,7 @@
         });
 
         typeof (data) == 'undefined' && (data = {
+            ID: '',
             svoSelect: [4, 4, 4, 4, 4, 4],
             svoGains: [
                 // self
@@ -267,8 +268,12 @@
                 [50, 54, 59, 63, 68, 72, 76, 81, 85]
             ],
             setID: function (id) {
+                this.ID = id;
                 console.log('Set ID:', id);
             },
+            getData: function () {
+                return {ID:this.ID,info:'This is a debug info'};
+            }
         });
 
         // 界面信息
@@ -504,6 +509,9 @@
                     });
                     currPage = tempPage;
                 }
+                if ($('.page:eq(' + currPage + ')').is('#page-over')) {
+                    send();
+                }
                 $('.page:eq(' + currPage + ')').removeClass('hidden');
                 debug && console.log('Goto page:', $('.page:eq(' + currPage + ')').attr('id'));
             }
@@ -532,20 +540,16 @@
                 debug && console.log('End exp');
             }
             function send() {
-                var tempData = {m:'214',n:123};
-                var ajaxUpload = $.ajax({
-                    url: "https://559f0faa-50ee-4605-869c-eb432c954171.bspapp.com/http/upload/collect1?a=1&b=qwer", //请求的URL
-                    timeout: 5000, //超时时间设置，单位毫秒
-                    type: 'post', //请求方式，get或post
-                    data: tempData,//JSON.stringify(tempData), //请求所传参数，json格式
-                    complete: function (XMLHttpRequest, status) { //请求完成后最终执行参数
-                        if (status == 'success') {
-                        }
-                        else{
-                        }
-                        console.log(status,XMLHttpRequest.responseText);
-                        ajaxUpload.abort();
-                    },
+                $('#next-btn').addClass('hidden');
+                $('#send-btn').addClass('hidden');
+                $('#send-msg').removeClass('hidden');
+                upload(data.getData(),'drive-exp',(suc)=>{
+                    $('#send-msg').text("发送完毕");
+                    console.log(suc);
+                },(err)=>{
+                    $('#send-msg').addClass('hidden');
+                    $('#send-btn').removeClass('hidden');
+                    console.log(err);
                 });
                 debug && console.log('Send data');
             }

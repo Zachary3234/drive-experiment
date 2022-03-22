@@ -197,7 +197,7 @@
                 </span>
                 <button id="cut-btn"
                     class="absolute text-xl left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10 bg-gray-300 rounded-lg"
-                    onclick="startCut(1000)">确定</button>
+                    onclick="startCut(500)">确定</button>
                 <span id="cut-round" class="m-auto text-gray-700 text-4xl hidden">
                     <span>Round: </span>
                     <span id="cut-round-num">1</span>
@@ -225,7 +225,7 @@
     <script src="js/exp.js?v=202203221652"></script>
     <script>
         $('#pages')[0].innerHTML = pagesHtml;
-        const debug = false;
+        const debug = true;
         if (debug) {
             // $('#skip-btn').removeClass('hidden');
 
@@ -387,7 +387,7 @@
                 $('#cut-text').hasClass('hidden'),
                 $('#cut-btn').hasClass('hidden'));
         }
-        function startCut(delay = 1500) {
+        function startCut(delay = 1000) {
             setTimeout(()=>{
                 exp.startRound();
             },delay);

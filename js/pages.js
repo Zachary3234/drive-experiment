@@ -17,7 +17,7 @@ const pagesHtml = /* html */`
 <div id="page-svo" class="page hidden">
     <h1>SVO测试</h1>
     <p>
-        本页面将对你的社会价值取向进行测量。在这个任务中，你被随机地与另一个人配对，我们称他为“其他人”。这个人是你不认识的人，你们将保持匿名，你所有的选择都是完全保密的。
+        本页面将对你的社会价值取向进行测量。在这个任务中，你被随机地与另一个人配对，这个人是你不认识的人，你们将保持匿名，你所有的选择都是完全保密的。
     </p>
     <p>
         <b>你要做一系列的决定，在你和这个人之间分配资源。</b>
@@ -27,7 +27,7 @@ const pagesHtml = /* html */`
             <div class="grid grid-cols-def gap-x-2">
                 <div class="label whitespace-nowrap">
                     <div>你得到</div>
-                    <div>其他人</div>
+                    <div>TA得到</div>
                 </div>
                 <div id="svo-row-0" class="svo-row col-span-9 grid grid-cols-9">
                     <div>
@@ -73,7 +73,7 @@ const pagesHtml = /* html */`
             <div class="grid grid-cols-def gap-x-2">
                 <div class="label whitespace-nowrap">
                     <div>你得到</div>
-                    <div>其他人</div>
+                    <div>TA得到</div>
                 </div>
                 <div id="svo-row-1" class="svo-row col-span-9 grid grid-cols-9">
                     <div>
@@ -119,7 +119,7 @@ const pagesHtml = /* html */`
             <div class="grid grid-cols-def gap-x-2">
                 <div class="label whitespace-nowrap">
                     <div>你得到</div>
-                    <div>其他人</div>
+                    <div>TA得到</div>
                 </div>
                 <div id="svo-row-2" class="svo-row col-span-9 grid grid-cols-9">
                     <div>
@@ -165,7 +165,7 @@ const pagesHtml = /* html */`
             <div class="grid grid-cols-def gap-x-2">
                 <div class="label whitespace-nowrap">
                     <div>你得到</div>
-                    <div>其他人</div>
+                    <div>TA得到</div>
                 </div>
                 <div id="svo-row-3" class="svo-row col-span-9 grid grid-cols-9">
                     <div>
@@ -211,7 +211,7 @@ const pagesHtml = /* html */`
             <div class="grid grid-cols-def gap-x-2">
                 <div class="label whitespace-nowrap">
                     <div>你得到</div>
-                    <div>其他人</div>
+                    <div>TA得到</div>
                 </div>
                 <div id="svo-row-4" class="svo-row col-span-9 grid grid-cols-9">
                     <div>
@@ -257,7 +257,7 @@ const pagesHtml = /* html */`
             <div class="grid grid-cols-def gap-x-2">
                 <div class="label whitespace-nowrap">
                     <div>你得到</div>
-                    <div>其他人</div>
+                    <div>TA得到</div>
                 </div>
                 <div id="svo-row-5" class="svo-row col-span-9 grid grid-cols-9">
                     <div>

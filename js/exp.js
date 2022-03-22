@@ -69,7 +69,7 @@ const exp = new (function Experiment() {
             waitRate = set[1];
             setRounds(coopRate, waitRate, maxRound);
             // 设置关联界面
-            setProgress(curSet++, expSets.length);
+            setProgress(curSet++);
             setRound(0, maxRound);
             resetCut();
             // 判断结束实验
@@ -143,6 +143,7 @@ const exp = new (function Experiment() {
             // data.setData(tag + '-' + round + '-得分', addscore);
             // data.setData(tag + '-合作率', coopUser / 10);
         }
+        setDialogBtn(!stopSelf);
         return {stopSelf, stopOther};
     }
 

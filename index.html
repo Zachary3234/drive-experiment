@@ -234,28 +234,6 @@
             // togglePages(false);
         }
 
-        typeof (app) == 'undefined' && (app = {
-            reset: function () {
-            },
-            nextMove: function () {
-                setTimeout(()=>{exp.startDecision()},2000);
-
-                setTimeout(()=>{exp.endDecision()},4000);
-            },
-            setSpeed: function () {
-
-            },
-            setCarType: function () {
-
-            },
-            changeSelf: function () {
-
-            },
-            changeOther: function () {
-
-            },
-        });
-
         // 界面信息
         //进度
         setProgress();
@@ -339,7 +317,7 @@
                 $('#move-btn').addClass('opacity-100 scale-100');
                 $('#wait-btn').addClass('opacity-50 scale-85');
                 $('#wait-btn').removeClass('opacity-100 scale-100');
-                exp.changeStop(true);
+                exp.changeStop(false);
             }
             debug && console.log('Click move-btn',exp.waitDecision);
         }
@@ -349,7 +327,7 @@
                 $('#wait-btn').addClass('opacity-100 scale-100');
                 $('#move-btn').addClass('opacity-50 scale-85');
                 $('#move-btn').removeClass('opacity-100 scale-100');
-                exp.changeStop(false);
+                exp.changeStop(true);
             }
             debug && console.log('Click wait-btn',exp.waitDecision);
         }

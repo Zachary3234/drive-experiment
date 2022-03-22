@@ -40,10 +40,10 @@ const app = new (function Application() {
         carsControl && carsControl.changeOther(ind);
     }
     this.stopSelf = function () {
-        carsControl && carsControl.carSelf && (carsControl.carSelf.stop = !carsControl.carSelf.stop);
+        carsControl && carsControl.carSelf && (carsControl.carSelf.stop = true);
     };
     this.stopOther = function () {
-        carsControl && carsControl.carOther && (carsControl.carOther.stop = !carsControl.carOther.stop);
+        carsControl && carsControl.carOther && (carsControl.carOther.stop = true);
     };
     this.crashCar = function () {
         carsControl && 

@@ -23,8 +23,8 @@ const data = new (function DataCollect() {
             dataObj.ID = id;
             debug && console.log('Set ID:', dataObj.ID);
         },
-        setData: function () {
-
+        setData: function (key,val) {
+            dataObj[key] = val;
         },
         getData: function () {
             dataObj["SVO"] = calcSVO(this.svoGains, this.svoSelect).toFixed(2);
@@ -44,6 +44,18 @@ const data = new (function DataCollect() {
             for (let i = 0; i < this.svoSelect.length; i++) {
                 keys.push("svo-"+(i+1)+"-self");
                 keys.push("svo-"+(i+1)+"-other");
+            }
+            for (let iSet = 1; iSet <= 9; iSet++) {
+                keys.push(iSet + '-对方等待率');
+                keys.push(iSet + '-系统合作率');
+                keys.push(iSet + '-用户合作率');
+                for (let iRound = 1; iRound <= 10; iRound++) {
+                    keys.push(iSet + '-' + iRound + '-对方等待');
+                    keys.push(iSet + '-' + iRound + '-系统等待');
+                    keys.push(iSet + '-' + iRound + '-用户等待');
+                    keys.push(iSet + '-' + iRound + '-本轮得分');
+                    keys.push(iSet + '-' + iRound + '-决策时刻');
+                }
             }
             for (let i = 0; i < keys.length; i++) {
                 const key = keys[i];

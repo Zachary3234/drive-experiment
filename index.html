@@ -225,7 +225,7 @@
     <script src="js/exp.js?v=202203222118"></script>
     <script>
         $('#pages')[0].innerHTML = pagesHtml;
-        const debug = true;
+        const debug = false;
         if (debug) {
             $('#skip-btn').removeClass('hidden');
 
@@ -236,9 +236,9 @@
 
         // 界面信息
         //进度
-        setProgress();
-        function setProgress(num = $('#prog-text-num').text(),
-                max = $('#prog-text-max').text()) {
+        function setProgress(num = parseInt($('#prog-text-num').text()),
+                max = parseInt($('#prog-text-max').text())) {
+                    console.log(num,max);
             $('#progress').removeClass('hidden');
             $('#prog-text-num').text(num);
             $('#prog-text-max').text(max);
@@ -436,6 +436,15 @@
                 }
             }
         })();
+        function calcSVO(svoGains, svoSelect) {
+            let selfGain = 0;
+            let otherGain = 0;
+            for (let i = 0; i < svoSelect.length; i++) {
+                selfGain += svoGains[i][svoSelect[i]];
+                otherGain += svoGains[6+i][svoSelect[i]];
+            }
+            return Math.atan((otherGain - 50 * svoSelect.length) / (selfGain - 50 * svoSelect.length)) * 180 / Math.PI;
+        }
 
         // 流程控制
         {
@@ -513,6 +522,11 @@
                     $('#send-btn').removeClass('hidden');
                 });
                 debug && console.log('Send data');
+            }
+            function download() {
+                downloadDB('drive-exp', (suc) => {
+                    data.getCSV(JSON.parse(suc));
+                }, (err) => {});
             }
         }
 

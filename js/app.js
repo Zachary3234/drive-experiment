@@ -134,6 +134,7 @@ const app = new (function Application() {
     var renderT = 1 / FPS; //单位秒  间隔多长时间渲染渲染一次
     var decision = false;
     var reaction = false;
+    var deciRes = {stopSelf:true,stopOther:true};
     function update() {
         requestAnimationFrame(update);
 
@@ -165,7 +166,6 @@ const app = new (function Application() {
                 exp.startDecision();
             }
             //结束决策
-            var deciRes = {stopSelf:true,stopOther:true};
             if (void 0 != carsControl && 
                 decision && 
                 distance > 10 && distance < 20) {
@@ -177,6 +177,7 @@ const app = new (function Application() {
             if (void 0 != carsControl && reaction && distance < 20) {
                 deciRes.stopSelf && app.stopSelf();
                 deciRes.stopOther && app.stopOther();
+                setDialogBtn(!deciRes.stopSelf);
                 
                 if (!deciRes.stopSelf && !deciRes.stopOther){
                     //双方都前进，相撞

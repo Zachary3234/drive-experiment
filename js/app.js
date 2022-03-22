@@ -163,7 +163,6 @@ const app = new (function Application() {
                 distance > 80 && distance < 90) {
                 decision = true;
                 exp.startDecision();
-                control.maxSpeed = control.baseSpeed;
             }
             //结束决策
             var deciRes = {stopSelf:true,stopOther:true};
@@ -173,7 +172,6 @@ const app = new (function Application() {
                 decision = false;
                 reaction = true;
                 deciRes = exp.endDecision();
-                control.maxSpeed = control.baseSpeed*2;
             }
             //决策结果
             if (void 0 != carsControl && reaction && distance < 20) {

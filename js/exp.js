@@ -143,7 +143,6 @@ const exp = new (function Experiment() {
             // data.setData(tag + '-' + round + '-得分', addscore);
             // data.setData(tag + '-合作率', coopUser / 10);
         }
-        setDialogBtn(!stopSelf);
         return {stopSelf, stopOther};
     }
 

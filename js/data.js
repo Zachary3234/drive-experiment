@@ -23,6 +23,9 @@ const data = new (function DataCollect() {
             dataObj.ID = id;
             debug && console.log('Set ID:', dataObj.ID);
         },
+        setData: function () {
+
+        },
         getData: function () {
             dataObj["SVO"] = calcSVO(this.svoGains, this.svoSelect).toFixed(2);
             let selfGain;

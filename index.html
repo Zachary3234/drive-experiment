@@ -94,7 +94,7 @@
 
 <body class="overflow-hidden bg-gray-50">
     <!-- 纵向高度占满，最大宽度与高度相同的方形区域 -->
-    <div id="app" class="relative mx-auto select-none" style="width: 100vh; max-width: 100%; height: 100vh;">
+    <div id="container" class="relative mx-auto select-none" style="width: 100vh; max-width: 100%; height: 100vh;">
         <!-- 显示器区域 -->
         <div id="monitor" class="absolute inset-2 p-5 bg-gray-700 ring-4 ring-gray-400 rounded-3xl">
             <!-- 画面渲染 -->
@@ -170,7 +170,7 @@
             </div>
             <!-- 决策框 -->
             <div id="dialog" class="absolute inset-x-5 bottom-5 w-64 max-w-full mx-auto mb-6 py-2 px-0 bg-white rounded-2xl shadow-xl 
-                        flex justify-evenly align-middle overflow-hidden 
+                        flex justify-evenly align-middle overflow-hidden pointer-events-none
                         transition duration-200 ease-in-out transform scale-95 opacity-0">
                 <div onclick="clickMove()">
                     <svg id="move-btn" xmlns="http://www.w3.org/2000/svg"
@@ -197,7 +197,7 @@
                 </span>
                 <button id="cut-btn"
                     class="absolute text-xl left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10 bg-gray-300 rounded-lg"
-                    onclick="startCut()">确定</button>
+                    onclick="startCut(1000)">确定</button>
                 <span id="cut-round" class="m-auto text-gray-700 text-4xl hidden">
                     <span>Round: </span>
                     <span id="cut-round-num">1</span>
@@ -217,28 +217,50 @@
     </div>
     <script src="js/lib/jquery-3.6.0.min.js"></script>
     <script src="js/lib/three.js"></script>
-    <script src="js/utils.js?v=202203201700"></script>
+    <script src="js/utils.js?v=202203221700"></script>
     <script src="js/pages.js?v=202203201735"></script>
-    <script src="js/data.js?v=202203201735"></script>
-    <!-- <script src="js/load.js?v=202203170310"></script>
-    <script src="js/app.js?v=202203170310"></script> -->
-    <script src="js/exp.js?v=202203201652" defer></script>
+    <script src="js/data.js?v=202203220311"></script>
+    <script src="js/load.js?v=202203170310"></script>
+    <script src="js/app.js?v=202203220310"></script>
+    <script src="js/exp.js?v=202203221652"></script>
     <script>
         $('#pages')[0].innerHTML = pagesHtml;
         const debug = true;
         if (debug) {
             $('#skip-btn').removeClass('hidden');
 
-            toggleDialog(true);
+            // toggleDialog(true);
             // toggleCut(false);
             // togglePages(false);
         }
+
+        typeof (app) == 'undefined' && (app = {
+            reset: function () {
+            },
+            nextMove: function () {
+                setTimeout(()=>{exp.startDecision()},2000);
+
+                setTimeout(()=>{exp.endDecision()},4000);
+            },
+            setSpeed: function () {
+
+            },
+            setCarType: function () {
+
+            },
+            changeSelf: function () {
+
+            },
+            changeOther: function () {
+
+            },
+        });
 
         // 界面信息
         //进度
         setProgress();
         function setProgress(num = $('#prog-text-num').text(),
-            max = $('#prog-text-max').text()) {
+                max = $('#prog-text-max').text()) {
             $('#progress').removeClass('hidden');
             $('#prog-text-num').text(num);
             $('#prog-text-max').text(max);
@@ -248,12 +270,15 @@
         }
         //轮次
         function setRound(num = $('#tip-round-num').text(),
-            max = $('#tip-round-max').text()) {
+                max = $('#tip-round-max').text()) {
             $('#tip-round-num').text(num);
             $('#tip-round-max').text(max);
             $('#cut-round-num').text(num);
             $('#cut-round-max').text(max);
             debug && console.log('Set round:', num, '/', max);
+        }
+        function addRound(){
+            setRound(parseInt($('#tip-round-num').text())+1);
         }
         //得分
         function setScore(score) {
@@ -316,7 +341,7 @@
                 $('#wait-btn').removeClass('opacity-100 scale-100');
                 exp.changeStop(true);
             }
-            debug && console.log('Click move-btn');
+            debug && console.log('Click move-btn',exp.waitDecision);
         }
         function clickWait() {
             if (exp.waitDecision) {
@@ -326,7 +351,7 @@
                 $('#move-btn').removeClass('opacity-100 scale-100');
                 exp.changeStop(false);
             }
-            debug && console.log('Click wait-btn');
+            debug && console.log('Click wait-btn',exp.waitDecision);
         }
         function setDialogBtn(move) {
             if (void 0 == move) {
@@ -351,12 +376,12 @@
         }
         function toggleDialog(open) {
             if (void 0 == open) {
-                $('#dialog').toggleClass('scale-95 opacity-0 scale-100 opacity-100');
+                $('#dialog').toggleClass('scale-95 opacity-0 pointer-events-none scale-100 opacity-100');
             } else if (open) {
-                $('#dialog').removeClass('scale-95 opacity-0');
+                $('#dialog').removeClass('scale-95 opacity-0 pointer-events-none');
                 $('#dialog').addClass('scale-100 opacity-100');
             } else {
-                $('#dialog').addClass('scale-95 opacity-0');
+                $('#dialog').addClass('scale-95 opacity-0 pointer-events-none');
                 $('#dialog').removeClass('scale-100 opacity-100');
             }
             debug && console.log('Toggle dialog:', $('#dialog').hasClass('scale-100 opacity-100'));
@@ -384,11 +409,13 @@
                 $('#cut-text').hasClass('hidden'),
                 $('#cut-btn').hasClass('hidden'));
         }
-        function startCut() {
+        function startCut(delay = 1500) {
+            setTimeout(()=>{
+                exp.startRound();
+            },delay);
             $('#cut-round').removeClass('hidden');
             $('#cut-text').addClass('hidden');
             $('#cut-btn').addClass('hidden');
-            exp.startSet();
             debug && console.log('Start cut',
                 $('#cut-round').hasClass('hidden'),
                 $('#cut-text').hasClass('hidden'),

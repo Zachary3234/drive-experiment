@@ -69,7 +69,7 @@ const data = new (function DataCollect() {
             for (let j = 0; j < dataArr.length; j++) {
                 for (let i = 0; i < keys.length; i++) {
                     const key = keys[i];
-                    text += dataArr[j][key];
+                    text += JSON.stringify(dataArr[j][key]);
                     if (i < keys.length-1)
                         text += ',';
                     else

@@ -177,7 +177,6 @@ const app = new (function Application() {
             if (void 0 != carsControl && reaction && distance < 20) {
                 deciRes.stopSelf && app.stopSelf();
                 deciRes.stopOther && app.stopOther();
-                setDialogBtn(!deciRes.stopSelf);
                 
                 if (!deciRes.stopSelf && !deciRes.stopOther){
                     //双方都前进，相撞
@@ -369,7 +368,7 @@ const app = new (function Application() {
             currCord.row = (currCord.row++) % worldControl.chunkTable.length;
             meetChunk = worldControl.chunkTable[currCord.row][currCord.col];
             this.carSelf.position.copy((new THREE.Vector3(3.4, 0, -10)).add(meetChunk.position));
-            console.log(currCord);
+            // console.log(currCord);
 
             // 设置车位置
             this.carSelf.position.copy((new THREE.Vector3(3.4, 0, 30)).add(meetChunk.position));

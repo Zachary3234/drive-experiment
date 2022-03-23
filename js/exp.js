@@ -5,6 +5,8 @@ const exp = new (function Experiment() {
     const waitRateOther = [0.1, 0.5, 0.9];
     //实验组集合
     var curSet = 0;
+    var curRound = 0;
+    var coopUser = 0;
     var expSets = [];
     //实验轮集合
     var expRounds = {
@@ -61,7 +63,7 @@ const exp = new (function Experiment() {
             }
         }
         expSets.shuffle();
-        setProgress(curSet++, expSets.length);
+        curSet = 0;
         // 开始实验
         nextSetFunc = () => {
             var set = expSets.pop();
@@ -69,7 +71,9 @@ const exp = new (function Experiment() {
             waitRate = set[1];
             setRounds(coopRate, waitRate, maxRound);
             // 设置关联界面
-            setProgress(curSet++);
+            setProgress(++curSet);
+            curRound = 0;
+            coopUser = 0;
             setRound(0, maxRound);
             resetCut();
             // 判断结束实验
@@ -80,14 +84,24 @@ const exp = new (function Experiment() {
             // 重置活动（重置位置和车辆）
             app.reset();
             app.setCarType(coopRate, waitRate);
+            // 记录数据
+            data.setData(curSet + '-对方等待率', waitRate);
+            data.setData(curSet + '-系统合作率', coopRate);
             return false;
         };
         endRound();
     }
     //实验进行时
+    var timer = null;
+    var timeSec = 0;
+    var timeRecord = [];
     this.waitDecision = true;
     this.changeStop = function (stop) {
         stopSelf = stop;
+        timeRecord.push({
+            stop: stopSelf,
+            time: timeSec
+        });
         app.setSpeed(2);
     }
     this.startDecision = function () {
@@ -96,11 +110,21 @@ const exp = new (function Experiment() {
         app.setSpeed(1);
         toggleDialog(true);
         setDialogBtn(!stopSelf);
+        timeSec = 0;
+        timeRecord = [];
+        timer = setInterval(()=>{
+            timeSec += 0.01;
+        },10);
     }
     this.endDecision = function () {
         // 结束决策
         this.waitDecision = false;
         app.setSpeed(2);
+        clearInterval(timer);
+        // 记录数据
+        if (curSet > 0) {
+            data.setData(curSet + '-' + curRound + '-决策时刻', timeRecord);
+        }
 
         // 结算分数
         var addscore = 0;
@@ -132,17 +156,15 @@ const exp = new (function Experiment() {
 
         // 记录数据
         if (curSet > 0) {
-            // data.setData(addscore);
-            // tag = (waitRateOther.findIndex((e) => waitRate == e) + 1);
-            // tag += '-' + (coopRateSelf.findIndex((e) => coopRate == e) + 1);
-            // data.setData(tag + '-对方类型', waitRate);
-            // data.setData(tag + '-系统合作率', coopRate);
-            // data.setData(tag + '-' + round + '-对方', stopOther);
-            // data.setData(tag + '-' + round + '-系统', stopSelf);
-            // data.setData(tag + '-' + round + '-用户', stopSelf);
-            // data.setData(tag + '-' + round + '-得分', addscore);
-            // data.setData(tag + '-合作率', coopUser / 10);
+            data.setData(curSet + '-' + curRound + '-用户等待', 0+stopSelf);
+            data.setData(curSet + '-' + curRound + '-本轮得分', addscore);
+            (waitRate > 0.5) ^ stopSelf && coopUser++;
+            if (curRound==maxRound){
+                data.setData(curSet + '-用户合作率', coopUser / maxRound);
+                data.setData(curSet + '-本单元得分', getScore());
+            }
         }
+        setDialogBtn(!stopSelf);
         return {stopSelf, stopOther};
     }
 
@@ -157,6 +179,12 @@ const exp = new (function Experiment() {
         var wait = expRounds.wait.pop();
         stopOther = wait;
         stopSelf = waitRate > 0.5 ? !coop : coop;
+        curRound++;
+        // 记录数据
+        if (curSet > 0) {
+            data.setData(curSet + '-' + curRound + '-对方等待', 0+stopOther);
+            data.setData(curSet + '-' + curRound + '-系统等待', 0+stopSelf);
+        }
 
         // 画面暂停
         app.pause(true);

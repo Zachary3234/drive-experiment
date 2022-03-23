@@ -49,6 +49,7 @@ const data = new (function DataCollect() {
                 keys.push(iSet + '-对方等待率');
                 keys.push(iSet + '-系统合作率');
                 keys.push(iSet + '-用户合作率');
+                keys.push(iSet + '-本单元得分');
                 for (let iRound = 1; iRound <= 10; iRound++) {
                     keys.push(iSet + '-' + iRound + '-对方等待');
                     keys.push(iSet + '-' + iRound + '-系统等待');

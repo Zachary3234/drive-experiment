@@ -161,6 +161,7 @@ const exp = new (function Experiment() {
             (waitRate > 0.5) ^ stopSelf && coopUser++;
             if (curRound==maxRound){
                 data.setData(curSet + '-用户合作率', coopUser / maxRound);
+                data.setData(curSet + '-本单元得分', getScore());
             }
         }
         setDialogBtn(!stopSelf);

@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SVO测试</title>
-    <link href="css/tailwind-2.2.19.min.css" rel="stylesheet">
+    <link href="../css/tailwind-2.2.19.min.css" rel="stylesheet">
     <style>
         html,
         body {
@@ -19,7 +19,6 @@
             flex: none;
             width: 100%;
             margin: auto;
-            padding: 2rem;
             overflow-y: overlay;
             overflow-x: hidden;
             font-size: 20px;
@@ -40,7 +39,6 @@
         #pages #page-svo.page {
             width: 100%;
             height: 100%;
-            padding: 2rem;
             position: absolute;
             inset: 0;
             z-index: 20;
@@ -49,6 +47,9 @@
 
         #svo-table .grid-cols-def {
             grid-template-columns: 1.5fr repeat(9, minmax(0, 1fr));
+        }
+        #svo-table .grid-cols-def-sm {
+            grid-template-columns: 1fr repeat(9, minmax(0, 1fr));
         }
 
         #svo-table .svo-row>div {
@@ -80,15 +81,15 @@
 
 <body class="overflow-hidden bg-gray-50">
     <!-- 纵向高度占满，最大宽度与高度相同的方形区域 -->
-    <div id="app" class="relative mx-auto select-none" style="width: 100vh; max-width: 100%; height: 100vh;">
+    <div id="container" class="relative mx-auto select-none" style="width: 100vh; max-width: 100%; height: 100vh;">
         <!-- 显示器区域 -->
-        <div id="monitor" class="absolute inset-2 p-5 bg-gray-700 ring-4 ring-gray-400 rounded-3xl">
+        <div id="monitor" class="absolute inset-0 sm:inset-2 p-0 sm:p-5 bg-gray-700 ring-0 sm:ring-4 ring-gray-400 rounded-3xl">
             <!-- 说明页面 -->
-            <div id="page" class="absolute inset-5 bg-gray-100 opacity-100 opacity-0x pointer-events-nonex
+            <div id="page" class="absolute inset-0 sm:inset-5 bg-gray-100 opacity-100 opacity-0x pointer-events-nonex
                                 transition-opacity duration-500 ease-in-out">
                 <div id="pages" class="h-4/5 flex overflow-x-hidden" style="overflow-y: overlay;">
                     <!-- 编号页 -->
-                    <div id="page-id" class="page hidden flex flex-col justify-center">
+                    <div id="page-id" class="page p-2 sm:p-8 hidden flex flex-col justify-center">
                         <h1>SVO测试</h1>
                         <br>
                         <div class="flex justify-center">
@@ -102,7 +103,7 @@
                         </span>
                     </div>
                     <!-- SVO测试页 -->
-                    <div id="page-svo" class="page hidden">
+                    <div id="page-svo" class="page p-2 sm:p-8 hidden">
                         <h1>SVO测试</h1>
                         <p>
                             本页面将对你的社会价值取向进行测量。在这个任务中，你被随机地与另一个人配对，这个人是你不认识的人，你们将保持匿名，你所有的选择都是完全保密的。
@@ -111,9 +112,13 @@
                             <b>你要做一系列的决定，在你和这个人之间分配资源。</b>
                         </p>
                         <div id="svo-table" class="w-full mt-2 bg-blue-50 text-lg">
-                            <div class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
-                                <div class="grid grid-cols-def gap-x-2">
-                                    <div class="label whitespace-nowrap">
+                            <div class="mt-1 max-0 sm:mx-2 px-0 sm:px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
+                                <div class="grid grid-cols-def-sm sm:grid-cols-def gap-x-2">
+                                    <div class="label -mr-2 block sm:hidden whitespace-nowrap">
+                                        <div>你</div>
+                                        <div>TA</div>
+                                    </div>
+                                    <div class="label hidden sm:block whitespace-nowrap">
                                         <div>你得到</div>
                                         <div>TA得到</div>
                                     </div>
@@ -157,9 +162,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
-                                <div class="grid grid-cols-def gap-x-2">
-                                    <div class="label whitespace-nowrap">
+                            <div class="mt-1 max-0 sm:mx-2 px-0 sm:px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
+                                <div class="grid grid-cols-def-sm sm:grid-cols-def gap-x-2">
+                                    <div class="label -mr-2 block sm:hidden whitespace-nowrap">
+                                        <div>你</div>
+                                        <div>TA</div>
+                                    </div>
+                                    <div class="label hidden sm:block whitespace-nowrap">
                                         <div>你得到</div>
                                         <div>TA得到</div>
                                     </div>
@@ -203,9 +212,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
-                                <div class="grid grid-cols-def gap-x-2">
-                                    <div class="label whitespace-nowrap">
+                            <div class="mt-1 max-0 sm:mx-2 px-0 sm:px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
+                                <div class="grid grid-cols-def-sm sm:grid-cols-def gap-x-2">
+                                    <div class="label -mr-2 block sm:hidden whitespace-nowrap">
+                                        <div>你</div>
+                                        <div>TA</div>
+                                    </div>
+                                    <div class="label hidden sm:block whitespace-nowrap">
                                         <div>你得到</div>
                                         <div>TA得到</div>
                                     </div>
@@ -249,9 +262,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
-                                <div class="grid grid-cols-def gap-x-2">
-                                    <div class="label whitespace-nowrap">
+                            <div class="mt-1 max-0 sm:mx-2 px-0 sm:px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
+                                <div class="grid grid-cols-def-sm sm:grid-cols-def gap-x-2">
+                                    <div class="label -mr-2 block sm:hidden whitespace-nowrap">
+                                        <div>你</div>
+                                        <div>TA</div>
+                                    </div>
+                                    <div class="label hidden sm:block whitespace-nowrap">
                                         <div>你得到</div>
                                         <div>TA得到</div>
                                     </div>
@@ -295,9 +312,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
-                                <div class="grid grid-cols-def gap-x-2">
-                                    <div class="label whitespace-nowrap">
+                            <div class="mt-1 max-0 sm:mx-2 px-0 sm:px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
+                                <div class="grid grid-cols-def-sm sm:grid-cols-def gap-x-2">
+                                    <div class="label -mr-2 block sm:hidden whitespace-nowrap">
+                                        <div>你</div>
+                                        <div>TA</div>
+                                    </div>
+                                    <div class="label hidden sm:block whitespace-nowrap">
                                         <div>你得到</div>
                                         <div>TA得到</div>
                                     </div>
@@ -341,9 +362,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="mt-1 mx-2 px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
-                                <div class="grid grid-cols-def gap-x-2">
-                                    <div class="label whitespace-nowrap">
+                            <div class="mt-1 max-0 sm:mx-2 px-0 sm:px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
+                                <div class="grid grid-cols-def-sm sm:grid-cols-def gap-x-2">
+                                    <div class="label -mr-2 block sm:hidden whitespace-nowrap">
+                                        <div>你</div>
+                                        <div>TA</div>
+                                    </div>
+                                    <div class="label hidden sm:block whitespace-nowrap">
                                         <div>你得到</div>
                                         <div>TA得到</div>
                                     </div>
@@ -393,11 +418,11 @@
                         </div>
                     </div>
                     <!-- 实验结束页 -->
-                    <div id="page-over" class="page hidden">
+                    <div id="page-over" class="page p-2 sm:p-8 hidden">
                         <h2 class="text-center">感谢您的参与！在数据发送完毕前请勿关闭网页。</h2>
                         <button id="send-btn"
                             class="z-30 absolute left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10 bg-gray-300 rounded-lg"
-                            onclick="send()">发送数据</button>
+                            onclick="send()">重新发送</button>
                         <div id="send-msg"
                             class="text-center hidden absolute left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10">
                             数据发送中...</div>
@@ -409,13 +434,13 @@
             </div>
         </div>
     </div>
-    <script src="js/lib/jquery-3.6.0.min.js"></script>
-    <script src="js/utils.js?v=202203201700"></script>
+    <script src="../js/lib/jquery-3.6.0.min.js"></script>
+    <script src="../js/utils.js?v=202203201700"></script>
     <!-- <script src="js/data.js?v=202203201735"></script> -->
     <script>
         const debug = false;
         if (debug) {
-
+            // next();
         }
 
         typeof (data) == 'undefined' && (data = {
@@ -586,11 +611,6 @@
                     $('#send-btn').removeClass('hidden');
                 });
                 debug && console.log('Send data:',data.getData());
-            }
-            function download() {
-                downloadDB('svo-test', (suc) => {
-                    data.getCSV(JSON.parse(suc));
-                }, (err) => {});
             }
         }
 

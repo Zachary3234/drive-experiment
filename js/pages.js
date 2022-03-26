@@ -396,7 +396,7 @@ const pagesHtml = /* html */`
     <h2 class="text-center">感谢您的参与！在数据发送完毕前请勿关闭网页。</h2>
     <button id="send-btn"
         class="z-30 absolute left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10 bg-gray-300 rounded-lg"
-        onclick="send()">发送数据</button>
+        onclick="send()">重新发送</button>
     <div id="send-msg"
         class="text-center hidden absolute left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10">
         数据发送中...</div>

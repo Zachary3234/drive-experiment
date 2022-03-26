@@ -522,11 +522,6 @@
                 });
                 debug && console.log('Send data');
             }
-            function download() {
-                downloadDB('drive-exp', (suc) => {
-                    data.getCSV(JSON.parse(suc));
-                }, (err) => {});
-            }
         }
 
     </script>

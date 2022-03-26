@@ -365,10 +365,9 @@ const app = new (function Application() {
             this.changeOther();
 
             // 确定相遇路口
-            currCord.row = (currCord.row++) % worldControl.chunkTable.length;
             meetChunk = worldControl.chunkTable[currCord.row][currCord.col];
             this.carSelf.position.copy((new THREE.Vector3(3.4, 0, -10)).add(meetChunk.position));
-            // console.log(currCord);
+            currCord.row = (currCord.row+1) % worldControl.chunkTable.length;
 
             // 设置车位置
             this.carSelf.position.copy((new THREE.Vector3(3.4, 0, 30)).add(meetChunk.position));

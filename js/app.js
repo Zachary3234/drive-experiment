@@ -332,7 +332,7 @@ const app = new (function Application() {
     }
     // 初始化车辆
     function initCars() {
-        var currCord = {row:1,col:2};
+        var currCord = {row:0,col:2};
         var meetChunk = worldControl.chunkTable[currCord.row][currCord.col];
         this.carSelf = null;
         this.carOther = null;
@@ -356,7 +356,7 @@ const app = new (function Application() {
             this.carSelf = null;
             this.carOther = null;
             // this.carOtherLast = null;
-            currCord = {row:1,col:2};
+            currCord = {row:0,col:2};
             meetChunk = worldControl.chunkTable[currCord.row][currCord.col];
         }
         this.setCars = function () {
@@ -365,9 +365,9 @@ const app = new (function Application() {
             this.changeOther();
 
             // 确定相遇路口
+            currCord.row = (currCord.row+1) % worldControl.chunkTable.length;
             meetChunk = worldControl.chunkTable[currCord.row][currCord.col];
             this.carSelf.position.copy((new THREE.Vector3(3.4, 0, -10)).add(meetChunk.position));
-            currCord.row = (currCord.row+1) % worldControl.chunkTable.length;
 
             // 设置车位置
             this.carSelf.position.copy((new THREE.Vector3(3.4, 0, 30)).add(meetChunk.position));

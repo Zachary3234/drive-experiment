@@ -7,6 +7,7 @@ const exp = new (function Experiment() {
     var curSet = 0;
     var curRound = 0;
     var coopUser = 0;
+    var finalScore = 0;
     var expSets = [];
     //实验轮集合
     var expRounds = {
@@ -64,6 +65,7 @@ const exp = new (function Experiment() {
         }
         expSets.shuffle();
         curSet = 0;
+        finalScore = 0;
         // 开始实验
         nextSetFunc = () => {
             var set = expSets.pop();
@@ -79,6 +81,9 @@ const exp = new (function Experiment() {
             // 判断结束实验
             if (expSets.length == 0) {
                 endExp();
+                // 记录数据
+                data.setData('总得分', finalScore);
+                $('#final-score').text(finalScore);
                 return true;
             }
             // 重置活动（重置位置和车辆）
@@ -158,6 +163,7 @@ const exp = new (function Experiment() {
         if (curSet > 0) {
             data.setData(curSet + '-' + curRound + '-用户等待', 0+stopSelf);
             data.setData(curSet + '-' + curRound + '-本轮得分', addscore);
+            finalScore += addScore;
             (waitRate > 0.5) ^ stopSelf && coopUser++;
             if (curRound==maxRound){
                 data.setData(curSet + '-用户合作率', coopUser / maxRound);
@@ -169,6 +175,8 @@ const exp = new (function Experiment() {
     }
 
     function endRound() {
+        // 画面暂停
+        app.pause(true);
         // 设置下一组
         if (expRounds.coop.length == 0 && nextSetFunc()) {
             return;
@@ -186,8 +194,6 @@ const exp = new (function Experiment() {
             data.setData(curSet + '-' + curRound + '-系统等待', 0+stopSelf);
         }
 
-        // 画面暂停
-        app.pause(true);
         // 设置关联界面
         addRound();
         toggleCut(true);

@@ -277,7 +277,7 @@
                 $('#tip-score-tail').text('+' + val);
             }
             setTimeout(() => {
-                $('#tip-score').text(newval);
+                setScore(newval);
                 $('#tip-score-tail').text('');
                 $('#tip-score-tail').removeClass();
                 debug && console.log('Add score done:', $('#tip-score').text());
@@ -495,6 +495,7 @@
             $('#skip-btn').removeClass('hidden');
             goto('page-exp');
             togglePage(true);
+            toggleCut(true);
             debug && console.log('End pre exp');
         }
         function startExp() {
@@ -507,17 +508,18 @@
         function endExp() {
             goto('page-over');
             togglePage(true);
+            toggleCut(true);
             send();
             debug && console.log('End exp');
         }
         function send() {
             $('#next-btn').addClass('hidden');
             $('#send-btn').addClass('hidden');
-            $('#send-msg').removeClass('hidden');
+            $('#send-msg').text("数据发送中...");
             uploadDB(data.getData(),'drive-exp',(suc)=>{
                 $('#send-msg').text("发送完毕");
             },(err)=>{
-                $('#send-msg').addClass('hidden');
+                $('#send-msg').text("发送失败，多次失败请联系管理员");
                 $('#send-btn').removeClass('hidden');
             });
             debug && console.log('Send data');

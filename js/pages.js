@@ -398,7 +398,7 @@ const pagesHtml = /* html */`
         class="z-30 absolute left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10 bg-gray-300 rounded-lg"
         onclick="send()">重新发送</button>
     <div id="send-msg"
-        class="text-center hidden absolute left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10">
+        class="text-center absolute left-1/2 bottom-20 transform -translate-x-1/2 h-10">
         数据发送中...</div>
 </div>
 `;

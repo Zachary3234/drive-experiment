@@ -400,7 +400,7 @@
                             class="z-30 absolute left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10 bg-gray-300 rounded-lg"
                             onclick="send()">重新发送</button>
                         <div id="send-msg"
-                            class="text-center hidden absolute left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10">
+                            class="text-center absolute left-1/2 bottom-20 transform -translate-x-1/2 h-10">
                             数据发送中...</div>
                     </div>
                 </div>
@@ -575,14 +575,14 @@
         function send() {
             $('#next-btn').addClass('hidden');
             $('#send-btn').addClass('hidden');
-            $('#send-msg').removeClass('hidden');
-            uploadDB(data.getData(), 'svo-test', (suc) => {
+            $('#send-msg').text("数据发送中...");
+            uploadDB(data.getData(),'svo-test',(suc)=>{
                 $('#send-msg').text("发送完毕");
-            }, (err) => {
-                $('#send-msg').addClass('hidden');
+            },(err)=>{
+                $('#send-msg').text("发送失败，多次失败请联系管理员");
                 $('#send-btn').removeClass('hidden');
             });
-            debug && console.log('Send data:',data.getData());
+            debug && console.log('Send data');
         }
 
         if (debug) {

@@ -45,6 +45,7 @@ const data = new (function DataCollect() {
                 keys.push("svo-"+(i+1)+"-self");
                 keys.push("svo-"+(i+1)+"-other");
             }
+            keys.push('总得分');
             for (let iSet = 1; iSet <= 9; iSet++) {
                 keys.push(iSet + '-对方等待率');
                 keys.push(iSet + '-系统合作率');
@@ -69,7 +70,9 @@ const data = new (function DataCollect() {
             for (let j = 0; j < dataArr.length; j++) {
                 for (let i = 0; i < keys.length; i++) {
                     const key = keys[i];
-                    text += JSON.stringify(dataArr[j][key]);
+                    var str = JSON.stringify(dataArr[j][key]);
+                    str && (str = str.replace(/,/g,';'));
+                    text += str;
                     if (i < keys.length-1)
                         text += ',';
                     else

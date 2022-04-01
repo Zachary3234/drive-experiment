@@ -72,6 +72,7 @@ const data = new (function DataCollect() {
                     const key = keys[i];
                     var str = JSON.stringify(dataArr[j][key]);
                     str && (str = str.replace(/,/g,';'));
+                    console.log(str);
                     text += str;
                     if (i < keys.length-1)
                         text += ',';

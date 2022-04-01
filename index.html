@@ -220,7 +220,7 @@
     <script src="js/lib/three.js"></script>
     <script src="js/utils.js?v=202203232202"></script>
     <script src="js/pages.js?v=202203232202"></script>
-    <script src="js/data.js?v=202203232202"></script>
+    <script src="js/data.js?v=202203232203"></script>
     <script src="js/load.js?v=202203232202"></script>
     <script src="js/app.js?v=202203281730"></script>
     <script src="js/exp.js?v=202203232202"></script>
@@ -479,9 +479,6 @@
                     return !$(this).is('#' + page);
                 });
                 currPage = tempPage;
-            }
-            if ($('.page:eq(' + currPage + ')').is('#page-over')) {
-                send();
             }
             $('.page:eq(' + currPage + ')').removeClass('hidden');
             debug && console.log('Goto page:', $('.page:eq(' + currPage + ')').attr('id'));

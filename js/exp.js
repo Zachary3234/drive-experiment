@@ -163,7 +163,7 @@ const exp = new (function Experiment() {
         if (curSet > 0) {
             data.setData(curSet + '-' + curRound + '-用户等待', 0+stopSelf);
             data.setData(curSet + '-' + curRound + '-本轮得分', addscore);
-            finalScore += addScore;
+            finalScore += addscore;
             (waitRate > 0.5) ^ stopSelf && coopUser++;
             if (curRound==maxRound){
                 data.setData(curSet + '-用户合作率', coopUser / maxRound);

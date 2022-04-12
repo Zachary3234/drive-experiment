@@ -68,6 +68,15 @@ const exp = new (function Experiment() {
         finalScore = 0;
         // 开始实验
         nextSetFunc = () => {
+            // 判断结束实验
+            if (expSets.length == 0) {
+                endExp();
+                // 记录数据
+                data.setData('总得分', finalScore);
+                $('#final-score').text(finalScore);
+                return true;
+            }
+            // 设置下一组
             var set = expSets.pop();
             coopRate = set[0];
             waitRate = set[1];
@@ -78,14 +87,6 @@ const exp = new (function Experiment() {
             coopUser = 0;
             setRound(0, maxRound);
             resetCut();
-            // 判断结束实验
-            if (expSets.length == 0) {
-                endExp();
-                // 记录数据
-                data.setData('总得分', finalScore);
-                $('#final-score').text(finalScore);
-                return true;
-            }
             // 重置活动（重置位置和车辆）
             app.reset();
             app.setCarType(coopRate, waitRate);

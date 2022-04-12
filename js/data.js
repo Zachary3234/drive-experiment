@@ -1,5 +1,24 @@
 const data = new (function DataCollect() {
     var dataObj = {ID: ''};
+    var keys = ["ID","SVO"];
+    for (let i = 0; i < 6; i++) {
+        keys.push("svo-"+(i+1)+"-self");
+        keys.push("svo-"+(i+1)+"-other");
+    }
+    keys.push('总得分');
+    for (let iSet = 1; iSet <= 9; iSet++) {
+        keys.push(iSet + '-对方等待率');
+        keys.push(iSet + '-系统合作率');
+        keys.push(iSet + '-用户合作率');
+        keys.push(iSet + '-本单元得分');
+        for (let iRound = 1; iRound <= 10; iRound++) {
+            keys.push(iSet + '-' + iRound + '-对方等待');
+            keys.push(iSet + '-' + iRound + '-系统等待');
+            keys.push(iSet + '-' + iRound + '-用户等待');
+            keys.push(iSet + '-' + iRound + '-本轮得分');
+            keys.push(iSet + '-' + iRound + '-决策时刻');
+        }
+    }
     
     return {
         svoSelect: [4, 4, 4, 4, 4, 4],
@@ -38,27 +57,42 @@ const data = new (function DataCollect() {
             }
             return dataObj;
         },
-        getCSV: function (dataArr) {
-            let text = '';
-            let keys = ["ID","SVO"];
-            for (let i = 0; i < this.svoSelect.length; i++) {
-                keys.push("svo-"+(i+1)+"-self");
-                keys.push("svo-"+(i+1)+"-other");
-            }
-            keys.push('总得分');
-            for (let iSet = 1; iSet <= 9; iSet++) {
-                keys.push(iSet + '-对方等待率');
-                keys.push(iSet + '-系统合作率');
-                keys.push(iSet + '-用户合作率');
-                keys.push(iSet + '-本单元得分');
-                for (let iRound = 1; iRound <= 10; iRound++) {
-                    keys.push(iSet + '-' + iRound + '-对方等待');
-                    keys.push(iSet + '-' + iRound + '-系统等待');
-                    keys.push(iSet + '-' + iRound + '-用户等待');
-                    keys.push(iSet + '-' + iRound + '-本轮得分');
-                    keys.push(iSet + '-' + iRound + '-决策时刻');
+        redoData: function (obj) {
+            if (obj != undefined) {
+                // delete obj._id;
+                dataObj = obj;
+                console.log(dataObj);
+                for (let i = 0; i < this.svoSelect.length; i++) {
+                    for (let j = 0; j < 9; j++) {
+                        if (dataObj["svo-"+(i+1)+"-self"] == this.svoGains[i][j]
+                        && dataObj["svo-"+(i+1)+"-other"] == this.svoGains[6+i][j]){
+                            $('#svo-row-' + i).children()[j].click();
+                        }
+                    }
+                }
+                let check = 0;
+                for (let iSet = 1; iSet <= 9; iSet++) {
+                    check += dataObj[iSet + '-对方等待率']===undefined;
+                    check += dataObj[iSet + '-系统合作率']===undefined;
+                    check += dataObj[iSet + '-用户合作率']===undefined;
+                    check += dataObj[iSet + '-本单元得分']===undefined;
+                    for (let iRound = 1; iRound <= 10; iRound++) {
+                        check += dataObj[iSet + '-' + iRound + '-对方等待']===undefined;
+                        check += dataObj[iSet + '-' + iRound + '-系统等待']===undefined;
+                        check += dataObj[iSet + '-' + iRound + '-用户等待']===undefined;
+                        check += dataObj[iSet + '-' + iRound + '-本轮得分']===undefined;
+                        check += dataObj[iSet + '-' + iRound + '-决策时刻']===undefined;
+                    }
+                    if (check==0) {
+                        exp.redoExp(dataObj[iSet + '-系统合作率'],dataObj[iSet + '-对方等待率'],dataObj[iSet + '-本单元得分']);
+                    }
+                    else
+                        break;
                 }
             }
+        },
+        getCSV: function (dataArr) {
+            let text = '';
             for (let i = 0; i < keys.length; i++) {
                 const key = keys[i];
                 text += key;
@@ -72,7 +106,6 @@ const data = new (function DataCollect() {
                     const key = keys[i];
                     var str = JSON.stringify(dataArr[j][key]);
                     str && (str = str.replace(/,/g,';'));
-                    console.log(str);
                     text += str;
                     if (i < keys.length-1)
                         text += ',';

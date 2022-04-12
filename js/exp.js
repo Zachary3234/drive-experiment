@@ -9,6 +9,11 @@ const exp = new (function Experiment() {
     var coopUser = 0;
     var finalScore = 0;
     var expSets = [];
+    for (let i = 0; i < waitRateOther.length; i++) {
+        for (let j = 0; j < coopRateSelf.length; j++) {
+            expSets.push([coopRateSelf[j], waitRateOther[i]]);
+        }
+    }
     //实验轮集合
     var expRounds = {
         coop: [],
@@ -26,11 +31,12 @@ const exp = new (function Experiment() {
     //结束实验出口
     var nextSetFunc = () => { return true };
 
+    var preFlag = false;
     this.startPreExp = function () {
+        preFlag = true;
         // 初始化
         expRounds.wait = [];
         expRounds.coop = [];
-        expSets = [];
         setScore(0);
         setRound(0, preRound);
         // 开始预实验
@@ -41,6 +47,7 @@ const exp = new (function Experiment() {
             // 判断结束预实验
             if (parseInt($('#tip-round-num').text()) >= preRound) {
                 endPreExp();
+                preFlag = false;
                 return true;
             }
             // 重置车辆
@@ -54,18 +61,8 @@ const exp = new (function Experiment() {
         // 初始化
         expRounds.wait = [];
         expRounds.coop = [];
-        expSets = [];
-        setScore(0);
-        for (let i = 0; i < waitRateOther.length; i++) {
-            waitRate = waitRateOther[i];
-            for (let j = 0; j < coopRateSelf.length; j++) {
-                coopRate = coopRateSelf[j];
-                expSets.push([coopRate, waitRate]);
-            }
-        }
+        setScore(finalScore);
         expSets.shuffle();
-        curSet = 0;
-        finalScore = 0;
         // 开始实验
         nextSetFunc = () => {
             // 判断结束实验
@@ -98,6 +95,18 @@ const exp = new (function Experiment() {
         };
         endRound();
     }
+    this.redoExp = function (coopRate, waitRate, setScore) {
+        $('#skip-btn').removeClass('hidden');
+        for (let i = 0; i < expSets.length; i++) {
+            if (expSets[i][0] == parseFloat(coopRate) && 
+            expSets[i][1] == parseFloat(waitRate)) {
+                expSets.splice(i,1);
+                break;
+            }
+        }
+        curSet++;
+        finalScore += parseFloat(setScore);
+    }
     //实验进行时
     var timer = null;
     var timeSec = 0;
@@ -129,7 +138,7 @@ const exp = new (function Experiment() {
         app.setSpeed(2);
         clearInterval(timer);
         // 记录数据
-        if (curSet > 0) {
+        if (~preFlag && curSet > 0) {
             data.setData(curSet + '-' + curRound + '-决策时刻', timeRecord);
         }
 
@@ -162,7 +171,7 @@ const exp = new (function Experiment() {
         }, 3000)
 
         // 记录数据
-        if (curSet > 0) {
+        if (~preFlag && curSet > 0) {
             data.setData(curSet + '-' + curRound + '-用户等待', 0+stopSelf);
             data.setData(curSet + '-' + curRound + '-本轮得分', addscore);
             finalScore += addscore;
@@ -181,6 +190,7 @@ const exp = new (function Experiment() {
         app.pause(true);
         // 设置下一组
         if (expRounds.coop.length == 0 && nextSetFunc()) {
+            // 没有剩余的实验组，结束实验
             return;
         }
 
@@ -191,7 +201,7 @@ const exp = new (function Experiment() {
         stopSelf = waitRate > 0.5 ? !coop : coop;
         curRound++;
         // 记录数据
-        if (curSet > 0) {
+        if (~preFlag && curSet > 0) {
             data.setData(curSet + '-' + curRound + '-对方等待', 0+stopOther);
             data.setData(curSet + '-' + curRound + '-系统等待', 0+stopSelf);
         }

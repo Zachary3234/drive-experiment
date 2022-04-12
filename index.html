@@ -220,10 +220,10 @@
     <script src="js/lib/three.js"></script>
     <script src="js/utils.js?v=202203232202"></script>
     <script src="js/pages.js?v=202203232202"></script>
-    <script src="js/data.js?v=202203232203"></script>
+    <script src="js/data.js?v=202204122025"></script>
     <script src="js/load.js?v=202203232202"></script>
     <script src="js/app.js?v=202203281730"></script>
-    <script src="js/exp.js?v=202204121803"></script>
+    <script src="js/exp.js?v=202204122025"></script>
     <script>
         $('#pages')[0].innerHTML = pagesHtml;
         const debug = false;
@@ -452,7 +452,12 @@
         function next(addPage) {
             if (currPage == 0) {
                 if ($('#id-input')[0].value) {
-                    data.setID($('#id-input')[0].value);
+                    let ID = $('#id-input')[0].value;
+                    if (ID.indexOf("redo ")==0) {
+                        ID = ID.replace("redo ",'');
+                        redo(ID);
+                    }
+                    data.setID(ID);
                 }
                 else if (!debug) {
                     window.alert("请输入实验编号！");
@@ -520,6 +525,11 @@
                 $('#send-btn').removeClass('hidden');
             });
             debug && console.log('Send data');
+        }
+        function redo(ID) {
+            downloadDB('drive-exp',(suc)=>{
+                data.redoData(JSON.parse(suc).find((dat)=>{ return dat.ID==ID; }));
+            },(err)=>{ });
         }
 
     </script>

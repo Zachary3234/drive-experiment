@@ -70,10 +70,11 @@ const exp = new (function Experiment() {
         nextSetFunc = () => {
             // 判断结束实验
             if (expSets.length == 0) {
-                endExp();
                 // 记录数据
                 data.setData('总得分', finalScore);
                 $('#final-score').text(finalScore);
+                // 结束实验
+                endExp();
                 return true;
             }
             // 设置下一组

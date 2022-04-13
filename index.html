@@ -489,8 +489,8 @@
             debug && console.log('Goto page:', $('.page:eq(' + currPage + ')').attr('id'));
         }
         function startPreExp() {
-            exp.startPreExp();
             togglePage(false);
+            exp.startPreExp();
             debug && console.log('Start pre exp');
         }
         function endPreExp() {
@@ -502,9 +502,9 @@
         }
         function startExp() {
             $('#progress').removeClass('invisible');
-            exp.startExp();
             resetCut();
             togglePage(false);
+            exp.startExp();
             debug && console.log('Start exp');
         }
         function endExp() {
@@ -515,7 +515,6 @@
             debug && console.log('End exp');
         }
         function send() {
-            return;
             $('#next-btn').addClass('hidden');
             $('#send-btn').addClass('hidden');
             $('#send-msg').text("数据发送中...");

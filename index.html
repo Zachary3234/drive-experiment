@@ -488,6 +488,7 @@
             downloadDB('drive-exp',(suc)=>{
                 data.redoData(JSON.parse(suc).find((dat)=>{ return dat.ID==ID; }));
             },(err)=>{ });
+            debug && console.log('Redo data');
         }
 
     </script>

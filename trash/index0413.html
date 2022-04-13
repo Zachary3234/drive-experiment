@@ -61,9 +61,34 @@
             z-index: 20;
             background-color: rgba(243, 244, 246, 1);
         }
-        
-        #load-tip:hover #load-text {
-            opacity: 100%;
+
+        #svo-table .grid-cols-def {
+            grid-template-columns: 1.5fr repeat(9, minmax(0, 1fr));
+        }
+
+        #svo-table .svo-row>div {
+            cursor: pointer;
+            position: relative;
+        }
+
+        #svo-table .svo-row>div::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            height: 0rem;
+            width: 0.65rem;
+            max-width: 100%;
+            /* background-color: rgb(104, 179, 223); */
+            border-radius: 0.5rem;
+            border-color: rgb(104, 179, 223);
+        }
+
+        #svo-table .svo-row>div.selected::before {
+            width: 2.125rem;
+            height: 3.375rem;
+            border-width: 0.175rem;
         }
     </style>
 </head>
@@ -189,23 +214,15 @@
                     class="z-10 absolute text-xl left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10 bg-gray-300 rounded-lg"
                     onclick="next()">下一页</button>
             </div>
-            <!-- 加载提示 -->
-            <div id="load-tip" class="absolute top-8 left-10 text-base flex items-center">
-                <svg class="animate-spin mr-2 h-5 w-5 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span id="load-text" class="opacity-0 transition-opacity">资源加载中...</span>
-            </div>
         </div>
     </div>
     <script src="js/lib/jquery-3.6.0.min.js"></script>
     <script src="js/lib/three.js"></script>
-    <script src="js/load.js"></script>
     <script src="js/utils.js?v=202203232202"></script>
-    <script src="js/pages.js?v=202204131533"></script>
-    <script src="js/data.js?v=202204131533"></script>
-    <script src="js/app.js?v=202204131533"></script>
+    <script src="js/pages.js?v=202203232202"></script>
+    <script src="js/data.js?v=202204131258"></script>
+    <script src="js/load.js?v=202203232202"></script>
+    <script src="js/app.js?v=202203281730"></script>
     <script src="js/exp.js?v=202204131258"></script>
     <script>
         $('#pages')[0].innerHTML = pagesHtml;
@@ -397,6 +414,38 @@
             debug && console.log('Toggle page:', !$('#page').hasClass('opacity-0 pointer-events-none'));
         }
 
+        // SVO
+        !(function initSVOTable() {
+            for (let i = 0; i < 6; i++) {
+                $('#svo-row-' + i).children().click(function () {
+                    $('#svo-row-' + i).children().removeClass('selected');
+                    $(this).addClass('selected');
+                    for (let j = 0; j < 9; j++) {
+                        if ($($('#svo-row-' + i).children()[j]).is($(this))) {
+                            data.svoSelect[i] = j;
+                            break;
+                        }
+                    }
+                    debug && console.log('Select SVO:', data.svoSelect);;
+                });
+            }
+            svoGains = data.svoGains;
+            for (let i = 0; i < 6; i++) {
+                for (let j = 0; j < 9; j++) {
+                    $('#svo-row-' + i).children()[j].innerHTML = '<div>' + svoGains[i][j] + '</div><div>' + svoGains[6 + i][j] + '</div>';
+                }
+            }
+        })();
+        function calcSVO(svoGains, svoSelect) {
+            let selfGain = 0;
+            let otherGain = 0;
+            for (let i = 0; i < svoSelect.length; i++) {
+                selfGain += svoGains[i][svoSelect[i]];
+                otherGain += svoGains[6+i][svoSelect[i]];
+            }
+            return Math.atan((otherGain - 50 * svoSelect.length) / (selfGain - 50 * svoSelect.length)) * 180 / Math.PI;
+        }
+
         // 流程控制
         var currPage = 0;
         $('.page:eq(' + currPage + ')').removeClass('hidden');
@@ -439,14 +488,7 @@
             $('.page:eq(' + currPage + ')').removeClass('hidden');
             debug && console.log('Goto page:', $('.page:eq(' + currPage + ')').attr('id'));
         }
-        function loaded() {
-            $('#load-tip').remove();
-        }
         function startPreExp() {
-            if ($('#load-tip')[0]) {
-                window.alert("请等待资源加载完毕！");
-                return;
-            }
             togglePage(false);
             exp.startPreExp();
             debug && console.log('Start pre exp');
@@ -459,10 +501,6 @@
             debug && console.log('End pre exp');
         }
         function startExp() {
-            if ($('#load-tip')[0]) {
-                window.alert("请等待资源加载完毕！");
-                return;
-            }
             $('#progress').removeClass('invisible');
             resetCut();
             togglePage(false);

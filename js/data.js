@@ -1,10 +1,11 @@
 const data = new (function DataCollect() {
     var dataObj = {ID: ''};
-    var keys = ["ID","SVO"];
-    for (let i = 0; i < 6; i++) {
-        keys.push("svo-"+(i+1)+"-self");
-        keys.push("svo-"+(i+1)+"-other");
-    }
+    var keys = ["ID"];
+    // keys.push("SVO");
+    // for (let i = 0; i < 6; i++) {
+    //     keys.push("svo-"+(i+1)+"-self");
+    //     keys.push("svo-"+(i+1)+"-other");
+    // }
     keys.push('总得分');
     for (let iSet = 1; iSet <= 9; iSet++) {
         keys.push(iSet + '-对方等待率');
@@ -46,7 +47,7 @@ const data = new (function DataCollect() {
             dataObj[key] = val;
         },
         getData: function () {
-            dataObj["SVO"] = calcSVO(this.svoGains, this.svoSelect).toFixed(2);
+            // dataObj["SVO"] = calcSVO(this.svoGains, this.svoSelect).toFixed(2);
             let selfGain;
             let otherGain;
             for (let i = 0; i < this.svoSelect.length; i++) {
@@ -59,17 +60,17 @@ const data = new (function DataCollect() {
         },
         redoData: function (obj) {
             if (obj != undefined) {
-                // delete obj._id;
                 dataObj = obj;
-                console.log(dataObj);
-                for (let i = 0; i < this.svoSelect.length; i++) {
-                    for (let j = 0; j < 9; j++) {
-                        if (dataObj["svo-"+(i+1)+"-self"] == this.svoGains[i][j]
-                        && dataObj["svo-"+(i+1)+"-other"] == this.svoGains[6+i][j]){
-                            $('#svo-row-' + i).children()[j].click();
-                        }
-                    }
-                }
+                // delete dataObj._id;
+                // console.log(dataObj);
+                // for (let i = 0; i < this.svoSelect.length; i++) {
+                //     for (let j = 0; j < 9; j++) {
+                //         if (dataObj["svo-"+(i+1)+"-self"] == this.svoGains[i][j]
+                //         && dataObj["svo-"+(i+1)+"-other"] == this.svoGains[6+i][j]){
+                //             $('#svo-row-' + i).children()[j].click();
+                //         }
+                //     }
+                // }
                 let check = 0;
                 let roundsScore = 0;
                 for (let iSet = 1; iSet <= 9; iSet++) {

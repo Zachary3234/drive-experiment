@@ -119,6 +119,7 @@ const app = new (function Application() {
         worldControl = new initWorld();
         carsControl = new initCars();
         //启动
+        loaded();
         update();
     });
     //尺寸更新

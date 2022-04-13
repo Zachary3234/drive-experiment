@@ -67,7 +67,6 @@ const exp = new (function Experiment() {
         // 开始实验
         nextSetFunc = () => {
             // 判断结束实验
-            console.log(expSets);
             if (expSets.length == 0) {
                 // 记录数据
                 data.setData('总得分', finalScore);

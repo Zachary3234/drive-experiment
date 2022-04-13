@@ -71,20 +71,24 @@ const data = new (function DataCollect() {
                     }
                 }
                 let check = 0;
+                let roundsScore = 0;
                 for (let iSet = 1; iSet <= 9; iSet++) {
                     check += dataObj[iSet + '-对方等待率']===undefined;
                     check += dataObj[iSet + '-系统合作率']===undefined;
                     check += dataObj[iSet + '-用户合作率']===undefined;
-                    check += dataObj[iSet + '-本单元得分']===undefined;
+                    // check += dataObj[iSet + '-本单元得分']===undefined;
+                    roundsScore = 0;
                     for (let iRound = 1; iRound <= 10; iRound++) {
                         check += dataObj[iSet + '-' + iRound + '-对方等待']===undefined;
                         check += dataObj[iSet + '-' + iRound + '-系统等待']===undefined;
                         check += dataObj[iSet + '-' + iRound + '-用户等待']===undefined;
                         check += dataObj[iSet + '-' + iRound + '-本轮得分']===undefined;
                         check += dataObj[iSet + '-' + iRound + '-决策时刻']===undefined;
+                        roundsScore += parseInt(dataObj[iSet + '-' + iRound + '-本轮得分']);
                     }
                     if (check==0) {
-                        exp.redoExp(dataObj[iSet + '-系统合作率'],dataObj[iSet + '-对方等待率'],dataObj[iSet + '-本单元得分']);
+                        dataObj[iSet + '-本单元得分'] = roundsScore;
+                        exp.redoExp(dataObj[iSet + '-系统合作率'],dataObj[iSet + '-对方等待率'],roundsScore);
                     }
                     else
                         break;

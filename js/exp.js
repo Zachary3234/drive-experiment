@@ -8,6 +8,7 @@ const exp = new (function Experiment() {
     var curRound = 0;
     var coopUser = 0;
     var finalScore = 0;
+    var roundsScore = 0;
     var expSets = [];
     for (let i = 0; i < waitRateOther.length; i++) {
         for (let j = 0; j < coopRateSelf.length; j++) {
@@ -174,11 +175,13 @@ const exp = new (function Experiment() {
         if (~preFlag && curSet > 0) {
             data.setData(curSet + '-' + curRound + '-用户等待', 0+stopSelf);
             data.setData(curSet + '-' + curRound + '-本轮得分', addscore);
-            finalScore += addscore;
+            roundsScore += addscore;
             (waitRate > 0.5) ^ stopSelf && coopUser++;
             if (curRound==maxRound){
                 data.setData(curSet + '-用户合作率', coopUser / maxRound);
-                data.setData(curSet + '-本单元得分', getScore());
+                data.setData(curSet + '-本单元得分', roundsScore);
+                finalScore += roundsScore;
+                roundsScore = 0;
             }
         }
         setDialogBtn(!stopSelf);

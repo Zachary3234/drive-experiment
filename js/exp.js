@@ -201,6 +201,8 @@ const exp = new (function Experiment() {
         var coop = expRounds.coop.pop();
         var wait = expRounds.wait.pop();
         stopOther = wait;
+        // 对方亲社会，我方不等待视为合作
+        // 对方亲自我或中立，我方等待视为合作
         stopSelf = waitRate > 0.5 ? !coop : coop;
         curRound++;
         // 记录数据

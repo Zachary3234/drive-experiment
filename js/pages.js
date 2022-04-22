@@ -66,8 +66,27 @@ const pagesHtml = /* html */`
         实验共分为九个单元，每个单元实验开始前将对我方车辆和对方车辆社会价值取向类型进行说明。
     </p>
     <p>
-        实验开始后，我方汽车所做决策将体现在决策框中，决策框出现时，你可对系统决策进行更改，若到达路口处未作出更改，则车辆按照系统决策行动。
+        实验开始后，我方汽车所做决策将体现在决策框中，决策框出现时，你可对系统决策进行更改，若到达路口处未作出更改，则汽车按照系统决策行动。（如图所示，深色图标表示系统决策，对决策做出反应后汽车将加速前进）
     </p>
+    <div id="dialog-0" class="w-64 max-w-full mx-auto mt-4 -mb-2 py-2 px-0 bg-white rounded-2xl shadow-sm 
+        flex justify-evenly align-middle overflow-hidden pointer-events-none">
+        <div>
+            <svg id="move-btn-0" xmlns="http://www.w3.org/2000/svg"
+                class="h-24 w-24 text-gray-700 transition-all cursor-pointer scale-100-hover transform opacity-100 scale-100"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                    d="M9 11l3-3m0 0l3 3m-3-3v8m0-13a9 9 0 110 18 9 9 0 010-18z" />
+            </svg>
+        </div>
+        <div>
+            <svg id="wait-btn-0" xmlns="http://www.w3.org/2000/svg"
+                class="h-24 w-24 text-gray-700 transition-all cursor-pointer scale-100-hover transform opacity-50 scale-85"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                    d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+            </svg>
+        </div>
+    </div>
 </div>
 <!-- 预实验说明页 -->
 <div id="page-preexp" class="page hidden">

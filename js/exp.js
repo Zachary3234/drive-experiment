@@ -221,7 +221,8 @@ const exp = new (function Experiment() {
     }
     this.startRound = function () {
         // 下次活动（接续上轮己方车辆）
-        app.nextMove();
+        app.nextMove(0,1);
+        // app.nextMove(1,0);
         // 对方换车
         app.changeOther();
         // 画面启动
@@ -232,6 +233,9 @@ const exp = new (function Experiment() {
         setDialogBtn();
 
         debug && console.log('Start round');
+    }
+    this.setAssess = function (level) {
+        data.setData(curSet + '-用户评价',level);
     }
 
     function setRounds(coopRate, waitRate, nRound) {

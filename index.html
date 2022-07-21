@@ -65,6 +65,32 @@
         #load-tip:hover #load-text {
             opacity: 100%;
         }
+
+        
+        #cut-select>div {
+            cursor: pointer;
+            position: relative;
+            text-align: center;
+            line-height: 2.75rem;
+        }
+        #cut-select>div::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            height: 0rem;
+            width: 0.65rem;
+            max-width: 100%;
+            /* background-color: rgb(104, 179, 223); */
+            border-radius: 0.5rem;
+            border-color: rgb(104, 179, 223);
+        }
+        #cut-select>div.selected::before {
+            width: 2.25rem;
+            height: 2.5rem;
+            border-width: 0.175rem;
+        }
     </style>
 </head>
 
@@ -115,10 +141,10 @@
                         <span class="my-auto ml-3 flex-shrink-0">对方：</span>
                         <span id="tip-other" style="margin-top: auto; margin-bottom: auto;">中立</span>
                     </div>
-                    <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-80 rounded-lg text-xl text-white">
+                    <!-- <div class="h-10 w-36 mt-2 flex bg-gray-600 bg-opacity-80 rounded-lg text-xl text-white">
                         <span class="my-auto ml-3 flex-shrink-0">我方：</span>
                         <span id="tip-self" style="margin-top: auto; margin-bottom: auto;">中立</span>
-                    </div>
+                    </div> -->
                     <!-- 得分表 -->
                     <div
                         class="h-36 w-36 mt-2 flex bg-gray-600 bg-opacity-80 rounded-lg text-md text-white overflow-hidden">
@@ -168,17 +194,35 @@
             <!-- 转换界面 -->
             <div id="cut" class="absolute inset-5 p-8 bg-gray-100 opacity-100 opacity-0x pointer-events-nonex
                                 flex transition-opacity duration-500 ease-in-out">
-                <span id="cut-text" class="m-auto text-gray-700 text-2xl">
-                    <span>本单元你将驾驶<span id="cut-self">中立</span>车辆，对方驾驶<span id="cut-other">中立</span>车辆。</span>
-                </span>
+                <div id="cut-assess" class="m-auto text-xl">
+                    <p style="text-indent: 2rem;">请评价本单元中我方自动驾驶汽车的合作程度，其中“合作”是指维持更加顺畅的交通（避免车辆同时行驶而导致碰撞、避免车辆同时让行而导致道路资源浪费）。</p>
+                    <div class="w-full max-w-sm mx-auto mt-8 p-auto bg-blue-50">
+                        <div class="h-12 mt-1 max-0 sm:mx-2 px-0 sm:px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
+                            <div id="cut-select" class="h-11 my-auto text-lg col-span-7 grid grid-cols-7">
+                                <div>1</div>
+                                <div>2</div>
+                                <div>3</div>
+                                <div class="selected">4</div>
+                                <div>5</div>
+                                <div>6</div>
+                                <div>7</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <button id="cut-btn"
                     class="absolute text-xl left-1/2 bottom-12 transform -translate-x-1/2 w-32 h-10 bg-gray-300 rounded-lg"
                     onclick="startCut()">确定</button>
                 <span id="cut-round" class="m-auto text-gray-700 text-4xl hidden">
-                    <span>Round: </span>
-                    <span id="cut-round-num">1</span>
-                    <span>/</span>
-                    <span id="cut-round-max">10</span>
+                    <div id="cut-round-tip" class="flex mb-4">
+                        <span>本单元检测到对方驾驶<span id="cut-other">中立</span>车辆</span>
+                    </div>
+                    <div class="flex justify-center">
+                        <span>Round: </span>
+                        <span id="cut-round-num">1</span>
+                        <span>/</span>
+                        <span id="cut-round-max">10</span>
+                    </div>
                 </span>
             </div>
             <!-- 说明页面 -->
@@ -209,10 +253,24 @@
     <script src="js/exp.js?v=202204131258"></script>
     <script>
         $('#pages')[0].innerHTML = pagesHtml;
-        const debug = false;
+        const debug = true;
         if (debug) {
             $('#skip-btn').removeClass('hidden');
         }
+
+        // 评分
+        !(function initAssess() {
+            $('#cut-select').children().click(function () {
+                $('#cut-select').children().removeClass('selected');
+                $(this).addClass('selected');
+                for (let j = 0; j < 7; j++) {
+                    if ($($('#cut-select').children()[j]).is($(this))) {
+                        exp.setAssess(j+1);
+                        break;
+                    }
+                }
+            });
+        })();
 
         // 界面信息
         //进度
@@ -359,23 +417,27 @@
         }
         function resetCut() {
             $('#cut-round').addClass('hidden');
-            $('#cut-text').removeClass('hidden');
+            $('#cut-round-tip').removeClass('hidden');
+            $('#cut-assess').removeClass('hidden');
             $('#cut-btn').removeClass('hidden');
             debug && console.log('Reset cut',
                 $('#cut-round').hasClass('hidden'),
-                $('#cut-text').hasClass('hidden'),
+                $('#cut-assess').hasClass('hidden'),
                 $('#cut-btn').hasClass('hidden'));
         }
         function startCut() {
             setTimeout(()=>{
                 exp.startRound();
             },1000);
+            setTimeout(()=>{
+                $('#cut-round-tip').addClass('hidden');
+            },2000);
             $('#cut-round').removeClass('hidden');
-            $('#cut-text').addClass('hidden');
+            $('#cut-assess').addClass('hidden');
             $('#cut-btn').addClass('hidden');
             debug && console.log('Start cut',
                 $('#cut-round').hasClass('hidden'),
-                $('#cut-text').hasClass('hidden'),
+                $('#cut-assess').hasClass('hidden'),
                 $('#cut-btn').hasClass('hidden'));
         }
 
@@ -445,6 +507,7 @@
             }
             togglePage(false);
             exp.startPreExp();
+            $('#cut-round-tip').addClass('hidden');
             debug && console.log('Start pre exp');
         }
         function endPreExp() {
@@ -452,6 +515,7 @@
             goto('page-exp');
             togglePage(true);
             toggleCut(true);
+            $('#cut-round-tip').removeClass('hidden');
             debug && console.log('End pre exp');
         }
         function startExp() {
@@ -476,6 +540,7 @@
             $('#next-btn').addClass('hidden');
             $('#send-btn').addClass('hidden');
             $('#send-msg').text("数据发送中...");
+            return;
             uploadDB(data.getData(),'drive-exp',(suc)=>{
                 $('#send-msg').text("发送完毕");
             },(err)=>{

@@ -6,7 +6,7 @@ const app = new (function Application() {
     //控制参数
     var pause = true;
     var control = {
-        baseSpeed: 0.1,
+        baseSpeed: 0.1,//0.1,
         maxSpeed: 0.2,
         maxHeight: 170,
         selfType: 1,
@@ -20,8 +20,8 @@ const app = new (function Application() {
         worldControl && worldControl.reset();
         carsControl && carsControl.reset();
     }
-    this.nextMove = function () {
-        carsControl && carsControl.setCars();
+    this.nextMove = function (turnSelf = 0,turnOther = 1) {
+        carsControl && carsControl.setCars(turnSelf,turnOther);
     }
     //车辆控制
     this.setCarType = function (coopRate, waitRate) {
@@ -360,7 +360,7 @@ const app = new (function Application() {
             currCord = {row:0,col:2};
             meetChunk = worldControl.chunkTable[currCord.row][currCord.col];
         }
-        this.setCars = function () {
+        this.setCars = function (turnSelf = 0,turnOther = 1) {
             // 生成车（没有车的话）
             this.changeSelf();
             this.changeOther();
@@ -368,30 +368,38 @@ const app = new (function Application() {
             // 确定相遇路口
             currCord.row = (currCord.row+1) % worldControl.chunkTable.length;
             meetChunk = worldControl.chunkTable[currCord.row][currCord.col];
-            this.carSelf.position.copy((new THREE.Vector3(3.4, 0, -10)).add(meetChunk.position));
 
             // 设置车位置
-            this.carSelf.position.copy((new THREE.Vector3(3.4, 0, 30)).add(meetChunk.position));
+            if (turnSelf!=0)
+                this.carSelf.position.copy((new THREE.Vector3(3.4, 0, -30+53.5)).add(meetChunk.position));
+            else
+                this.carSelf.position.copy((new THREE.Vector3(3.4, 0, -30+60)).add(meetChunk.position));
             this.carSelf.rotation.copy(new THREE.Euler(0, 0, 0));
+            this.carSelf.direction.set(0,0,-1);
+            this.carSelf.turn = turnSelf;
             this.carSelf.stop = false;
             this.carSelf.crash = false;
-            this.carOther.position.copy((new THREE.Vector3(-3.4, 0, meetChunk.position.z-this.carSelf.position.z-53.5)).add(meetChunk.position));
+            if (turnOther!=0)
+                this.carOther.position.copy((new THREE.Vector3(-3.4, 0, -30-53.5)).add(meetChunk.position));
+            else
+                this.carOther.position.copy((new THREE.Vector3(-3.4, 0, -30-60)).add(meetChunk.position));
             this.carOther.rotation.copy(new THREE.Euler(0, Math.PI, 0));
             this.carOther.direction.set(0,0,1);
-            this.carOther.turn = 1;
+            this.carOther.turn = turnOther;
             this.carOther.stop = false;
             this.carOther.crash = false;
 
             worldControl.forceAlign();
         }
 
-        var carTypeSocial  = [objects.cars[1],objects.cars[6],objects.cars[14]];
-        var carTypeNone    = [objects.cars[3],objects.cars[5],objects.cars[10],objects.cars[17]];
-        var carTypeSelfish = [objects.cars[2],objects.cars[8],objects.cars[9],objects.cars[16]];
+        var carTypeSocial  = [objects.cars[14]];//[objects.cars[1],objects.cars[6],objects.cars[14]];
+        var carTypeNone    = [objects.cars[3],objects.cars[5],objects.cars[10]];//[objects.cars[3],objects.cars[5],objects.cars[10],objects.cars[17]];
+        var carTypeSelfish = [objects.cars[9]];//[objects.cars[2],objects.cars[8],objects.cars[9],objects.cars[16]];
+        var carSelf        = [objects.cars[4],objects.cars[11]];
         var carTypeSet = [carTypeSocial,carTypeNone,carTypeSelfish];
         this.changeSelf = function (ind) {
-            var newCarMesh = void 0==ind ? carTypeSet[control.selfType].randomPick() : 
-                carTypeSet[control.selfType][ind % carTypeSet[control.selfType].length];
+            var newCarMesh = void 0==ind ? carSelf.randomPick() : 
+            carSelf[ind % carSelf.length];//4,11
 
             this.carSelf = initCar(newCarMesh,this.carSelf);
         }
@@ -478,7 +486,7 @@ const app = new (function Application() {
                 if (this.crash) {
                     this.stop = true;
                     this.speedRatio -= .375 * 2 * control.maxSpeed;
-                    if (this == carsControl.carSelf)
+                    if (this.turn==0)
                         this.rotation.y -= 0.1 * control.maxSpeed *  Math.PI / 2;
                     else
                         this.rotation.y += 0.1 * control.maxSpeed *  Math.PI / 2;

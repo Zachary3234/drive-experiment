@@ -1,8 +1,8 @@
 const exp = new (function Experiment() {
-    //我方合作率（亲自我、中立、亲社会）
-    const coopRateSelf = [0.1, 0.5, 0.9];
+    //我方合作率
+    const coopRateSelf = [0.1, 0.3, 0.5, 0.7, 0.9];
     //对方等待概率（亲自我、中立、亲社会）
-    const waitRateOther = [0.1, 0.5, 0.9];
+    const waitRateOther = [0.3, 0.5, 0.7];
     //实验组集合
     var curSet = 0;
     var curRound = 0;
@@ -219,10 +219,16 @@ const exp = new (function Experiment() {
 
         debug && console.log('End round');
     }
+    var moveType = 0;
+    this.setMoveType = function (t) {
+        moveType = t;
+    }
     this.startRound = function () {
         // 下次活动（接续上轮己方车辆）
-        app.nextMove(0,1);
-        // app.nextMove(1,0);
+        if (moveType==0)
+            app.nextMove(0,1);
+        else
+            app.nextMove(1,0);
         // 对方换车
         app.changeOther();
         // 画面启动

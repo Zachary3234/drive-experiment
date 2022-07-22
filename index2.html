@@ -152,11 +152,11 @@
                             <tbody>
                                 <tr>
                                     <td class="border-2 border-opacity-20 w-16"></td>
-                                    <td class="border-2 border-opacity-20 w-20">左转</td>
+                                    <td class="border-2 border-opacity-20 w-20">直行</td>
                                     <td class="border-2 border-opacity-20 w-20">等待</td>
                                 </tr>
                                 <tr>
-                                    <td class="border-2 border-opacity-20">直行</td>
+                                    <td class="border-2 border-opacity-20">左转</td>
                                     <td class="border-2 border-opacity-20">(-2,-2)</td>
                                     <td class="border-2 border-opacity-20">(2,0)</td>
                                 </tr>
@@ -576,4 +576,35 @@
 
 <script>
     exp.setMoveType(1);
+    $('#page-info-1').html(`
+    <h1>实验说明</h1>
+    <p>
+        本实验中，你将与直行车辆进行是否让行的博弈，实验绩效将与你的得分相关。在十字路口：
+    </p>
+    <p>若你选择左转，对方选择直行，则两车均无法顺利通过，各得-2分；</p>
+    <p>若你选择左转，对方选择等待，则你可以顺利通过，得2分，对方得0分；</p>
+    <p>若你选择等待，对方选择直行，则对方可顺利通过，你得0分，对方得2分；</p>
+    <p>若你选择等待，对方选择等待，则会造成道路资源浪费，各得-1分。</p>
+    <p>
+        得分表如下：
+    <table class="mx-auto border-collapse border-2 border-blue-500 bg-blue-50 text-center">
+        <tbody>
+            <tr class="bg-blue-100">
+                <td class="border-2 border-blue-500 w-16"></td>
+                <td class="border-2 border-blue-500 w-20">直行</td>
+                <td class="border-2 border-blue-500 w-20">等待</td>
+            </tr>
+            <tr>
+                <td class="border-2 border-blue-500 bg-blue-100">左转</td>
+                <td class="border-2 border-blue-500">(-2,-2)</td>
+                <td class="border-2 border-blue-500">(2,0)</td>
+            </tr>
+            <tr>
+                <td class="border-2 border-blue-500 bg-blue-100">等待</td>
+                <td class="border-2 border-blue-500">(0,2)</td>
+                <td class="border-2 border-blue-500">(-1,-1)</td>
+            </tr>
+        </tbody>
+    </table>
+    </p>`);
 </script>

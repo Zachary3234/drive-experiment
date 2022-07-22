@@ -73,7 +73,7 @@ const pagesHtml = /* html */`
         实验共分为十五个单元，每个单元实验开始前将对对方车辆社会价值取向类型进行说明。
     </p>
     <p>
-        实验开始后，我方汽车所做决策将体现在决策框中，决策框出现时，你可对系统决策进行更改，若到达路口处未作出更改，则汽车按照系统决策行动。（如图所示，深色图标表示系统决策，对决策做出反应后汽车将加速前进）
+        实验开始后，我方汽车所做决策将体现在决策框中，决策框出现时，你可对系统决策进行更改，若到达路口处未作出更改，则汽车按照系统决策行动，对决策做出反应后汽车将加速前进。（如图所示，深色图标表示系统决策）
     </p>
     <div id="dialog-0" class="w-64 max-w-full mx-auto mt-4 -mb-2 py-2 px-0 bg-white rounded-2xl shadow-sm 
         flex justify-evenly align-middle overflow-hidden pointer-events-none">

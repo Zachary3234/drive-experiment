@@ -199,7 +199,7 @@
                         <p>本单元结果如下：</p>
                         <tr></tr>
                     </div> -->
-                    <p style="text-indent: 2rem;">请评价本单元中<b>我方</b>b>自动驾驶汽车默认决策的合作程度，其中“合作”是指维持更加顺畅的交通（避免车辆同时行驶而导致碰撞、避免车辆同时让行而导致道路资源浪费）。</p>
+                    <p style="text-indent: 2rem;">请评价本单元中<b>我方</b>自动驾驶汽车默认决策的合作程度（1分代表完全不合作，7分代表完全合作），其中“合作”是指维持更加顺畅的交通（避免车辆同时行驶而导致碰撞、避免车辆同时让行而导致道路资源浪费）。</p>
                     <div class="w-full max-w-sm mx-auto mt-8 p-auto bg-blue-50">
                         <div class="h-12 mt-1 max-0 sm:mx-2 px-0 sm:px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
                             <div id="cut-select" class="h-11 my-auto text-lg col-span-7 grid grid-cols-7">
@@ -252,7 +252,7 @@
     <script src="js/load.js"></script>
     <script src="js/utils.js?v=202207221745"></script>
     <script src="js/pages.js?v=202207221420"></script>
-    <script src="js/data.js?v=202204131533"></script>
+    <script src="js/data.js?v=202207221904"></script>
     <script src="js/app.js?v=202204131533"></script>
     <script src="js/exp.js?v=202204131258"></script>
     <script>
@@ -550,7 +550,7 @@
             send();
             debug && console.log('End exp');
         }
-        function send2() {
+        function send() {
             $('#next-btn').addClass('hidden');
             $('#send-btn').addClass('hidden');
             $('#send-msg').text("数据发送中...");
@@ -563,7 +563,6 @@
             });
             debug && console.log('Send data');
         }
-        send2();
         function redo(ID) {
             downloadDB('drive-exp',(suc)=>{
                 data.redoData(JSON.parse(suc).find((dat)=>{ return dat.ID==ID; }));

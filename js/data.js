@@ -7,11 +7,12 @@ const data = new (function DataCollect() {
     //     keys.push("svo-"+(i+1)+"-other");
     // }
     keys.push('总得分');
-    for (let iSet = 1; iSet <= 9; iSet++) {
+    for (let iSet = 1; iSet <= 15; iSet++) {
         keys.push(iSet + '-对方等待率');
         keys.push(iSet + '-系统合作率');
         keys.push(iSet + '-用户合作率');
         keys.push(iSet + '-本单元得分');
+        keys.push(iSet + '-合作度评价');
         for (let iRound = 1; iRound <= 10; iRound++) {
             keys.push(iSet + '-' + iRound + '-对方等待');
             keys.push(iSet + '-' + iRound + '-系统等待');

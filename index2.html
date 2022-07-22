@@ -152,11 +152,11 @@
                             <tbody>
                                 <tr>
                                     <td class="border-2 border-opacity-20 w-16"></td>
-                                    <td class="border-2 border-opacity-20 w-20">直行</td>
+                                    <td class="border-2 border-opacity-20 w-20">左转</td>
                                     <td class="border-2 border-opacity-20 w-20">等待</td>
                                 </tr>
                                 <tr>
-                                    <td class="border-2 border-opacity-20">左转</td>
+                                    <td class="border-2 border-opacity-20">直行</td>
                                     <td class="border-2 border-opacity-20">(-2,-2)</td>
                                     <td class="border-2 border-opacity-20">(2,0)</td>
                                 </tr>
@@ -517,6 +517,7 @@
                 return;
             }
             togglePage(false);
+            $('#cut-assess').addClass('hidden');
             exp.startPreExp();
             $('#cut-round-tip').addClass('hidden');
             debug && console.log('Start pre exp');
@@ -538,7 +539,7 @@
             // resetCut();
             togglePage(false);
             exp.startExp();
-            // $('#cut-assess').addClass('hidden');
+            $('#cut-assess').addClass('hidden');
             startCut();
             debug && console.log('Start exp');
         }
@@ -573,6 +574,7 @@
 </body>
 
 </html>
+
 
 <script>
     exp.setMoveType(1);

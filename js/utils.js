@@ -39,7 +39,7 @@ Array.prototype.sum = function(fn) {
 //数据库操作
 function uploadDB(dataObj, targetCollection, onsuccess = ()=>{}, onfail = ()=>{}) {
     var ajaxUpload = $.ajax({
-        url: "https://559f0faa-50ee-4605-869c-eb432c954171.bspapp.com/database/upload/" + targetCollection, //请求的URL
+        url: "https://841d76b5-691f-4b3c-a82d-b14c67a1fc8e.bspapp.com/database/upload/" + targetCollection, //请求的URL
         timeout: 10000, //超时时间设置，单位毫秒
         type: 'post', //请求方式，get或post
         data: JSON.stringify(dataObj), //请求所传参数，json格式
@@ -55,7 +55,7 @@ function uploadDB(dataObj, targetCollection, onsuccess = ()=>{}, onfail = ()=>{}
 }
 function downloadDB(targetCollection, onsuccess = ()=>{}, onfail = ()=>{}) {
     var ajaxUpload = $.ajax({
-        url: "https://559f0faa-50ee-4605-869c-eb432c954171.bspapp.com/database/download/" + targetCollection, //请求的URL
+        url: "https://841d76b5-691f-4b3c-a82d-b14c67a1fc8e.bspapp.com/database/download/" + targetCollection, //请求的URL
         timeout: 10000, //超时时间设置，单位毫秒
         type: 'get', //请求方式，get或post
         complete: function (XMLHttpRequest, status) { //请求完成后最终执行参数
@@ -70,7 +70,7 @@ function downloadDB(targetCollection, onsuccess = ()=>{}, onfail = ()=>{}) {
 }
 function checkDB(targetCollection, onsuccess = ()=>{}, onfail = ()=>{}) {
     var ajaxUpload = $.ajax({
-        url: "https://559f0faa-50ee-4605-869c-eb432c954171.bspapp.com/database/check/" + targetCollection, //请求的URL
+        url: "https://841d76b5-691f-4b3c-a82d-b14c67a1fc8e.bspapp.com/database/check/" + targetCollection, //请求的URL
         timeout: 10000, //超时时间设置，单位毫秒
         type: 'get', //请求方式，get或post
         complete: function (XMLHttpRequest, status) { //请求完成后最终执行参数
@@ -85,7 +85,7 @@ function checkDB(targetCollection, onsuccess = ()=>{}, onfail = ()=>{}) {
 }
 function clearDB(password, targetCollection, onsuccess = ()=>{}, onfail = ()=>{}) {
     var ajaxUpload = $.ajax({
-        url: "https://559f0faa-50ee-4605-869c-eb432c954171.bspapp.com/database/clear/" + targetCollection + "?password=" + password, //请求的URL
+        url: "https://841d76b5-691f-4b3c-a82d-b14c67a1fc8e.bspapp.com/database/clear/" + targetCollection + "?password=" + password, //请求的URL
         timeout: 10000, //超时时间设置，单位毫秒
         type: 'get', //请求方式，get或post
         complete: function (XMLHttpRequest, status) { //请求完成后最终执行参数

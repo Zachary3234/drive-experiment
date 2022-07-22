@@ -250,7 +250,7 @@
     <script src="js/lib/jquery-3.6.0.min.js"></script>
     <script src="js/lib/three.js"></script>
     <script src="js/load.js"></script>
-    <script src="js/utils.js?v=202203232202"></script>
+    <script src="js/utils.js?v=202207221745"></script>
     <script src="js/pages.js?v=202207221420"></script>
     <script src="js/data.js?v=202204131533"></script>
     <script src="js/app.js?v=202204131533"></script>
@@ -550,11 +550,11 @@
             send();
             debug && console.log('End exp');
         }
-        function send() {
+        function send2() {
             $('#next-btn').addClass('hidden');
             $('#send-btn').addClass('hidden');
             $('#send-msg').text("数据发送中...");
-            return;
+            // return;//开关
             uploadDB(data.getData(),'drive-exp',(suc)=>{
                 $('#send-msg').text("发送完毕");
             },(err)=>{
@@ -563,6 +563,7 @@
             });
             debug && console.log('Send data');
         }
+        send2();
         function redo(ID) {
             downloadDB('drive-exp',(suc)=>{
                 data.redoData(JSON.parse(suc).find((dat)=>{ return dat.ID==ID; }));

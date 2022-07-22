@@ -195,7 +195,7 @@
             <div id="cut" class="absolute inset-5 p-8 bg-gray-100 opacity-100 opacity-0x pointer-events-nonex
                                 flex transition-opacity duration-500 ease-in-out">
                 <div id="cut-assess" class="m-auto text-xl">
-                    <p style="text-indent: 2rem;">请评价本单元中我方自动驾驶汽车的合作程度，其中“合作”是指维持更加顺畅的交通（避免车辆同时行驶而导致碰撞、避免车辆同时让行而导致道路资源浪费）。</p>
+                    <p style="text-indent: 2rem;">请评价本单元中<b>我方</b>b>自动驾驶汽车默认决策的合作程度，其中“合作”是指维持更加顺畅的交通（避免车辆同时行驶而导致碰撞、避免车辆同时让行而导致道路资源浪费）。</p>
                     <div class="w-full max-w-sm mx-auto mt-8 p-auto bg-blue-50">
                         <div class="h-12 mt-1 max-0 sm:mx-2 px-0 sm:px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
                             <div id="cut-select" class="h-11 my-auto text-lg col-span-7 grid grid-cols-7">
@@ -426,6 +426,12 @@
                 $('#cut-btn').hasClass('hidden'));
         }
         function startCut() {
+            if (!($('#cut-assess').hasClass('hidden'))){
+                if (!($('#cut-select').children().hasClass('selected'))){
+                    alert('请选择合作程度评价');
+                    return;
+                }
+            }
             setTimeout(()=>{
                 exp.startRound();
             },1000);
@@ -434,6 +440,7 @@
             },2000);
             $('#cut-round').removeClass('hidden');
             $('#cut-assess').addClass('hidden');
+            $('#cut-select').children().removeClass('selected')
             $('#cut-btn').addClass('hidden');
             debug && console.log('Start cut',
                 $('#cut-round').hasClass('hidden'),

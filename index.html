@@ -524,9 +524,11 @@
                 return;
             }
             $('#progress').removeClass('invisible');
-            resetCut();
+            // resetCut();
             togglePage(false);
             exp.startExp();
+            // $('#cut-assess').addClass('hidden');
+            startCut();
             debug && console.log('Start exp');
         }
         function endExp() {

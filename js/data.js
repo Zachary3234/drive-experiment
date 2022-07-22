@@ -46,7 +46,10 @@ const data = new (function DataCollect() {
         setData: function (key,val) {
             dataObj[key] = val;
         },
-        getData: function () {
+        getData: function (key = undefined) {
+            if (key!=undefined){
+                return dataObj[key];
+            }
             // dataObj["SVO"] = calcSVO(this.svoGains, this.svoSelect).toFixed(2);
             let selfGain;
             let otherGain;

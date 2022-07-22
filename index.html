@@ -195,6 +195,10 @@
             <div id="cut" class="absolute inset-5 p-8 bg-gray-100 opacity-100 opacity-0x pointer-events-nonex
                                 flex transition-opacity duration-500 ease-in-out">
                 <div id="cut-assess" class="m-auto text-xl">
+                    <!-- <div>
+                        <p>本单元结果如下：</p>
+                        <tr></tr>
+                    </div> -->
                     <p style="text-indent: 2rem;">请评价本单元中<b>我方</b>b>自动驾驶汽车默认决策的合作程度，其中“合作”是指维持更加顺畅的交通（避免车辆同时行驶而导致碰撞、避免车辆同时让行而导致道路资源浪费）。</p>
                     <div class="w-full max-w-sm mx-auto mt-8 p-auto bg-blue-50">
                         <div class="h-12 mt-1 max-0 sm:mx-2 px-0 sm:px-3 border-2 rounded-lg border-blue-500 bg-blue-50 text-center">
@@ -202,7 +206,7 @@
                                 <div>1</div>
                                 <div>2</div>
                                 <div>3</div>
-                                <div class="selected">4</div>
+                                <div>4</div>
                                 <div>5</div>
                                 <div>6</div>
                                 <div>7</div>
@@ -215,7 +219,7 @@
                     onclick="startCut()">确定</button>
                 <span id="cut-round" class="m-auto text-gray-700 text-4xl hidden">
                     <div id="cut-round-tip" class="flex mb-4">
-                        <span>本单元检测到对方驾驶<span id="cut-other">中立</span>车辆</span>
+                        <span>本单元对方驾驶<span id="cut-other">中立</span>车辆</span>
                     </div>
                     <div class="flex justify-center">
                         <span>Round: </span>
